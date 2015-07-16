@@ -92,6 +92,7 @@
     <ClInclude Include="Sources\Primitive\Primitive.hpp" />
     <ClInclude Include="Sources\Reference\Reference.hpp" />
     <ClInclude Include="Sources\SimpleVertex\SimpleVertex.hpp" />
+    <ClInclude Include="Sources\Texture2D\Texture2D.hpp" />
     <ClInclude Include="Sources\Window\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
