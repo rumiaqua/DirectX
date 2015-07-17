@@ -2,8 +2,6 @@
 
 # include "Model/Model.hpp"
 
-# include "Texture2D/Texture2D.hpp"
-
 # define ISVALID(VAR) if(!(VAR)->IsValid())
 
 Handle<ID3D11ShaderResourceView> shaderResourceView;
@@ -49,8 +47,6 @@ Float4 color;
 Model player;
 
 Matrix model;
-
-Texture2D texture2D;
 
 using namespace DirectX;
 
@@ -155,12 +151,9 @@ void Initialize(Window& window)
 		Float4(0.0f, 0.0f, 10.0f, 0.0f));
 
 	player.Load(L"Contents/Box.obj", device);
-	player.Texture(device);
 
 	model = XMMatrixIdentity();
 	modelVariable->SetMatrix(model);
-
-	// texture2D.Load(L"Contents/seafloor.dds", device, 640, 480);
 }
 
 
@@ -332,33 +325,9 @@ void Render(Window& window)
 	worldViewInverseTransposeVariable->SetMatrix(
 		worldViewInverseTranspose);
 
-	// projection = XMMatrixOrthographicLH(640.0f, 480.0f, 0.01f, 250.0f);
-	//projection.m33 *= -1;
-	// projection = projection * XMMatrixTranslation(-1.0f, 1.0f, 0.0f);
-	projection.m11 = 2.0f / 640.0f;
-	projection.m12 = 0.0f;
-	projection.m13 = 0.0f;
-	projection.m14 = 0.0f;
-	projection.m21 = 0.0f;
-	projection.m22 = -2.0f / 480.0f;
-	projection.m23 = 0.0f;
-	projection.m24 = 0.0f;
-	projection.m31 = 0.0f;
-	projection.m32 = 0.0f;
-	projection.m33 = 1.0f;
-	projection.m34 = 0.0f;
-	projection.m41 = 0.0f;
-	projection.m42 = 0.0f;
-	projection.m43 = 0.0f;
-	projection.m44 = 1.0f;
-	Matrix trans = XMMatrixTranslation(-1.0f, 1.0f, 0.0f);
-	projectionVariable->SetMatrix(projection * trans);
-
 	pass->Apply(0, window.Context());
 
 	player.Render(window.Context());
-
-	// texture2D.Render(window.Context());
 
 	window.Present();
 }
