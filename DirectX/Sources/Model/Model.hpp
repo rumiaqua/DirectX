@@ -8,8 +8,6 @@
 
 # include <fstream>
 
-# include "Base/Base.hpp"
-
 float Lerp(float t, float start, float end)
 {
 	return start + (end - start) * t;
@@ -19,45 +17,22 @@ class Model
 {
 public:
 
-	/*
-	Handle<ID3D11Buffer> m_vertexBuffer;
-
-	UINT m_stride;
-
-	UINT m_offset;
-
-	Handle<ID3D11Buffer> m_indexBuffer;
-
-	UINT m_numIndices;
-
-	D3D11_PRIMITIVE_TOPOLOGY m_topology;
-
-	Float3 m_position;
-
-	Matrix m_rotateAndScale;
-	*/
 	Model()
-		: m_vertexBuffer()
-		, m_stride(0)
-		, m_offset(0)
-		, m_indexBuffer()
-		, m_numIndices(0)
-		, m_topology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
-		, m_position(0.0f, 0.0f, 0.0f)
-		, m_rotateAndScale(DirectX::XMMatrixIdentity())
 	{
 
 	}
 
-	void Load(const std::wstring& filename)
+	void Load(const std::wstring& filename, Reference<ID3D11Device>& device)
 	{
+		HRESULT hr = S_OK;
+
 		ObjLoader loader { filename };
 
 		auto vertices = loader.Vertices();
 
 		auto indices = loader.Indices();
 
-		Initialize(vertices.data(), vertices.size(), indices.data(), indices.size(), loader.Topology());
+		Initialize(vertices.data(), vertices.size(), indices.data(), indices.size(), loader.Topology(), device);
 	}
 
 	virtual ~Model()
@@ -65,21 +40,21 @@ public:
 
 	}
 
-	void Render()
+	void Render(Reference<ID3D11DeviceContext>& context)
 	{
-		Base::Context()->IASetVertexBuffers(
+		context->IASetVertexBuffers(
 			0U, 1U, &m_vertexBuffer, &m_stride, &m_offset);
 
-		Base::Context()->IASetIndexBuffer(
+		context->IASetIndexBuffer(
 			m_indexBuffer, DXGI_FORMAT_R16_UINT, 0U);
 
-		Base::Context()->IASetPrimitiveTopology(m_topology);
+		context->IASetPrimitiveTopology(m_topology);
 
-		Base::Context()->DrawIndexed(
+		context->DrawIndexed(
 			m_numIndices, 0U, 0);
 	}
 
-	void Box()
+	void Box(Reference<ID3D11Device>& device)
 	{
 		static const SimpleVertex v[] =
 		{
@@ -140,17 +115,36 @@ public:
 
 		UINT numIndices = ARRAYSIZE(i);
 
-		Initialize(v, numVertices, i, numIndices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		Initialize(v, numVertices, i, numIndices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, device);
 	}
 
-	void Texture()
+	void Texture(Reference<ID3D11Device>& device)
 	{
+		/*static const SimpleVertex v[] =
+		{
+			{ Float3(0.0f, 0.0f, 0.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(0.0f, 1.0f, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(1.0f, 1.0f, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(1.0f, 0.0f, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+		};
+
+		UINT numVertices = ARRAYSIZE(v);
+
+		static const WORD i[] =
+		{
+			0, 1, 2,
+			2, 3, 0,
+		};
+
+		UINT numIndices = ARRAYSIZE(i);
+		*/
+
 		static const SimpleVertex v[] =
 		{
 			{ Float3(0.0f, 0.0f, 0.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(1.0f, 0.0f, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(0.0f, 1.0f, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(1.0f, 1.0f, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(150.0f, 0.0f, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(0.0f, 150.0f, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(150.0f, 150.0f, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
 		};
 
 		UINT numVertices = ARRAYSIZE(v);
@@ -162,12 +156,7 @@ public:
 
 		UINT numIndices = ARRAYSIZE(i);
 
-		Initialize(
-			v,
-			numVertices,
-			i,
-			numIndices,
-			D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		Initialize(v, numVertices, i, numIndices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, device);
 	}
 
 private:
@@ -177,7 +166,8 @@ private:
 		UINT numVertices,
 		const WORD* indices,
 		UINT numIndices,
-		D3D11_PRIMITIVE_TOPOLOGY topology)
+		D3D11_PRIMITIVE_TOPOLOGY topology,
+		ID3D11Device* device)
 	{
 
 		D3D11_BUFFER_DESC bufferDesc;
@@ -191,14 +181,14 @@ private:
 		bufferDesc.ByteWidth = sizeof(SimpleVertex) * numVertices;
 		initData.pSysMem = vertices;
 
-		Base::Device()->CreateBuffer(
+		device->CreateBuffer(
 			&bufferDesc, &initData, &m_vertexBuffer);
 
 		bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		bufferDesc.ByteWidth = sizeof(WORD) * numIndices;
 		initData.pSysMem = indices;
 
-		Base::Device()->CreateBuffer(
+		device->CreateBuffer(
 			&bufferDesc, &initData, &m_indexBuffer);
 
 		m_stride = sizeof(SimpleVertex);

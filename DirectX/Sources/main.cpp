@@ -1,9 +1,5 @@
 # include "Window/Window.hpp"
 
-// # include "_Window/Window.hpp"
-
-// # include "Base/Base.hpp"
-
 # include "Model/Model.hpp"
 
 # include "Texture2D/Texture2D.hpp"
@@ -40,6 +36,8 @@ ID3DX11EffectShaderResourceVariable* textureVariable;
 
 ID3DX11EffectVectorVariable* lightPositionVariable;
 
+ID3DX11EffectMatrixVariable* modelVariable;
+
 Matrix world;
 
 Matrix view;
@@ -50,24 +48,25 @@ Float4 color;
 
 Model player;
 
-// Texture2D texture2D;
-Model texture2D;
+Matrix model;
+
+Texture2D texture2D;
 
 using namespace DirectX;
 
 void Initialize(Window& window)
 {
-	// Window::Initialize(L"Direct X Project", 640, 480);
-
-	// Base::Initialize();
-
 	HRESULT hr = S_OK;
+
+	auto device = window.Device();
+
+	auto context = window.Context();
 
 	TexMetadata metadata;
 	ScratchImage image;
 	LoadFromDDSFile(L"Contents/seafloor.dds", 0U, &metadata, image);
 	CreateShaderResourceView(
-		window.Device(),
+		device,
 		image.GetImages(),
 		image.GetImageCount(),
 		metadata,
@@ -79,7 +78,7 @@ void Initialize(Window& window)
 		NULL,
 		0U,
 		0U,
-		window.Device(),
+		device,
 		&effect,
 		NULL);
 
@@ -95,7 +94,7 @@ void Initialize(Window& window)
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	window.Device()->CreateInputLayout(
+	device->CreateInputLayout(
 		layout,
 		ARRAYSIZE(layout),
 		passDesc.pIAInputSignature,
@@ -120,7 +119,9 @@ void Initialize(Window& window)
 
 	lightPositionVariable = effect->GetVariableByName("lightPosition")->AsVector();
 
-	window.Context()->IASetInputLayout(vertexLayout);
+	modelVariable = effect->GetVariableByName("Model")->AsMatrix();
+
+	context->IASetInputLayout(vertexLayout);
 
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
@@ -131,7 +132,7 @@ void Initialize(Window& window)
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	window.Device()->CreateSamplerState(&sampDesc, &sampler);
+	device->CreateSamplerState(&sampDesc, &sampler);
 
 	world = XMMatrixIdentity();
 	worldVariable->SetMatrix(world);
@@ -153,14 +154,17 @@ void Initialize(Window& window)
 	lightPositionVariable->SetFloatVector(
 		Float4(0.0f, 0.0f, 10.0f, 0.0f));
 
-	// player.Load(L"Contents/Box.obj");
-	player.Load(L"Contents/Casual_Man.obj");
+	player.Load(L"Contents/Box.obj", device);
+	player.Texture(device);
 
-	texture2D.Texture();
+	model = XMMatrixIdentity();
+	modelVariable->SetMatrix(model);
+
+	// texture2D.Load(L"Contents/seafloor.dds", device, 640, 480);
 }
 
 
-void Update()
+void Update(Window& window)
 {
 	static Float3 velocity;
 
@@ -310,7 +314,6 @@ void Render(Window& window)
 	{
 		0.1f, 0.1f, 0.1f, 1.0f,
 	};
-
 	window.Clear(clearColor);
 
 	worldVariable->SetMatrix(world);
@@ -329,18 +332,9 @@ void Render(Window& window)
 	worldViewInverseTransposeVariable->SetMatrix(
 		worldViewInverseTranspose);
 
-	// ’Êí‚Ì“§Ž‹ŽË‰e•`‰æ
-	worldVariable->SetMatrix(world);
-	viewVariable->SetMatrix(view);
-	projection = XMMatrixPerspectiveFovLH(
-		XM_PIDIV4, 4.0f / 3.0f, 1.0f, 250.0f);
-	projectionVariable->SetMatrix(projection);
-	pass->Apply(0, window.Context());
-	// player.Render(window.Context());
-
-	// 2D³ŽË‰e
-	worldVariable->SetMatrix((float*)XMMatrixIdentity().m);
-	viewVariable->SetMatrix((float*)XMMatrixIdentity().m);
+	// projection = XMMatrixOrthographicLH(640.0f, 480.0f, 0.01f, 250.0f);
+	//projection.m33 *= -1;
+	// projection = projection * XMMatrixTranslation(-1.0f, 1.0f, 0.0f);
 	projection.m11 = 2.0f / 640.0f;
 	projection.m12 = 0.0f;
 	projection.m13 = 0.0f;
@@ -353,31 +347,25 @@ void Render(Window& window)
 	projection.m32 = 0.0f;
 	projection.m33 = 1.0f;
 	projection.m34 = 0.0f;
-	projection.m41 = -1.0f;
-	projection.m42 = 1.0f;
+	projection.m41 = 0.0f;
+	projection.m42 = 0.0f;
 	projection.m43 = 0.0f;
 	projection.m44 = 1.0f;
-	projectionVariable->SetMatrix(projection);
+	Matrix trans = XMMatrixTranslation(-1.0f, 1.0f, 0.0f);
+	projectionVariable->SetMatrix(projection * trans);
 
-	Matrix model = XMMatrixIdentity();
-	model = model * XMMatrixRotationRollPitchYaw(0.0f, 0.0f, 3.14f / 4.0f);
-	model = model * XMMatrixScaling(150.0f, 150.0f, 1.0f);
-	model = model * XMMatrixTranslation(320.0f, 240.0f, 0.0f);
-	worldVariable->SetMatrix(
-		(float*)model.m);
-
-	// pass->Apply(0, Base::Context());
 	pass->Apply(0, window.Context());
 
-	texture2D.Render();
+	player.Render(window.Context());
 
-	// Base::Flip();
+	// texture2D.Render(window.Context());
+
 	window.Present();
 }
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	Window window { L"DirectX Sample Program", 640, 480 };
+	Window window { L"Direct X Project", 640, 480 };
 
 	Initialize(window);
 
@@ -392,7 +380,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 		else
 		{
-			Update();
+			Update(window);
 			Render(window);
 		}
 	}

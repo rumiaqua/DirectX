@@ -1,14 +1,9 @@
 matrix Projection;
 
-Texture2D txDiffuse;
-
-SamplerState samLinear;
-
 struct VS_INPUT
 {
 	float4 Pos : POSITION;
 	float2 Tex : TEXCOORD0;
-	float3 Nor : NORMAL;
 };
 
 struct PS_INPUT
@@ -20,7 +15,8 @@ struct PS_INPUT
 PS_INPUT VS( VS_INPUT input )
 {
 	PS_INPUT output = (PS_INPUT)0;
-	output.Pos = mul(input.Pos, Projection);
+	// output.Pos = mul(input.Pos, Projection);
+	output.Pos = input.Pos;
 	output.Tex = input.Tex;
 	
 	return output;
@@ -28,7 +24,7 @@ PS_INPUT VS( VS_INPUT input )
 
 float4 PS( PS_INPUT input) : SV_Target
 {
-	return txDiffuse.Sample(samLinear, input.Tex);
+	return float4(1.0f, 0.0f, 0.0f, 1.0f);
 }
 
 technique11 Default
