@@ -2,6 +2,7 @@
 
 # include "Primitive/Primitive.hpp"
 
+/// <summary>頂点データ</summary>
 struct SimpleVertex
 {
 	Float3 position;

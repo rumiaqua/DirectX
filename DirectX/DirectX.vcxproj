@@ -86,19 +86,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\Base\Base.hpp" />
+    <ClInclude Include="Sources\Context\Context.hpp" />
+    <ClInclude Include="Sources\Convert\Convert.hpp" />
+    <ClInclude Include="Sources\Device\Device.hpp" />
     <ClInclude Include="Sources\Handle\Handle.hpp" />
     <ClInclude Include="Sources\Model\Model.hpp" />
     <ClInclude Include="Sources\ObjLoader\ObjLoader.hpp" />
     <ClInclude Include="Sources\Primitive\Primitive.hpp" />
     <ClInclude Include="Sources\Reference\Reference.hpp" />
+    <ClInclude Include="Sources\Shader\Shader.hpp" />
     <ClInclude Include="Sources\SimpleVertex\SimpleVertex.hpp" />
     <ClInclude Include="Sources\Texture2D\Texture2D.hpp" />
     <ClInclude Include="Sources\Window\Window.hpp" />
+    <ClInclude Include="Sources\_Window\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Base\Base.cpp" />
+    <ClCompile Include="Sources\Convert\Convert.cpp" />
     <ClCompile Include="Sources\main.cpp" />
     <ClCompile Include="Sources\ObjLoader\ObjLoader.cpp" />
     <ClCompile Include="Sources\Window\Window.cpp" />
+    <ClCompile Include="Sources\_Window\Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

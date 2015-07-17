@@ -1,5 +1,9 @@
 # include "Window/Window.hpp"
 
+// # include "_Window/Window.hpp"
+
+// # include "Base/Base.hpp"
+
 # include "Model/Model.hpp"
 
 # include "Texture2D/Texture2D.hpp"
@@ -53,17 +57,17 @@ using namespace DirectX;
 
 void Initialize(Window& window)
 {
+	// Window::Initialize(L"Direct X Project", 640, 480);
+
+	// Base::Initialize();
+
 	HRESULT hr = S_OK;
-
-	auto device = window.Device();
-
-	auto context = window.Context();
 
 	TexMetadata metadata;
 	ScratchImage image;
 	LoadFromDDSFile(L"Contents/seafloor.dds", 0U, &metadata, image);
 	CreateShaderResourceView(
-		device,
+		window.Device(),
 		image.GetImages(),
 		image.GetImageCount(),
 		metadata,
@@ -75,7 +79,7 @@ void Initialize(Window& window)
 		NULL,
 		0U,
 		0U,
-		device,
+		window.Device(),
 		&effect,
 		NULL);
 
@@ -91,7 +95,7 @@ void Initialize(Window& window)
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	device->CreateInputLayout(
+	window.Device()->CreateInputLayout(
 		layout,
 		ARRAYSIZE(layout),
 		passDesc.pIAInputSignature,
@@ -116,7 +120,7 @@ void Initialize(Window& window)
 
 	lightPositionVariable = effect->GetVariableByName("lightPosition")->AsVector();
 
-	context->IASetInputLayout(vertexLayout);
+	window.Context()->IASetInputLayout(vertexLayout);
 
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
@@ -127,7 +131,7 @@ void Initialize(Window& window)
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	device->CreateSamplerState(&sampDesc, &sampler);
+	window.Device()->CreateSamplerState(&sampDesc, &sampler);
 
 	world = XMMatrixIdentity();
 	worldVariable->SetMatrix(world);
@@ -149,13 +153,14 @@ void Initialize(Window& window)
 	lightPositionVariable->SetFloatVector(
 		Float4(0.0f, 0.0f, 10.0f, 0.0f));
 
-	player.Load(L"Contents/Box.obj", device);
+	// player.Load(L"Contents/Box.obj");
+	player.Load(L"Contents/Casual_Man.obj");
 
-	texture2D.Texture(device);
+	texture2D.Texture();
 }
 
 
-void Update(Window& window)
+void Update()
 {
 	static Float3 velocity;
 
@@ -305,6 +310,7 @@ void Render(Window& window)
 	{
 		0.1f, 0.1f, 0.1f, 1.0f,
 	};
+
 	window.Clear(clearColor);
 
 	worldVariable->SetMatrix(world);
@@ -360,16 +366,18 @@ void Render(Window& window)
 	worldVariable->SetMatrix(
 		(float*)model.m);
 
+	// pass->Apply(0, Base::Context());
 	pass->Apply(0, window.Context());
 
-	texture2D.Render(window.Context());
+	texture2D.Render();
 
+	// Base::Flip();
 	window.Present();
 }
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	Window window { L"Direct X Project", 640, 480 };
+	Window window { L"DirectX Sample Program", 640, 480 };
 
 	Initialize(window);
 
@@ -384,7 +392,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 		else
 		{
-			Update(window);
+			Update();
 			Render(window);
 		}
 	}

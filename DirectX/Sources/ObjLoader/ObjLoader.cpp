@@ -8,6 +8,12 @@
 
 # include <algorithm>
 
+# include "Convert/Convert.hpp"
+
+/// <summary>文字列を指定の文字で分割する</summary>
+/// <param name="str">文字列</param>
+/// <param name="delim">分割点の文字</param>
+/// <returns>分割した文字列の入ったコンテナ</returns>
 std::vector<std::wstring> Split(const std::wstring& str, char delim)
 {
 	std::vector<std::wstring> res;
@@ -20,15 +26,6 @@ std::vector<std::wstring> Split(const std::wstring& str, char delim)
 	}
 	res.push_back(std::wstring(str, current, str.size() - current));
 	return res;
-}
-
-template <typename Type>
-Type ToValue(const std::wstring& str)
-{
-	std::wstringstream ss { str };
-	Type value;
-	ss >> value;
-	return value;
 }
 
 ObjLoader::ObjLoader()
@@ -52,35 +49,40 @@ void ObjLoader::Load(const std::wstring& filename)
 
 	std::wstring buffer;
 
+	// 最後まで読む
 	while (std::getline(ifs, buffer))
 	{
+		// 半角スペースで分割
 		auto split = Split(buffer, ' ');
 
+		// 最初の文字で判断
 		switch (buffer[0])
 		{
 			case 'v':
 			{
+				// ２文字目で判断
 				switch (buffer[1])
 				{
 					case 'n':
-						Normal(split[1], split[2], split[3]);
-						break;
+					Normal(split[1], split[2], split[3]);
+					break;
 
 					case 't':
-						Texcoord(split[1], split[2]);
-						break;
+					Texcoord(split[1], split[2]);
+					break;
 
 					default:
-						Position(split[1], split[2], split[3]);
-						break;
+					Position(split[1], split[2], split[3]);
+					break;
 				}
 			}
 			break;
 
 			case 'f':
 			{
-					Face(split[1], split[2], split[3]);
-					m_topology = D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+				Face(split[1], split[2], split[3]);
+				// 今は三面データのみを扱う
+				m_topology = D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 			}
 			break;
 		}
@@ -88,6 +90,7 @@ void ObjLoader::Load(const std::wstring& filename)
 
 	std::vector<FaceElement> temp;
 
+	// 面データから実際の面リストを作成
 	for (const auto& f : m_faces)
 	{
 		static UINT id = 0;
@@ -102,6 +105,7 @@ void ObjLoader::Load(const std::wstring& filename)
 		m_indices.emplace_back(index);
 	}
 
+	// 頂点リストを作成
 	for (const auto& f : temp)
 	{
 		m_vertices.emplace_back(
@@ -153,20 +157,29 @@ void ObjLoader::Face(const std::wstring& f1, const std::wstring& f2, const std::
 
 void ObjLoader::Face(const std::wstring& f)
 {
+	// スラッシュで分割
 	auto split = Split(f, '/');
 
+	// 要素数で判断
 	switch (split.size())
 	{
+		// 1つなら座標のみ
 		case 1:
+		{
 			m_faces.emplace_back(ToValue<WORD>(split[0]), 0, 0);
 			break;
-
+		}
+		// 2つなら座標とUV座標
 		case 2:
+		{
 			m_faces.emplace_back(ToValue<WORD>(split[0]), ToValue<WORD>(split[1]), 0);
 			break;
-
+		}
+		// 3つなら座標と（UV座標と）法線
 		case 3:
+		{
 			m_faces.emplace_back(ToValue<WORD>(split[0]), split[1].size() > 1 ? ToValue<WORD>(split[1]) : 0U, ToValue<WORD>(split[2]));
 			break;
+		}
 	}
 }

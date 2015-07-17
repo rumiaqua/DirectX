@@ -1,8 +1,10 @@
 # pragma once
 
+// # define _XM_NO_INTRINSICS_
+
 # include <DirectXPackedVector.h>
 
-// 二次元ベクトル
+/// <summary>二次元ベクトル</summary>
 struct Float2
 {
 	Float2()
@@ -64,7 +66,7 @@ struct Float2
 	};
 };
 
-// 三次元ベクトル
+/// <summary>三次元ベクトル</summary>
 struct Float3
 {
 	Float3()
@@ -138,7 +140,7 @@ struct Float3
 	};
 };
 
-// 四次元ベクトル
+/// <summary>四次元ベクトル</summary>
 struct Float4
 {
 	Float4()
@@ -213,7 +215,7 @@ struct Float4
 	};
 };
 
-// 行列
+/// <summary>4x4行列</summary>
 struct Matrix
 {
 	Matrix()
