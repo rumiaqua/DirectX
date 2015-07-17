@@ -11,10 +11,17 @@ public:
 
 	}
 
-	void Load(const std::wstring& filename, ID3D11Device* device, UINT width, UINT height)
+	void Load(
+		const std::wstring& filename, 
+		ID3D11Device* device,
+		UINT screenWidth,
+		UINT screenHeight,
+		UINT textureWidth,
+		UINT textureHeight)
 	{
 		using namespace DirectX;
 
+		// 画像読込
 		TexMetadata metadata;
 		ScratchImage image;
 		LoadFromDDSFile(filename.c_str(), 0U, &metadata, image);
@@ -25,20 +32,20 @@ public:
 			metadata,
 			&m_texture);
 
-		static Vertex vertices[] =
+		// 頂点データ
+		static const SimpleVertex vertices[] =
 		{
-			{ Float3(0.0f, 0.0f, 0.0f), Float2(0.0f, 0.0f) },
-			{ Float3(1.0f, 0.0f, 0.0f), Float2(1.0f, 0.0f) },
-			{ Float3(1.0f, 1.0f, 0.0f), Float2(1.0f, 1.0f) },
-			{ Float3(0.0f, 1.0f, 0.0f), Float2(0.0f, 1.0f) },
+			{ Float3(0.0f, 0.0f, 0.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(150.0f, 0.0f, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(0.0f, 150.0f, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(150.0f, 150.0f, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
 		};
 
 		UINT numVertices = ARRAYSIZE(vertices);
 
 		static WORD indices[] =
 		{
-			0, 1, 2,
-			2, 3, 0,
+			0, 1, 2, 3,
 		};
 
 		UINT numIndices = ARRAYSIZE(indices);
@@ -51,7 +58,7 @@ public:
 		ZeroMemory(&initData, sizeof(initData));
 
 		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		bufferDesc.ByteWidth = sizeof(Vertex) * numVertices;
+		bufferDesc.ByteWidth = sizeof(SimpleVertex) * numVertices;
 		initData.pSysMem = vertices;
 
 		device->CreateBuffer(
@@ -85,6 +92,7 @@ public:
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
 
 		UINT numElements = ARRAYSIZE(layout);
@@ -106,37 +114,19 @@ public:
 			m_effect->GetVariableByName("samLinear")->AsSampler();
 
 		Matrix projection = XMMatrixIdentity();
-		projection.m11 = 2.0f / width;
-		projection.m22 = -2.0f / height;
+		projection.m11 = 2.0f / screenWidth;
+		projection.m22 = -2.0f / screenHeight;
 
-		Matrix offset = XMMatrixIdentity();
-		offset.m41 = -1.0f;
-		offset.m42 = 1.0f;
+		Matrix offset = XMMatrixTranslation(-1.0f, 1.0f, 0.0f);
 
 		Matrix composition = projection * offset;
 
 		m_projectionVariable->SetMatrix(composition);
-
-		Matrix identity = XMMatrixIdentity();
-
-		Matrix p = XMMatrixPerspectiveFovLH(
-			XM_PIDIV4, 4.0f / 3.0f, 1.0f, 250.0f);
-
-		Matrix v = XMMatrixLookAtLH(
-			Float4(0.0f, 3.0f, -6.0f, 1.0f).ToVector(),
-			Float4(0.0f, 0.0f, 0.0f, 1.0f).ToVector(),
-			Float4(0.0f, 1.0f, 0.0f, 1.0f).ToVector());
-
-		Matrix w = XMMatrixIdentity();
-
-		m_projectionVariable->SetMatrix(identity);
-
-		m_projectionVariable->SetMatrix(w * v * p);
 	}
 
 	void Render(ID3D11DeviceContext* context)
 	{
-		static UINT stride = sizeof(Vertex);
+		static UINT stride = sizeof(SimpleVertex);
 		static UINT offset = 0;
 
 		context->IASetVertexBuffers(
@@ -145,23 +135,15 @@ public:
 		context->IASetIndexBuffer(
 			m_indexBuffer, DXGI_FORMAT_R16_UINT, 0U);
 
-		context->IASetInputLayout(m_layout);
+		// context->IASetInputLayout(m_layout);
 
 		context->IASetPrimitiveTopology(
-			D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
-		m_pass->Apply(0, context);
+		m_pass->Apply(0U, context);
 
-		context->DrawIndexed(6, 0U, 0);
+		context->DrawIndexed(4, 0U, 0);
 	}
-
-private:
-
-	struct Vertex
-	{
-		Float3 position;
-		Float2 texcoord;
-	};
 
 private:
 

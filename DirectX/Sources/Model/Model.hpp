@@ -120,31 +120,12 @@ public:
 
 	void Texture(Reference<ID3D11Device>& device)
 	{
-		/*static const SimpleVertex v[] =
-		{
-			{ Float3(0.0f, 0.0f, 0.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(0.0f, 1.0f, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(1.0f, 1.0f, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(1.0f, 0.0f, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
-		};
-
-		UINT numVertices = ARRAYSIZE(v);
-
-		static const WORD i[] =
-		{
-			0, 1, 2,
-			2, 3, 0,
-		};
-
-		UINT numIndices = ARRAYSIZE(i);
-		*/
-
 		static const SimpleVertex v[] =
 		{
 			{ Float3(0.0f, 0.0f, 0.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(150.0f, 0.0f, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(0.0f, 150.0f, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(150.0f, 150.0f, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(1.0f, 0.0f, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(0.0f, 1.0f, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(1.0f, 1.0f, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
 		};
 
 		UINT numVertices = ARRAYSIZE(v);
@@ -156,7 +137,12 @@ public:
 
 		UINT numIndices = ARRAYSIZE(i);
 
-		Initialize(v, numVertices, i, numIndices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, device);
+		Initialize(
+			v,
+			numVertices,
+			i,
+			numIndices,
+			D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, device);
 	}
 
 private:

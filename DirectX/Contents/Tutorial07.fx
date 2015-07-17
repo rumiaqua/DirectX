@@ -10,6 +10,7 @@
 Texture2D txDiffuse;
 SamplerState samLinear;
 matrix View;
+
 matrix Projection;
 matrix World;
 
@@ -46,7 +47,6 @@ PS_INPUT VS( VS_INPUT input )
 	output.Pos = mul( input.Pos, World );
 	output.Pos = mul( output.Pos, View );
 	output.Pos = mul( output.Pos, Projection );
-	output.Pos = mul(input.Pos, Projection);
 	output.Nor = input.Nor;
 	output.Tex = input.Tex;
 	
