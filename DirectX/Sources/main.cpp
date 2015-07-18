@@ -2,7 +2,7 @@
 
 # include "Model/Model.hpp"
 
-# include "Convert/Convert.hpp"
+# include "Shader/Shader.hpp"
 
 # define ISVALID(VAR) if(!(VAR)->IsValid())
 
@@ -29,16 +29,6 @@ Float4 color;
 Model player;
 
 using namespace DirectX;
-
-ID3DX11EffectVariable* Variable(const std::wstring& name)
-{
-	auto val = effect->GetVariableByName(ToMultibyte(name).c_str());
-	if (!val->IsValid())
-	{
-		assert((L"‚¾‚ß‚Å‚· : " + name).c_str());
-	}
-	return val;
-}
 
 void Initialize()
 {
@@ -110,18 +100,20 @@ void Initialize()
 		return;
 	}
 
+	Shader::SetEffect(effect);
+
 	world = XMMatrixIdentity();
-	Variable(L"World")->AsMatrix()->SetMatrix(world);
+	Shader::Variable(L"World")->AsMatrix()->SetMatrix(world);
 
 	view = XMMatrixLookAtLH(
 		Float4(0.0f, 3.0f, -6.0f, 0.0f).ToVector(),
 		Float4(0.0f, 0.0f, 0.0f, 0.0f).ToVector(),
 		Float4(0.0f, 1.0f, 0.0f, 0.0f).ToVector());
-	Variable(L"View")->AsMatrix()->SetMatrix(view);
+	Shader::Variable(L"View")->AsMatrix()->SetMatrix(view);
 
 	projection = XMMatrixPerspectiveFovLH(
 		XM_PIDIV4, 4.0f / 3.0f, 1.0f, 250.0f);
-	Variable(L"Projection")->AsMatrix()->SetMatrix(projection);
+	Shader::Variable(L"Projection")->AsMatrix()->SetMatrix(projection);
 
 
 	TexMetadata metadata;
@@ -142,11 +134,11 @@ void Initialize()
 		return;
 	}
 
-	Variable(L"txDiffuse")->AsShaderResource()->SetResource(shaderResourceView);
+	Shader::Variable(L"txDiffuse")->AsShaderResource()->SetResource(shaderResourceView);
 
-	Variable(L"samLinear")->AsSampler()->SetSampler(0, sampler);
+	Shader::Variable(L"samLinear")->AsSampler()->SetSampler(0, sampler);
 
-	Variable(L"lightPosition")->AsVector()->SetFloatVector(
+	Shader::Variable(L"lightPosition")->AsVector()->SetFloatVector(
 		Float4(0.0f, 0.0f, -10.0f, 0.0f));
 
 	player.Load(L"Contents/Box.obj");
@@ -213,7 +205,7 @@ void Update()
 
 	world = rotate * translate;
 
-	Variable(L"World")->AsMatrix()->SetMatrix(world);
+	Shader::Variable(L"World")->AsMatrix()->SetMatrix(world);
 }
 
 void Render()
@@ -231,9 +223,9 @@ void Render()
 	};
 	Window::Clear(clearColor);
 
-	Variable(L"World")->AsMatrix()->SetMatrix(world);
+	Shader::Variable(L"World")->AsMatrix()->SetMatrix(world);
 
-	Variable(L"vMeshColor")->AsVector()->SetFloatVector(color);
+	Shader::Variable(L"vMeshColor")->AsVector()->SetFloatVector(color);
 
 	Matrix worldView = world * view;
 
@@ -242,9 +234,9 @@ void Render()
 	Matrix worldViewInverseTranspose =
 		XMMatrixTranspose(worldViewInverse);
 
-	Variable(L"worldView")->AsMatrix()->SetMatrix(worldView);
+	Shader::Variable(L"worldView")->AsMatrix()->SetMatrix(worldView);
 
-	Variable(L"worldViewInverseTranspose")->AsMatrix()->SetMatrix(
+	Shader::Variable(L"worldViewInverseTranspose")->AsMatrix()->SetMatrix(
 		worldViewInverseTranspose);
 
 	pass->Apply(0, Window::Context());
