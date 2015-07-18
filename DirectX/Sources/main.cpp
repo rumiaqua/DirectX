@@ -2,6 +2,8 @@
 
 # include "Model/Model.hpp"
 
+# include "Convert/Convert.hpp"
+
 # define ISVALID(VAR) if(!(VAR)->IsValid())
 
 Handle<ID3D11ShaderResourceView> shaderResourceView;
@@ -16,24 +18,6 @@ Handle<ID3D11InputLayout> vertexLayout;
 
 Handle<ID3D11SamplerState> sampler;
 
-ID3DX11EffectMatrixVariable* worldVariable;
-
-ID3DX11EffectMatrixVariable* viewVariable;
-
-ID3DX11EffectMatrixVariable* projectionVariable;
-
-ID3DX11EffectMatrixVariable* worldViewVariable;
-
-ID3DX11EffectMatrixVariable* worldViewInverseTransposeVariable;
-
-ID3DX11EffectVectorVariable* colorVariable;
-
-ID3DX11EffectSamplerVariable* samplerVariable;
-
-ID3DX11EffectShaderResourceVariable* textureVariable;
-
-ID3DX11EffectVectorVariable* lightPositionVariable;
-
 Matrix world;
 
 Matrix view;
@@ -45,6 +29,16 @@ Float4 color;
 Model player;
 
 using namespace DirectX;
+
+ID3DX11EffectVariable* Variable(const std::wstring& name)
+{
+	auto val = effect->GetVariableByName(ToMultibyte(name).c_str());
+	if (!val->IsValid())
+	{
+		assert((L"‚¾‚ß‚Å‚· : " + name).c_str());
+	}
+	return val;
+}
 
 void Initialize()
 {
@@ -99,60 +93,6 @@ void Initialize()
 		return;
 	}
 
-	worldVariable = effect->GetVariableByName("World")->AsMatrix();
-	if (!worldVariable->IsValid())
-	{
-		return;
-	}
-
-	viewVariable = effect->GetVariableByName("View")->AsMatrix();
-	if (!viewVariable->IsValid())
-	{
-		return;
-	}
-
-	projectionVariable = effect->GetVariableByName("Projection")->AsMatrix();
-	if (!projectionVariable->IsValid())
-	{
-		return;
-	}
-
-	worldViewVariable = effect->GetVariableByName("worldView")->AsMatrix();
-	if (!worldViewVariable->IsValid())
-	{
-		return;
-	}
-
-	worldViewInverseTransposeVariable = effect->GetVariableByName("worldViewInverseTranspose")->AsMatrix();
-	if (!worldViewInverseTransposeVariable->IsValid())
-	{
-		return;
-	}
-
-	colorVariable = effect->GetVariableByName("vMeshColor")->AsVector();
-	if (!colorVariable->IsValid())
-	{
-		return;
-	}
-
-	samplerVariable = effect->GetVariableByName("samLinear")->AsSampler();
-	if (!samplerVariable->IsValid())
-	{
-		return;
-	}
-
-	textureVariable = effect->GetVariableByName("txDiffuse")->AsShaderResource();
-	if (!textureVariable->IsValid())
-	{
-		return;
-	}
-
-	lightPositionVariable = effect->GetVariableByName("lightPosition")->AsVector();
-	if (!lightPositionVariable->IsValid())
-	{
-		return;
-	}
-
 	context->IASetInputLayout(vertexLayout);
 
 	D3D11_SAMPLER_DESC sampDesc;
@@ -171,17 +111,17 @@ void Initialize()
 	}
 
 	world = XMMatrixIdentity();
-	worldVariable->SetMatrix(world);
+	Variable(L"World")->AsMatrix()->SetMatrix(world);
 
 	view = XMMatrixLookAtLH(
 		Float4(0.0f, 3.0f, -6.0f, 0.0f).ToVector(),
 		Float4(0.0f, 0.0f, 0.0f, 0.0f).ToVector(),
 		Float4(0.0f, 1.0f, 0.0f, 0.0f).ToVector());
-	viewVariable->SetMatrix(view);
+	Variable(L"View")->AsMatrix()->SetMatrix(view);
 
 	projection = XMMatrixPerspectiveFovLH(
 		XM_PIDIV4, 4.0f / 3.0f, 1.0f, 250.0f);
-	projectionVariable->SetMatrix(projection);
+	Variable(L"Projection")->AsMatrix()->SetMatrix(projection);
 
 
 	TexMetadata metadata;
@@ -202,11 +142,11 @@ void Initialize()
 		return;
 	}
 
-	textureVariable->SetResource(shaderResourceView);
+	Variable(L"txDiffuse")->AsShaderResource()->SetResource(shaderResourceView);
 
-	samplerVariable->SetSampler(0, sampler);
+	Variable(L"samLinear")->AsSampler()->SetSampler(0, sampler);
 
-	lightPositionVariable->SetFloatVector(
+	Variable(L"lightPosition")->AsVector()->SetFloatVector(
 		Float4(0.0f, 0.0f, -10.0f, 0.0f));
 
 	player.Load(L"Contents/Box.obj");
@@ -273,7 +213,7 @@ void Update()
 
 	world = rotate * translate;
 
-	worldVariable->SetMatrix(world);
+	Variable(L"World")->AsMatrix()->SetMatrix(world);
 }
 
 void Render()
@@ -291,9 +231,9 @@ void Render()
 	};
 	Window::Clear(clearColor);
 
-	worldVariable->SetMatrix(world);
+	Variable(L"World")->AsMatrix()->SetMatrix(world);
 
-	colorVariable->SetFloatVector(color);
+	Variable(L"vMeshColor")->AsVector()->SetFloatVector(color);
 
 	Matrix worldView = world * view;
 
@@ -302,9 +242,9 @@ void Render()
 	Matrix worldViewInverseTranspose =
 		XMMatrixTranspose(worldViewInverse);
 
-	worldViewVariable->SetMatrix(worldView);
+	Variable(L"worldView")->AsMatrix()->SetMatrix(worldView);
 
-	worldViewInverseTransposeVariable->SetMatrix(
+	Variable(L"worldViewInverseTranspose")->AsMatrix()->SetMatrix(
 		worldViewInverseTranspose);
 
 	pass->Apply(0, Window::Context());
