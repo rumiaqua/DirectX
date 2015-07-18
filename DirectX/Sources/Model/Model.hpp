@@ -54,7 +54,7 @@ public:
 			m_numIndices, 0U, 0);
 	}
 
-	void Box(Reference<ID3D11Device>& device)
+	void Box(ID3D11Device* device)
 	{
 		static const SimpleVertex v[] =
 		{

@@ -95,24 +95,19 @@
   <ItemGroup>
     <ClInclude Include="Librarys\DirectXTex\Inc\DirectXTex.h" />
     <ClInclude Include="Librarys\Effects11\Inc\d3dx11effect.h" />
-    <ClInclude Include="Sources\Base\Base.hpp" />
     <ClInclude Include="Sources\Convert\Convert.hpp" />
     <ClInclude Include="Sources\Handle\Handle.hpp" />
     <ClInclude Include="Sources\Model\Model.hpp" />
     <ClInclude Include="Sources\ObjLoader\ObjLoader.hpp" />
     <ClInclude Include="Sources\Primitive\Primitive.hpp" />
-    <ClInclude Include="Sources\Reference\Reference.hpp" />
     <ClInclude Include="Sources\Shader\Shader.hpp" />
     <ClInclude Include="Sources\SimpleVertex\SimpleVertex.hpp" />
-    <ClInclude Include="Sources\Windows\Windows.hpp" />
     <ClInclude Include="Sources\Window\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sources\Base\Base.cpp" />
     <ClCompile Include="Sources\Convert\Convert.cpp" />
     <ClCompile Include="Sources\main.cpp" />
     <ClCompile Include="Sources\ObjLoader\ObjLoader.cpp" />
-    <ClCompile Include="Sources\Windows\Windows.cpp" />
     <ClCompile Include="Sources\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>

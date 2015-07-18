@@ -1,9 +1,9 @@
 # pragma once
 
-# include "Reference/Reference.hpp"
+# include <exception>
 
 template <typename Type>
-class Handle : public Reference<Type>
+class Handle
 {
 public:
 
@@ -14,9 +14,9 @@ public:
 	}
 
 	Handle(Type* handle)
-		: Reference(handle)
+		: m_handle(handle)
 	{
-
+		static_cast<IUnknown*>(m_handle);
 	}
 
 	virtual ~Handle()
@@ -24,7 +24,37 @@ public:
 		Release();
 	}
 
-private:
+	operator Type*()
+	{
+		return Pointer();
+	}
+
+	operator bool() const
+	{
+		return m_handle != nullptr;
+	}
+
+	Type* operator -> ()
+	{
+		return Pointer();
+	}
+
+	Type** operator & ()
+	{
+		return Double();
+	}
+
+public:
+
+	Type* Pointer()
+	{
+		return m_handle;
+	}
+
+	Type** Double()
+	{
+		return &m_handle;
+	}
 
 	void Release()
 	{
@@ -34,4 +64,8 @@ private:
 			m_handle = nullptr;
 		}
 	}
+
+protected:
+
+	Type* m_handle;
 };
