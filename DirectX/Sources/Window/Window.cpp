@@ -308,3 +308,8 @@ IDXGISwapChain* Window::SwapChain()
 {
 	return Instance().m_swapChain;
 }
+
+D3D_DRIVER_TYPE Window::DriverType()
+{
+	return Instance().m_driverType;
+}

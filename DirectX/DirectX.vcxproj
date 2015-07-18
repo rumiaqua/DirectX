@@ -56,7 +56,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)\Sources;$(ProjectDir)\Librarys;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>Windows.h;d3d11.h;d3dcompiler.h;Primitive\Primitive.hpp;Effects11\Inc\d3dx11effect.h;DirectXTex\Inc\DirectXTex.h</ForcedIncludeFiles>
       <DisableSpecificWarnings>4099</DisableSpecificWarnings>
-      <DebugInformationFormat>None</DebugInformationFormat>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
@@ -80,7 +80,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)\Sources;$(ProjectDir)\Librarys;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>Windows.h;d3d11.h;d3dcompiler.h;Primitive\Primitive.hpp;Effects11\Inc\d3dx11effect.h;DirectXTex\Inc\DirectXTex.h</ForcedIncludeFiles>
       <DisableSpecificWarnings>4099</DisableSpecificWarnings>
-      <DebugInformationFormat>None</DebugInformationFormat>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>

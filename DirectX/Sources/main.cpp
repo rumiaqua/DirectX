@@ -20,6 +20,8 @@ Float4 color;
 
 Model player;
 
+static float t = 0.0f;
+
 using namespace DirectX;
 
 void Initialize()
@@ -32,7 +34,8 @@ void Initialize()
 
 	Shader::SetEffect(L"Contents/Tutorial07.fx");
 
-	Shader::Tech(L"Default");
+	// Shader::Tech(L"Default");
+	Shader::Tech(L"Color");
 
 	Shader::Pass(L"P0");
 
@@ -102,6 +105,21 @@ void Initialize()
 
 void Update()
 {
+	if (Window::DriverType() == D3D_DRIVER_TYPE_REFERENCE)
+	{
+		t += (float)XM_PI * 0.0125f;
+	}
+	else
+	{
+		static WORD dwTimeStart = 0;
+		DWORD dwTimeCur = GetTickCount();
+		if (dwTimeStart == 0)
+		{
+			dwTimeStart = dwTimeCur;
+		}
+		t = (dwTimeCur - dwTimeStart) / 1000.0f;
+	}
+
 	static Float3 velocity;
 
 	static float angle = 0.0f;
@@ -152,11 +170,44 @@ void Update()
 		velocity.y -= 0.1f * deltaTime;
 	}
 
+	static Float3 camera { 0.0f, 3.0f, -6.0f };
+	if (GetAsyncKeyState('J') != 0)
+	{
+		camera.x -= 0.1f * deltaTime;
+	}
+	if (GetAsyncKeyState('L') != 0)
+	{
+		camera.x += 0.1f * deltaTime;
+	}
+	if (GetAsyncKeyState('I') != 0)
+	{
+		camera.z += 0.1f * deltaTime;
+	}
+	if (GetAsyncKeyState('K') != 0)
+	{
+		camera.z -= 0.1f * deltaTime;
+	}
+	if (GetAsyncKeyState('O') != 0)
+	{
+		camera.y += 0.1f * deltaTime;
+	}
+	if (GetAsyncKeyState(',') != 0)
+	{
+		camera.y -= 0.1f * deltaTime;
+	}
+
+	view = XMMatrixLookAtLH(
+		Float3(camera.x, camera.y, camera.z).ToVector(0.0f),
+		Float3(velocity.x, velocity.y, velocity.z).ToVector(0.0f),
+		Float3(0.0f, 1.0f, 0.0f).ToVector(0.0f));
+	Shader::SetMatrix(L"View", view);
+
 	// å∏êä
 	// velocity.x *= 0.99f;
 	// velocity.z *= 0.99f;
 
 	Matrix rotate = XMMatrixRotationY(angle);
+	// rotate = XMMatrixRotationRollPitchYaw(t * 3, t * 1, t * 2);
 	Matrix translate = XMMatrixTranslation(velocity.x, velocity.y, velocity.z);
 
 	world = rotate * translate;
@@ -166,13 +217,6 @@ void Update()
 
 void Render()
 {
-	static float t = 0.0f;
-	t += (float)XM_PI * 0.0125f;
-
-	color.x = (sinf(t * 1.0f) + 1.0f) * 0.5f;
-	color.y = (cosf(t * 3.0f) + 1.0f) * 0.5f;
-	color.z = (sinf(t * 5.0f) + 1.0f) * 0.5f;
-
 	static float clearColor[] =
 	{
 		0.1f, 0.1f, 0.1f, 1.0f,
@@ -181,6 +225,10 @@ void Render()
 
 	Shader::SetMatrix(L"World", world);
 
+	color.x = (sinf(t * 1.0f) + 1.0f) * 0.5f;
+	color.y = (cosf(t * 3.0f) + 1.0f) * 0.5f;
+	color.z = (sinf(t * 5.0f) + 1.0f) * 0.5f;
+	color.w = 1.0f;
 	Shader::SetVector(L"vMeshColor", color);
 
 	Matrix worldView = world * view;

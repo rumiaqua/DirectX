@@ -39,6 +39,8 @@ public:
 
 	static IDXGISwapChain* SwapChain();
 
+	static D3D_DRIVER_TYPE DriverType();
+
 private:
 
 	TCHAR* m_appname;
