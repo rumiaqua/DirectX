@@ -70,7 +70,7 @@ float4 PS( PS_INPUT input) : SV_Target
 
 	float diffuse = max(dot(N, L), 0.0f);
 
-	float4 color = txDiffuse.Sample(samLinear, input.Tex) * diffuse;
+	float4 color = txDiffuse.Sample(samLinear, input.Tex);
 		
 	color.a = 1.0f;
 

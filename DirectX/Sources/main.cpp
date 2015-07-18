@@ -61,6 +61,7 @@ void Initialize(Window& window)
 	TexMetadata metadata;
 	ScratchImage image;
 	LoadFromDDSFile(L"Contents/seafloor.dds", 0U, &metadata, image);
+	// LoadFromTGAFile(L"Contents/Casual_Man_02_D.tga", &metadata, image);
 	CreateShaderResourceView(
 		device,
 		image.GetImages(),
@@ -148,7 +149,7 @@ void Initialize(Window& window)
 	samplerVariable->SetSampler(0, sampler);
 
 	lightPositionVariable->SetFloatVector(
-		Float4(0.0f, 0.0f, 10.0f, 0.0f));
+		Float4(0.0f, 0.0f, -10.0f, 0.0f));
 
 	player.Load(L"Contents/Box.obj", device);
 
@@ -169,34 +170,44 @@ void Update(Window& window)
 
 	static const Float3 Forward = { 0.0f, 0.0f, 1.0f };
 
-	if (GetAsyncKeyState('A') != 0)
+	if (GetAsyncKeyState(VK_LEFT) != 0)
 	{
 		angle -= oneRadian * deltaTime;
 	}
 
-	if (GetAsyncKeyState('D') != 0)
+	if (GetAsyncKeyState(VK_RIGHT) != 0)
 	{
 		angle += oneRadian * deltaTime;
 	}
 
-	if (GetAsyncKeyState(VK_LEFT) != 0)
+	if (GetAsyncKeyState('A') != 0)
 	{
 		velocity.x -= 0.1f * deltaTime;
 	}
 
-	if (GetAsyncKeyState(VK_RIGHT) != 0)
+	if (GetAsyncKeyState('D') != 0)
 	{
 		velocity.x += 0.1f * deltaTime;
 	}
 
-	if (GetAsyncKeyState(VK_UP) != 0)
+	if (GetAsyncKeyState('W') != 0)
 	{
 		velocity.z += 0.1f * deltaTime;
 	}
 
-	if (GetAsyncKeyState(VK_DOWN) != 0)
+	if (GetAsyncKeyState('S') != 0)
 	{
 		velocity.z -= 0.1f * deltaTime;
+	}
+
+	if (GetAsyncKeyState('E') != 0)
+	{
+		velocity.y += 0.1f * deltaTime;
+	}
+
+	if (GetAsyncKeyState('X') != 0)
+	{
+		velocity.y -= 0.1f * deltaTime;
 	}
 
 	// å∏êä

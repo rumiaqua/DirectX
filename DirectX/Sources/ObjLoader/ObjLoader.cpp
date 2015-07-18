@@ -133,6 +133,7 @@ D3D11_PRIMITIVE_TOPOLOGY ObjLoader::Topology() const
 void ObjLoader::Position(const std::wstring& x, const std::wstring& y, const std::wstring& z)
 {
 	m_positions.emplace_back(
+		// ToValue<float>(x), ToValue<float>(y), ToValue<float>(z));
 		ToValue<float>(x), ToValue<float>(y), ToValue<float>(z));
 }
 
