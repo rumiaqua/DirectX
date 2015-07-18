@@ -35,6 +35,8 @@ public:
 
 	Reference<ID3D11DeviceContext> Context();
 
+	Reference<IDXGISwapChain> SwapChain();
+
 private:
 
 	TCHAR* m_appname;

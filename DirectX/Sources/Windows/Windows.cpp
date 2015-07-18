@@ -1,10 +1,10 @@
-# include "Window.hpp"
+# include "Windows.hpp"
 
 # include "Convert/Convert.hpp"
 
 # include <strsafe.h>
 
-Window::Window()
+Windows::Windows()
 	: m_appname()
 	, m_width(0U)
 	, m_height(0U)
@@ -14,7 +14,7 @@ Window::Window()
 
 }
 
-LRESULT CALLBACK Window::WindowProcedure(
+LRESULT CALLBACK Windows::WindowProcedure(
 	HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	PAINTSTRUCT ps;
@@ -54,20 +54,20 @@ LRESULT CALLBACK Window::WindowProcedure(
 	return DefWindowProc(window, message, wparam, lparam);
 }
 
-Window& Window::Instance()
+Windows& Windows::Instance()
 {
-	static Window window;
+	static Windows window;
 	return window;
 }
 
-Window::~Window()
+Windows::~Windows()
 {
 	UnregisterClass(m_appname, m_instance);
 }
 
-void Window::Initialize(const std::wstring& name, UINT width, UINT height)
+void Windows::Initialize(const std::wstring& name, UINT width, UINT height)
 {
-	auto& instance = Window::Instance();
+	auto& instance = Windows::Instance();
 
 	instance.m_instance = GetModuleHandle(NULL);
 
@@ -82,7 +82,7 @@ void Window::Initialize(const std::wstring& name, UINT width, UINT height)
 	ZeroMemory(&wc, sizeof(wc));
 	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = Window::WindowProcedure;
+	wc.lpfnWndProc = Windows::WindowProcedure;
 	wc.hInstance = instance.m_instance;
 	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
@@ -121,17 +121,17 @@ void Window::Initialize(const std::wstring& name, UINT width, UINT height)
 	ShowWindow(instance.m_window, SW_SHOWNORMAL);
 }
 
-HWND Window::Handle()
+HWND Windows::Handle()
 {
 	return Instance().m_window;
 }
 
-UINT Window::Width()
+UINT Windows::Width()
 {
 	return Instance().m_width;
 }
 
-UINT Window::Height()
+UINT Windows::Height()
 {
 	return Instance().m_height;
 }

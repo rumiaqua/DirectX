@@ -1,22 +1,22 @@
 # pragma once
 
-class Window
+class Windows
 {
 private:
 
-	Window();
-	Window(const Window&);
+	Windows();
+	Windows(const Windows&);
 
-	Window& operator = (const Window&);
+	Windows& operator = (const Windows&);
 
 	static LRESULT CALLBACK WindowProcedure(
 		HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
-	static Window& Instance();
+	static Windows& Instance();
 
 public:
 
-	virtual ~Window();
+	virtual ~Windows();
 
 	static void Initialize(const std::wstring& name, UINT width, UINT height);
 

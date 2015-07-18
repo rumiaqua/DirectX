@@ -291,3 +291,8 @@ Reference<ID3D11DeviceContext> Window::Context()
 {
 	return m_context;
 }
+
+Reference<IDXGISwapChain> Window::SwapChain()
+{
+	return m_swapChain;
+}

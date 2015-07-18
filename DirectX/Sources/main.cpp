@@ -2,6 +2,8 @@
 
 # include "Model/Model.hpp"
 
+# include "LoadOBJ.hpp"
+
 # define ISVALID(VAR) if(!(VAR)->IsValid())
 
 Handle<ID3D11ShaderResourceView> shaderResourceView;
@@ -57,27 +59,6 @@ void Initialize(Window& window)
 	auto device = window.Device();
 
 	auto context = window.Context();
-
-	TexMetadata metadata;
-	ScratchImage image;
-	LoadFromDDSFile(L"Contents/seafloor.dds", 0U, &metadata, image);
-	// LoadFromTGAFile(L"Contents/Casual_Man_02_D.tga", &metadata, image);
-	CreateShaderResourceView(
-		device,
-		image.GetImages(),
-		image.GetImageCount(),
-		metadata,
-		&shaderResourceView);
-
-	D3DX11CompileEffectFromFile(
-		L"Contents/Tutorial07.fx",
-		NULL,
-		NULL,
-		0U,
-		0U,
-		device,
-		&effect,
-		NULL);
 
 	technique = effect->GetTechniqueByName("Default");
 
@@ -143,6 +124,27 @@ void Initialize(Window& window)
 	projection = XMMatrixPerspectiveFovLH(
 		XM_PIDIV4, 4.0f / 3.0f, 1.0f, 250.0f);
 	projectionVariable->SetMatrix(projection);
+
+
+	TexMetadata metadata;
+	ScratchImage image;
+	LoadFromDDSFile(L"Contents/seafloor.dds", 0U, &metadata, image);
+	CreateShaderResourceView(
+		device,
+		image.GetImages(),
+		image.GetImageCount(),
+		metadata,
+		&shaderResourceView);
+
+	D3DX11CompileEffectFromFile(
+		L"Contents/Tutorial07.fx",
+		NULL,
+		NULL,
+		0U,
+		0U,
+		device,
+		&effect,
+		NULL);
 
 	textureVariable->SetResource(shaderResourceView);
 
@@ -215,94 +217,11 @@ void Update(Window& window)
 	// velocity.z *= 0.99f;
 
 	Matrix rotate = XMMatrixRotationY(angle);
-
-	// 回転方向へ指定ベクトル量移動
-
-	Float3 forward = XMVector3Transform(velocity.ToVector(), rotate);
-
-	Matrix translate = XMMatrixTranslation(forward.x, forward.y, forward.z);
+	Matrix translate = XMMatrixTranslation(velocity.x, velocity.y, velocity.z);
 
 	world = rotate * translate;
 
 	worldVariable->SetMatrix(world);
-
-	/*
-	float angle = 0.0f;
-
-	static float oneRadian = XM_PI / 180.0f / 60.0f;
-
-	if (GetAsyncKeyState('A') != 0)
-	{
-		angle -= oneRadian;
-	}
-	if (GetAsyncKeyState('D') != 0)
-	{
-		angle += oneRadian;
-	}
-
-	// 回転行列
-	Matrix rotate = XMMatrixRotationY(angle);
-
-	// 移動
-	static Float3 velocity;
-
-	if (GetAsyncKeyState(VK_SPACE) != 0)
-	{
-		velocity.y = 0.005f;
-	}
-
-	if (GetAsyncKeyState(VK_LEFT) != 0)
-	{
-		velocity.x -= 0.001f;
-	}
-
-	if (GetAsyncKeyState(VK_RIGHT) != 0)
-	{
-		velocity.x += 0.001f;
-	}
-
-	if (GetAsyncKeyState(VK_UP) != 0)
-	{
-		velocity.z += 0.001f;
-	}
-
-	if (GetAsyncKeyState(VK_DOWN) != 0)
-	{
-		velocity.z -= 0.001f;
-	}
-
-	// x速度クランプ
-	auto xsign = velocity.x / std::abs(velocity.x);
-	velocity.x = std::abs(velocity.x) > 0.005f ? 0.005f * xsign : velocity.x;
-	velocity.x *= 0.995f;
-
-	// z速度クランプ
-	auto zsign = velocity.z / std::abs(velocity.z);
-	velocity.z = std::abs(velocity.z) > 0.005f ? 0.005f * zsign : velocity.z;
-	velocity.z *= 0.995f;
-
-	// 重力
-	velocity.y -= 0.000005f;
-
-	// 平行移動行列
-	Matrix translate = XMMatrixTranslation(velocity.x, velocity.y, velocity.z);
-
-	// 拡大縮小行列
-	Matrix scale = XMMatrixIdentity();
-
-	// 合成行列
-	Matrix composition = rotate * translate;
-
-	// 行列をかける
-	world = composition;
-
-	// y座標制御
-	world.m42 = world.m42 < -3.0f ? -3.0f : world.m42;
-
-	worldVariable->SetMatrix(world);
-
-	modelVariable->SetMatrix(model);
-	*/
 }
 
 void Render(Window& window)
