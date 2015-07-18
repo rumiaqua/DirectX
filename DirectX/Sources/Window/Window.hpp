@@ -6,7 +6,7 @@ class Window
 {
 public:
 
-	Window(TCHAR* appname, UINT width, UINT height);	
+	Window(TCHAR* appname, TCHAR* classname,  UINT width, UINT height);
 
 	virtual ~Window();
 
@@ -27,19 +27,23 @@ private:
 
 public:
 
-	void Clear(float color[4]);
+	static Window& Instance();
 
-	void Present();
+	static void Clear(float color[4]);
 
-	Reference<ID3D11Device> Device();
+	static void Flip();
 
-	Reference<ID3D11DeviceContext> Context();
+	static ID3D11Device* Device();
 
-	Reference<IDXGISwapChain> SwapChain();
+	static ID3D11DeviceContext* Context();
+
+	static IDXGISwapChain* SwapChain();
 
 private:
 
 	TCHAR* m_appname;
+
+	TCHAR* m_classname;
 
 	UINT m_width;
 

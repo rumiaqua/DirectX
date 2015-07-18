@@ -2,7 +2,7 @@
 
 # include "Handle/Handle.hpp"
 
-# include "_Window/Window.hpp"
+# include "Windows/Windows.hpp"
 
 Base::Base()
 {
@@ -54,7 +54,7 @@ void Base::Initialize()
 	swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
 	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.OutputWindow = Window::Handle();
+	swapChainDesc.OutputWindow = Windows::Handle();
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.Windowed = TRUE;
@@ -108,8 +108,8 @@ void Base::Initialize()
 	// 深度ステンシルの生成
 	D3D11_TEXTURE2D_DESC depthDesc;
 	ZeroMemory(&depthDesc, sizeof(depthDesc));
-	depthDesc.Width = Window::Width();
-	depthDesc.Height = Window::Height();
+	depthDesc.Width = Windows::Width();
+	depthDesc.Height = Windows::Height();
 	depthDesc.MipLevels = 1;
 	depthDesc.ArraySize = 1;
 	depthDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -137,6 +137,15 @@ void Base::Initialize()
 	// 出力マネージャにレンダーターゲットビューを設定
 	instance.m_context->OMSetRenderTargets(
 		1, &instance.m_renderTargetView, instance.m_depthStencilView);
+
+	D3D11_VIEWPORT viewport;
+	viewport.Width = (FLOAT)Windows::Width();
+	viewport.Height = (FLOAT)Windows::Height();
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+	viewport.TopLeftX = 0.0f;
+	viewport.TopLeftY = 0.0f;
+	instance.m_context->RSSetViewports(1, &viewport);
 }
 
 D3D_DRIVER_TYPE Base::DriverType()
@@ -164,7 +173,7 @@ IDXGISwapChain* Base::SwapChain()
 	return Instance().m_swapChain;
 }
 
-void Base::Clear(const float* color)
+void Base::Clear(const float color[4])
 {
 	Instance().m_context->ClearRenderTargetView(
 		Instance().m_renderTargetView, color);

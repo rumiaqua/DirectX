@@ -50,17 +50,39 @@ Matrix model;
 
 using namespace DirectX;
 
-void Initialize(Window& window)
+void Initialize()
 {
 	HRESULT hr = S_OK;
 
-	auto device = window.Device();
+	auto device = Window::Device();
 
-	auto context = window.Context();
+	auto context = Window::Context();
+
+	hr = D3DX11CompileEffectFromFile(
+		L"Contents/Tutorial07.fx",
+		NULL,
+		NULL,
+		0U,
+		0U,
+		device,
+		&effect,
+		NULL);
+	if (FAILED(hr))
+	{
+		return;
+	}
 
 	technique = effect->GetTechniqueByName("Default");
+	if (!technique->IsValid())
+	{
+		return;
+	}
 
 	pass = technique->GetPassByName("P0");
+	if (!pass->IsValid())
+	{
+		return;
+	}
 
 	D3DX11_PASS_DESC passDesc;
 	pass->GetDesc(&passDesc);
@@ -70,32 +92,76 @@ void Initialize(Window& window)
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	device->CreateInputLayout(
+	hr = device->CreateInputLayout(
 		layout,
 		ARRAYSIZE(layout),
 		passDesc.pIAInputSignature,
 		passDesc.IAInputSignatureSize,
 		&vertexLayout);
+	if (FAILED(hr))
+	{
+		return;
+	}
 
 	worldVariable = effect->GetVariableByName("World")->AsMatrix();
+	if (!worldVariable->IsValid())
+	{
+		return;
+	}
 
 	viewVariable = effect->GetVariableByName("View")->AsMatrix();
+	if (!viewVariable->IsValid())
+	{
+		return;
+	}
 
 	projectionVariable = effect->GetVariableByName("Projection")->AsMatrix();
+	if (!projectionVariable->IsValid())
+	{
+		return;
+	}
 
 	worldViewVariable = effect->GetVariableByName("worldView")->AsMatrix();
+	if (!worldViewVariable->IsValid())
+	{
+		return;
+	}
 
 	worldViewInverseTransposeVariable = effect->GetVariableByName("worldViewInverseTranspose")->AsMatrix();
+	if (!worldViewInverseTransposeVariable->IsValid())
+	{
+		return;
+	}
 
 	colorVariable = effect->GetVariableByName("vMeshColor")->AsVector();
+	if (!colorVariable->IsValid())
+	{
+		return;
+	}
 
 	samplerVariable = effect->GetVariableByName("samLinear")->AsSampler();
+	if (!samplerVariable->IsValid())
+	{
+		return;
+	}
 
 	textureVariable = effect->GetVariableByName("txDiffuse")->AsShaderResource();
+	if (!textureVariable->IsValid())
+	{
+		return;
+	}
 
 	lightPositionVariable = effect->GetVariableByName("lightPosition")->AsVector();
+	if (!lightPositionVariable->IsValid())
+	{
+		return;
+	}
 
 	modelVariable = effect->GetVariableByName("Model")->AsMatrix();
+	if (!modelVariable->IsValid())
+	{
+		return;
+	}
 
 	context->IASetInputLayout(vertexLayout);
 
@@ -108,11 +174,15 @@ void Initialize(Window& window)
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	device->CreateSamplerState(&sampDesc, &sampler);
+	hr = device->CreateSamplerState(&sampDesc, &sampler);
+	if (FAILED(hr))
+	{
+		return;
+	}
 
 	world = XMMatrixIdentity();
 	worldVariable->SetMatrix(world);
-	
+
 	view = XMMatrixLookAtLH(
 		Float4(0.0f, 3.0f, -6.0f, 0.0f).ToVector(),
 		Float4(0.0f, 0.0f, 0.0f, 0.0f).ToVector(),
@@ -126,23 +196,21 @@ void Initialize(Window& window)
 
 	TexMetadata metadata;
 	ScratchImage image;
-	LoadFromDDSFile(L"Contents/seafloor.dds", 0U, &metadata, image);
-	CreateShaderResourceView(
+	hr = LoadFromDDSFile(L"Contents/seafloor.dds", 0U, &metadata, image);
+	if (FAILED(hr))
+	{
+		return;
+	}
+	hr = CreateShaderResourceView(
 		device,
 		image.GetImages(),
 		image.GetImageCount(),
 		metadata,
 		&shaderResourceView);
-
-	D3DX11CompileEffectFromFile(
-		L"Contents/Tutorial07.fx",
-		NULL,
-		NULL,
-		0U,
-		0U,
-		device,
-		&effect,
-		NULL);
+	if (FAILED(hr))
+	{
+		return;
+	}
 
 	textureVariable->SetResource(shaderResourceView);
 
@@ -157,8 +225,7 @@ void Initialize(Window& window)
 	modelVariable->SetMatrix(model);
 }
 
-
-void Update(Window& window)
+void Update()
 {
 	static Float3 velocity;
 
@@ -222,7 +289,7 @@ void Update(Window& window)
 	worldVariable->SetMatrix(world);
 }
 
-void Render(Window& window)
+void Render()
 {
 	static float t = 0.0f;
 	t += (float)XM_PI * 0.0125f;
@@ -235,7 +302,7 @@ void Render(Window& window)
 	{
 		0.1f, 0.1f, 0.1f, 1.0f,
 	};
-	window.Clear(clearColor);
+	Window::Clear(clearColor);
 
 	worldVariable->SetMatrix(world);
 
@@ -253,18 +320,18 @@ void Render(Window& window)
 	worldViewInverseTransposeVariable->SetMatrix(
 		worldViewInverseTranspose);
 
-	pass->Apply(0, window.Context());
+	pass->Apply(0, Window::Context());
 
-	player.Render(window.Context());
+	player.Render(Window::Context());
 
-	window.Present();
+	Window::Flip();
 }
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	Window window { L"Direct X Project", 640, 480 };
+	Window::Instance();
 
-	Initialize(window);
+	Initialize();
 
 	MSG msg = { 0 };
 
@@ -277,8 +344,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 		else
 		{
-			Update(window);
-			Render(window);
+			Update();
+			Render();
 		}
 	}
 }

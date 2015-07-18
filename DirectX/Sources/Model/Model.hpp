@@ -22,7 +22,7 @@ public:
 
 	}
 
-	void Load(const std::wstring& filename, Reference<ID3D11Device>& device)
+	void Load(const std::wstring& filename, ID3D11Device* device)
 	{
 		HRESULT hr = S_OK;
 
@@ -40,7 +40,7 @@ public:
 
 	}
 
-	void Render(Reference<ID3D11DeviceContext>& context)
+	void Render(ID3D11DeviceContext* context)
 	{
 		context->IASetVertexBuffers(
 			0U, 1U, &m_vertexBuffer, &m_stride, &m_offset);

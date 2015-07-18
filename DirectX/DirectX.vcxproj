@@ -55,6 +55,10 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)\Sources;$(ProjectDir)\Librarys;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>Windows.h;d3d11.h;d3dcompiler.h;Primitive\Primitive.hpp;Effects11\Inc\d3dx11effect.h;DirectXTex\Inc\DirectXTex.h</ForcedIncludeFiles>
+      <DisableSpecificWarnings>4099</DisableSpecificWarnings>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -75,6 +79,9 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)\Sources;$(ProjectDir)\Librarys;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>Windows.h;d3d11.h;d3dcompiler.h;Primitive\Primitive.hpp;Effects11\Inc\d3dx11effect.h;DirectXTex\Inc\DirectXTex.h</ForcedIncludeFiles>
+      <DisableSpecificWarnings>4099</DisableSpecificWarnings>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -88,6 +95,7 @@
   <ItemGroup>
     <ClInclude Include="Librarys\DirectXTex\Inc\DirectXTex.h" />
     <ClInclude Include="Librarys\Effects11\Inc\d3dx11effect.h" />
+    <ClInclude Include="Sources\Base\Base.hpp" />
     <ClInclude Include="Sources\Convert\Convert.hpp" />
     <ClInclude Include="Sources\Handle\Handle.hpp" />
     <ClInclude Include="Sources\Model\Model.hpp" />
@@ -100,6 +108,7 @@
     <ClInclude Include="Sources\Window\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sources\Base\Base.cpp" />
     <ClCompile Include="Sources\Convert\Convert.cpp" />
     <ClCompile Include="Sources\main.cpp" />
     <ClCompile Include="Sources\ObjLoader\ObjLoader.cpp" />

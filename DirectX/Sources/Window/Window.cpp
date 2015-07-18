@@ -1,7 +1,8 @@
 # include "Window.hpp"
 
-Window::Window(TCHAR* appname, UINT width, UINT height)
+Window::Window(TCHAR* appname, TCHAR* classname, UINT width, UINT height)
 	: m_appname(appname)
+	, m_classname(classname)
 	, m_width(width)
 	, m_height(height)
 	, m_instance()
@@ -27,7 +28,7 @@ Window::~Window()
 		m_context->ClearState();
 	}
 
-	UnregisterClass(m_appname, m_instance);
+	UnregisterClass(m_classname, m_instance);
 }
 
 LRESULT CALLBACK Window::WindowProcedure(
@@ -84,7 +85,7 @@ void Window::InitWindow()
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wc.lpszMenuName = NULL;
-	wc.lpszClassName = m_appname;
+	wc.lpszClassName = m_classname;
 	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 	if (!RegisterClassEx(&wc))
 	{
@@ -97,8 +98,8 @@ void Window::InitWindow()
 
 	// ウィンドウの生成
 	m_wnd = CreateWindow(
+		m_classname,
 		m_appname,
-		TEXT("DirectX Sample Program"),
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -269,30 +270,41 @@ void Window::SetViewport()
 	m_context->RSSetViewports(1, &vp);
 }
 
+Window& Window::Instance()
+{
+	static Window window { L"Static Instance Window", L"DirectX HOGE", 640, 480 };
+	return window;
+}
+
 void Window::Clear(float color[4])
 {
-	m_context->ClearRenderTargetView(m_renderTargetView, color);
+	auto& instance = Instance();
 
-	m_context->ClearDepthStencilView(
-		m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	instance.m_context->ClearRenderTargetView(
+		instance.m_renderTargetView, color);
+
+	instance.m_context->ClearDepthStencilView(
+		instance.m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
-void Window::Present()
+void Window::Flip()
 {
-	m_swapChain->Present(0, 0);
+	auto& instance = Instance();
+
+	instance.m_swapChain->Present(0, 0);
 }
 
-Reference<ID3D11Device> Window::Device()
+ID3D11Device* Window::Device()
 {
-	return m_device;
+	return Instance().m_device;
 }
 
-Reference<ID3D11DeviceContext> Window::Context()
+ID3D11DeviceContext* Window::Context()
 {
-	return m_context;
+	return Instance().m_context;
 }
 
-Reference<IDXGISwapChain> Window::SwapChain()
+IDXGISwapChain* Window::SwapChain()
 {
-	return m_swapChain;
+	return Instance().m_swapChain;
 }
