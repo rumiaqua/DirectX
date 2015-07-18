@@ -6,6 +6,8 @@
 
 # include "SimpleVertex/SimpleVertex.hpp"
 
+# include "Window/Window.hpp"
+
 # include <fstream>
 
 float Lerp(float t, float start, float end)
@@ -22,7 +24,7 @@ public:
 
 	}
 
-	void Load(const std::wstring& filename, ID3D11Device* device)
+	void Load(const std::wstring& filename)
 	{
 		HRESULT hr = S_OK;
 
@@ -32,7 +34,7 @@ public:
 
 		auto indices = loader.Indices();
 
-		Initialize(vertices.data(), vertices.size(), indices.data(), indices.size(), loader.Topology(), device);
+		Initialize(vertices.data(), vertices.size(), indices.data(), indices.size(), loader.Topology());
 	}
 
 	virtual ~Model()
@@ -40,8 +42,10 @@ public:
 
 	}
 
-	void Render(ID3D11DeviceContext* context)
+	void Render()
 	{
+		auto context = Window::Context();
+
 		context->IASetVertexBuffers(
 			0U, 1U, &m_vertexBuffer, &m_stride, &m_offset);
 
@@ -54,7 +58,7 @@ public:
 			m_numIndices, 0U, 0);
 	}
 
-	void Box(ID3D11Device* device)
+	void Box()
 	{
 		static const SimpleVertex v[] =
 		{
@@ -115,7 +119,7 @@ public:
 
 		UINT numIndices = ARRAYSIZE(i);
 
-		Initialize(v, numVertices, i, numIndices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, device);
+		Initialize(v, numVertices, i, numIndices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
 private:
@@ -125,8 +129,7 @@ private:
 		UINT numVertices,
 		const WORD* indices,
 		UINT numIndices,
-		D3D11_PRIMITIVE_TOPOLOGY topology,
-		ID3D11Device* device)
+		D3D11_PRIMITIVE_TOPOLOGY topology)
 	{
 
 		D3D11_BUFFER_DESC bufferDesc;
@@ -139,6 +142,8 @@ private:
 		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		bufferDesc.ByteWidth = sizeof(SimpleVertex) * numVertices;
 		initData.pSysMem = vertices;
+
+		auto device = Window::Device();
 
 		device->CreateBuffer(
 			&bufferDesc, &initData, &m_vertexBuffer);

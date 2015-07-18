@@ -25,9 +25,9 @@ private:
 
 	void SetViewport();
 
-public:
-
 	static Window& Instance();
+
+public:
 
 	static void Clear(float color[4]);
 

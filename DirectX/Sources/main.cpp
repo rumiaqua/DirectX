@@ -219,7 +219,7 @@ void Initialize()
 	lightPositionVariable->SetFloatVector(
 		Float4(0.0f, 0.0f, -10.0f, 0.0f));
 
-	player.Load(L"Contents/Box.obj", device);
+	player.Load(L"Contents/Box.obj");
 
 	model = XMMatrixIdentity();
 	modelVariable->SetMatrix(model);
@@ -322,15 +322,13 @@ void Render()
 
 	pass->Apply(0, Window::Context());
 
-	player.Render(Window::Context());
+	player.Render();
 
 	Window::Flip();
 }
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	Window::Instance();
-
 	Initialize();
 
 	MSG msg = { 0 };

@@ -6,7 +6,7 @@
 
 # include "Convert/Convert.hpp"
 
-# include "Base/Base.hpp"
+# include "Window/Window.hpp"
 
 class Shader
 {
@@ -28,12 +28,13 @@ public:
 
 	void AddShader(const std::wstring& name, const std::wstring& filepath)
 	{
-		D3DX11CompileEffectFromFile(filepath.data(),
+		D3DX11CompileEffectFromFile(
+			filepath.c_str(),
 			NULL,
 			NULL,
 			0U,
 			0U,
-			Base::Device(),
+			Window::Device(),
 			&m_shaders[name],
 			NULL);
 	}
@@ -81,7 +82,7 @@ public:
 	void Apply()
 	{
 		m_technique->GetPassByIndex(0)
-			->Apply(0U, Base::Context());
+			->Apply(0U, Window::Context());
 	}
 
 private:
