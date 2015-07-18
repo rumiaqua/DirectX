@@ -48,6 +48,12 @@
     <ClInclude Include="Sources\Shader\Shader.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Librarys\Effects11\Inc\d3dx11effect.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Librarys\DirectXTex\Inc\DirectXTex.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\ObjLoader\ObjLoader.cpp">
@@ -62,5 +68,29 @@
     <ClCompile Include="Sources\Convert\Convert.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Contents\Box.obj" />
+    <Object Include="Contents\Casual_Man.obj" />
+    <Object Include="Contents\sphere.obj" />
+    <Object Include="Contents\teapot.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Contents\Casual_Man_02_D.tga" />
+    <Image Include="Contents\seafloor.dds" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Contents\Tutorial07.fx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="Librarys\Effects11\Lib\Effects11d.lib" />
+    <Library Include="Librarys\Effects11\Lib\Effects11.lib" />
+    <Library Include="Librarys\DirectXTex\Lib\DirectXTexd.lib" />
+    <Library Include="Librarys\DirectXTex\Lib\DirectXTex.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Librarys\DirectXTex\Inc\DirectXTex.inl">
+      <Filter>ヘッダー ファイル</Filter>
+    </None>
   </ItemGroup>
 </Project>
