@@ -8,12 +8,6 @@
 
 Handle<ID3D11ShaderResourceView> shaderResourceView;
 
-ID3DX11EffectTechnique* technique;
-
-ID3DX11EffectPass* pass;
-
-Handle<ID3D11InputLayout> vertexLayout;
-
 Handle<ID3D11SamplerState> sampler;
 
 Matrix world;
@@ -36,54 +30,19 @@ void Initialize()
 
 	auto context = Window::Context();
 
-	/*hr = D3DX11CompileEffectFromFile(
-		L"Contents/Tutorial07.fx",
-		NULL,
-		NULL,
-		0U,
-		0U,
-		device,
-		&effect,
-		NULL);
-	if (FAILED(hr))
-	{
-		return;
-	}*/
-
 	Shader::SetEffect(L"Contents/Tutorial07.fx");
 
-	technique = Shader::Tech(L"Default");
-	if (!technique->IsValid())
-	{
-		return;
-	}
+	Shader::Tech(L"Default");
 
-	pass = technique->GetPassByName("P0");
-	if (!pass->IsValid())
-	{
-		return;
-	}
+	Shader::Pass(L"P0");
 
-	D3DX11_PASS_DESC passDesc;
-	pass->GetDesc(&passDesc);
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	hr = device->CreateInputLayout(
-		layout,
-		ARRAYSIZE(layout),
-		passDesc.pIAInputSignature,
-		passDesc.IAInputSignatureSize,
-		&vertexLayout);
-	if (FAILED(hr))
-	{
-		return;
-	}
-
-	context->IASetInputLayout(vertexLayout);
+	Shader::InputLayout(layout, ARRAYSIZE(layout));
 
 	D3D11_SAMPLER_DESC sampDesc;
 	ZeroMemory(&sampDesc, sizeof(sampDesc));
@@ -100,20 +59,18 @@ void Initialize()
 		return;
 	}
 
-	// Shader::SetEffect(effect);
-
 	world = XMMatrixIdentity();
-	Shader::Variable(L"World")->AsMatrix()->SetMatrix(world);
+	Shader::SetMatrix(L"World", world);
 
 	view = XMMatrixLookAtLH(
 		Float4(0.0f, 3.0f, -6.0f, 0.0f).ToVector(),
 		Float4(0.0f, 0.0f, 0.0f, 0.0f).ToVector(),
 		Float4(0.0f, 1.0f, 0.0f, 0.0f).ToVector());
-	Shader::Variable(L"View")->AsMatrix()->SetMatrix(view);
+	Shader::SetMatrix(L"View", view);
 
 	projection = XMMatrixPerspectiveFovLH(
 		XM_PIDIV4, 4.0f / 3.0f, 1.0f, 250.0f);
-	Shader::Variable(L"Projection")->AsMatrix()->SetMatrix(projection);
+	Shader::SetMatrix(L"Projection", projection);
 
 
 	TexMetadata metadata;
@@ -134,12 +91,11 @@ void Initialize()
 		return;
 	}
 
-	Shader::Variable(L"txDiffuse")->AsShaderResource()->SetResource(shaderResourceView);
+	Shader::SetShaderResource(L"txDiffuse", shaderResourceView);
 
-	Shader::Variable(L"samLinear")->AsSampler()->SetSampler(0, sampler);
+	Shader::SetSampler(L"samLinear", 0, sampler);
 
-	Shader::Variable(L"lightPosition")->AsVector()->SetFloatVector(
-		Float4(0.0f, 0.0f, -10.0f, 0.0f));
+	Shader::SetVector(L"lightPosition", Float4(0.0f, 0.0f, -10.0f, 0.0f));
 
 	player.Load(L"Contents/Box.obj");
 }
@@ -205,7 +161,7 @@ void Update()
 
 	world = rotate * translate;
 
-	Shader::Variable(L"World")->AsMatrix()->SetMatrix(world);
+	Shader::SetMatrix(L"World", world);
 }
 
 void Render()
@@ -223,9 +179,9 @@ void Render()
 	};
 	Window::Clear(clearColor);
 
-	Shader::Variable(L"World")->AsMatrix()->SetMatrix(world);
+	Shader::SetMatrix(L"World", world);
 
-	Shader::Variable(L"vMeshColor")->AsVector()->SetFloatVector(color);
+	Shader::SetVector(L"vMeshColor", color);
 
 	Matrix worldView = world * view;
 
@@ -234,12 +190,11 @@ void Render()
 	Matrix worldViewInverseTranspose =
 		XMMatrixTranspose(worldViewInverse);
 
-	Shader::Variable(L"worldView")->AsMatrix()->SetMatrix(worldView);
+	Shader::SetMatrix(L"worldView", worldView);
 
-	Shader::Variable(L"worldViewInverseTranspose")->AsMatrix()->SetMatrix(
-		worldViewInverseTranspose);
+	Shader::SetMatrix(L"worldViewInverseTranspose", worldViewInverseTranspose);
 
-	pass->Apply(0, Window::Context());
+	Shader::Apply();
 
 	player.Render();
 
