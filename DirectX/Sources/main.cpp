@@ -8,7 +8,7 @@
 
 Handle<ID3D11ShaderResourceView> shaderResourceView;
 
-Handle<ID3DX11Effect> effect;
+ID3DX11Effect* effect;
 
 ID3DX11EffectTechnique* technique;
 
@@ -38,7 +38,7 @@ void Initialize()
 
 	auto context = Window::Context();
 
-	hr = D3DX11CompileEffectFromFile(
+	/*hr = D3DX11CompileEffectFromFile(
 		L"Contents/Tutorial07.fx",
 		NULL,
 		NULL,
@@ -50,7 +50,10 @@ void Initialize()
 	if (FAILED(hr))
 	{
 		return;
-	}
+	}*/
+
+	Shader::SetEffect(L"Contents/Tutorial07.fx");
+	effect = Shader::Effect();
 
 	technique = effect->GetTechniqueByName("Default");
 	if (!technique->IsValid())
@@ -100,7 +103,7 @@ void Initialize()
 		return;
 	}
 
-	Shader::SetEffect(effect);
+	// Shader::SetEffect(effect);
 
 	world = XMMatrixIdentity();
 	Shader::Variable(L"World")->AsMatrix()->SetMatrix(world);

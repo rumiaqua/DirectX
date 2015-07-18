@@ -42,9 +42,22 @@ private:
 
 public:
 
-	static void SetEffect(ID3DX11Effect* effect)
+	static void SetEffect(const std::wstring& filepath)
 	{
-		Instance().m_effect = effect;
+		D3DX11CompileEffectFromFile(
+			filepath.c_str(),
+			NULL,
+			NULL,
+			0U,
+			0U,
+			Window::Device(),
+			&Instance().m_effect,
+			NULL);
+	}
+
+	static ID3DX11Effect* Effect()
+	{
+		return Instance().m_effect;
 	}
 
 	static ID3DX11EffectVariable* Variable(const std::wstring& name)
@@ -66,7 +79,7 @@ public:
 
 private:
 
-	ID3DX11Effect* m_effect;
+	Handle<ID3DX11Effect> m_effect;
 
 	std::unordered_map<std::wstring, ID3DX11EffectVariable*> m_variable;
 };
