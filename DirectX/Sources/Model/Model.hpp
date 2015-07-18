@@ -10,11 +10,6 @@
 
 # include <fstream>
 
-float Lerp(float t, float start, float end)
-{
-	return start + (end - start) * t;
-}
-
 class Model
 {
 public:
@@ -115,6 +110,30 @@ public:
 
 			20, 21, 22,
 			22, 23, 20,
+		};
+
+		UINT numIndices = ARRAYSIZE(i);
+
+		Initialize(v, numVertices, i, numIndices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	}
+
+	void Plane()
+	{
+		static const SimpleVertex v[] =
+		{
+			// ê≥ñ 
+			{ Float3(-1.0f, -1.0f, 0.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(-1.0f, +1.0f, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(+1.0f, +1.0f, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(+1.0f, -1.0f, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+		};
+
+		UINT numVertices = ARRAYSIZE(v);
+
+		static const unsigned short i[] =
+		{
+			0, 1, 2,
+			2, 3, 0,
 		};
 
 		UINT numIndices = ARRAYSIZE(i);

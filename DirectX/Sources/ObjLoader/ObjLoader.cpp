@@ -91,9 +91,9 @@ void ObjLoader::Load(const std::wstring& filename)
 	std::vector<FaceElement> temp;
 
 	// 面データから実際の面リストを作成
+	UINT id = 0;
 	for (const auto& f : m_faces)
 	{
-		static UINT id = 0;
 		auto it = std::find(temp.begin(), temp.end(), f);
 		if (it == temp.end())
 		{

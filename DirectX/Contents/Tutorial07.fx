@@ -8,18 +8,16 @@
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
 Texture2D txDiffuse;
+
 SamplerState samLinear;
+
 matrix View;
+
 matrix Projection;
+
 matrix World;
 
 float4 vMeshColor;
-
-matrix worldView;
-
-matrix worldViewInverseTranspose;
-
-float3 lightPosition;
 
 //--------------------------------------------------------------------------------------
 struct VS_INPUT
@@ -58,25 +56,6 @@ PS_INPUT VS( VS_INPUT input )
 //--------------------------------------------------------------------------------------
 float4 PS( PS_INPUT input) : SV_Target
 {
-	float4 pos_ = mul(input.Pos, worldView);
-
-	float3 pos = float3(pos_.x, pos_.y, pos_.z);
-
-	float3 L = normalize(lightPosition - pos);
-
-	float3 N = normalize(mul(input.Nor, (float3x3)worldViewInverseTranspose));
-
-	float diffuse = max(dot(N, L), 0.0f);
-
-	float4 color = txDiffuse.Sample(samLinear, input.Tex);
-		
-	color.a = 1.0f;
-
-	return color;
-}
-
-float4 PS2(PS_INPUT input) : SV_Target
-{
 	return txDiffuse.Sample(samLinear, input.Tex) * vMeshColor;
 }
 
@@ -89,19 +68,6 @@ technique11 Default
 		SetHullShader(NULL);
 		SetDomainShader(NULL);
 		SetPixelShader(CompileShader(ps_5_0, PS()));
-		SetComputeShader(NULL);
-	}
-}
-
-technique11 Color
-{
-	pass P0
-	{
-		SetVertexShader(CompileShader(vs_5_0, VS()));
-		SetGeometryShader(NULL);
-		SetHullShader(NULL);
-		SetDomainShader(NULL);
-		SetPixelShader(CompileShader(ps_5_0, PS2()));
 		SetComputeShader(NULL);
 	}
 }

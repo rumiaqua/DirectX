@@ -20,6 +20,14 @@ Float4 color;
 
 Model player;
 
+Model enemy;
+
+Float3 playerPosition;
+
+Float3 enemyPosition;
+
+Model plane;
+
 static float t = 0.0f;
 
 using namespace DirectX;
@@ -34,8 +42,7 @@ void Initialize()
 
 	Shader::SetEffect(L"Contents/Tutorial07.fx");
 
-	// Shader::Tech(L"Default");
-	Shader::Tech(L"Color");
+	Shader::Tech(L"Default");
 
 	Shader::Pass(L"P0");
 
@@ -72,7 +79,7 @@ void Initialize()
 	Shader::SetMatrix(L"View", view);
 
 	projection = XMMatrixPerspectiveFovLH(
-		XM_PIDIV4, 4.0f / 3.0f, 1.0f, 250.0f);
+		XM_PIDIV4, 4.0f / 3.0f, 0.1f, 100.0f);
 	Shader::SetMatrix(L"Projection", projection);
 
 
@@ -98,9 +105,9 @@ void Initialize()
 
 	Shader::SetSampler(L"samLinear", 0, sampler);
 
-	Shader::SetVector(L"lightPosition", Float4(0.0f, 0.0f, -10.0f, 0.0f));
-
 	player.Load(L"Contents/Box.obj");
+
+	enemy.Plane();
 }
 
 void Update()
@@ -120,8 +127,6 @@ void Update()
 		t = (dwTimeCur - dwTimeStart) / 1000.0f;
 	}
 
-	static Float3 velocity;
-
 	static float angle = 0.0f;
 
 	static float oneRadian = XM_PI / 180.0f;
@@ -140,79 +145,73 @@ void Update()
 		angle += oneRadian * deltaTime;
 	}
 
+	// player
 	if (GetAsyncKeyState('A') != 0)
 	{
-		velocity.x -= 0.1f * deltaTime;
+		playerPosition.x -= 0.1f * deltaTime;
 	}
 
 	if (GetAsyncKeyState('D') != 0)
 	{
-		velocity.x += 0.1f * deltaTime;
+		playerPosition.x += 0.1f * deltaTime;
 	}
 
 	if (GetAsyncKeyState('W') != 0)
 	{
-		velocity.z += 0.1f * deltaTime;
+		playerPosition.z += 0.1f * deltaTime;
 	}
 
 	if (GetAsyncKeyState('S') != 0)
 	{
-		velocity.z -= 0.1f * deltaTime;
+		playerPosition.z -= 0.1f * deltaTime;
 	}
 
 	if (GetAsyncKeyState('E') != 0)
 	{
-		velocity.y += 0.1f * deltaTime;
+		playerPosition.y += 0.1f * deltaTime;
 	}
 
 	if (GetAsyncKeyState('X') != 0)
 	{
-		velocity.y -= 0.1f * deltaTime;
+		playerPosition.y -= 0.1f * deltaTime;
 	}
 
-	static Float3 camera { 0.0f, 3.0f, -6.0f };
-	if (GetAsyncKeyState('J') != 0)
+	// enemy
+	if (GetAsyncKeyState('F') != 0)
 	{
-		camera.x -= 0.1f * deltaTime;
-	}
-	if (GetAsyncKeyState('L') != 0)
-	{
-		camera.x += 0.1f * deltaTime;
-	}
-	if (GetAsyncKeyState('I') != 0)
-	{
-		camera.z += 0.1f * deltaTime;
-	}
-	if (GetAsyncKeyState('K') != 0)
-	{
-		camera.z -= 0.1f * deltaTime;
-	}
-	if (GetAsyncKeyState('O') != 0)
-	{
-		camera.y += 0.1f * deltaTime;
-	}
-	if (GetAsyncKeyState(',') != 0)
-	{
-		camera.y -= 0.1f * deltaTime;
+		enemyPosition.x -= 0.1f * deltaTime;
 	}
 
-	view = XMMatrixLookAtLH(
-		Float3(camera.x, camera.y, camera.z).ToVector(0.0f),
-		Float3(velocity.x, velocity.y, velocity.z).ToVector(0.0f),
-		Float3(0.0f, 1.0f, 0.0f).ToVector(0.0f));
-	Shader::SetMatrix(L"View", view);
+	if (GetAsyncKeyState('H') != 0)
+	{
+		enemyPosition.x += 0.1f * deltaTime;
+	}
 
+	if (GetAsyncKeyState('T') != 0)
+	{
+		enemyPosition.z += 0.1f * deltaTime;
+	}
+
+	if (GetAsyncKeyState('G') != 0)
+	{
+		enemyPosition.z -= 0.1f * deltaTime;
+	}
+
+	if (GetAsyncKeyState('Y') != 0)
+	{
+		enemyPosition.y += 0.1f * deltaTime;
+	}
+
+	if (GetAsyncKeyState('B') != 0)
+	{
+		enemyPosition.y -= 0.1f * deltaTime;
+	}
 	// å∏êä
 	// velocity.x *= 0.99f;
 	// velocity.z *= 0.99f;
 
-	Matrix rotate = XMMatrixRotationY(angle);
-	// rotate = XMMatrixRotationRollPitchYaw(t * 3, t * 1, t * 2);
-	Matrix translate = XMMatrixTranslation(velocity.x, velocity.y, velocity.z);
-
-	world = rotate * translate;
-
-	Shader::SetMatrix(L"World", world);
+	// Matrix rotate = XMMatrixRotationY(angle);
+	// Matrix translate = XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z);
 }
 
 void Render()
@@ -222,8 +221,6 @@ void Render()
 		0.1f, 0.1f, 0.1f, 1.0f,
 	};
 	Window::Clear(clearColor);
-
-	Shader::SetMatrix(L"World", world);
 
 	color.x = (sinf(t * 1.0f) + 1.0f) * 0.5f;
 	color.y = (cosf(t * 3.0f) + 1.0f) * 0.5f;
@@ -238,13 +235,17 @@ void Render()
 	Matrix worldViewInverseTranspose =
 		XMMatrixTranspose(worldViewInverse);
 
-	Shader::SetMatrix(L"worldView", worldView);
-
-	Shader::SetMatrix(L"worldViewInverseTranspose", worldViewInverseTranspose);
+	Shader::SetMatrix(L"World", XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z));
 
 	Shader::Apply();
 
 	player.Render();
+
+	Shader::SetMatrix(L"World", XMMatrixTranslation(enemyPosition.x, enemyPosition.y, enemyPosition.z));
+
+	Shader::Apply();
+
+	enemy.Render();
 
 	Window::Flip();
 }
