@@ -2,8 +2,6 @@
 
 # include "Model/Model.hpp"
 
-# include "LoadOBJ.hpp"
-
 # define ISVALID(VAR) if(!(VAR)->IsValid())
 
 Handle<ID3D11ShaderResourceView> shaderResourceView;
