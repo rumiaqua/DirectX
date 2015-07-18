@@ -34,8 +34,6 @@ ID3DX11EffectShaderResourceVariable* textureVariable;
 
 ID3DX11EffectVectorVariable* lightPositionVariable;
 
-ID3DX11EffectMatrixVariable* modelVariable;
-
 Matrix world;
 
 Matrix view;
@@ -45,8 +43,6 @@ Matrix projection;
 Float4 color;
 
 Model player;
-
-Matrix model;
 
 using namespace DirectX;
 
@@ -157,12 +153,6 @@ void Initialize()
 		return;
 	}
 
-	modelVariable = effect->GetVariableByName("Model")->AsMatrix();
-	if (!modelVariable->IsValid())
-	{
-		return;
-	}
-
 	context->IASetInputLayout(vertexLayout);
 
 	D3D11_SAMPLER_DESC sampDesc;
@@ -220,9 +210,6 @@ void Initialize()
 		Float4(0.0f, 0.0f, -10.0f, 0.0f));
 
 	player.Load(L"Contents/Box.obj");
-
-	model = XMMatrixIdentity();
-	modelVariable->SetMatrix(model);
 }
 
 void Update()
