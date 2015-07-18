@@ -8,8 +8,6 @@
 
 Handle<ID3D11ShaderResourceView> shaderResourceView;
 
-ID3DX11Effect* effect;
-
 ID3DX11EffectTechnique* technique;
 
 ID3DX11EffectPass* pass;
@@ -53,9 +51,8 @@ void Initialize()
 	}*/
 
 	Shader::SetEffect(L"Contents/Tutorial07.fx");
-	effect = Shader::Effect();
 
-	technique = effect->GetTechniqueByName("Default");
+	technique = Shader::Tech(L"Default");
 	if (!technique->IsValid())
 	{
 		return;

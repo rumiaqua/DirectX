@@ -55,9 +55,10 @@ public:
 			NULL);
 	}
 
-	static ID3DX11Effect* Effect()
+	static ID3DX11EffectTechnique* Tech(const std::wstring& name)
 	{
-		return Instance().m_effect;
+		return Instance().m_effect->GetTechniqueByName(
+			ToMultibyte(name).c_str());
 	}
 
 	static ID3DX11EffectVariable* Variable(const std::wstring& name)
