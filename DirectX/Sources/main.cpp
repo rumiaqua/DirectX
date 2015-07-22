@@ -8,6 +8,8 @@
 
 Handle<ID3D11ShaderResourceView> shaderResourceView;
 
+Handle<ID3D11ShaderResourceView> soccerballTexture;
+
 Handle<ID3D11SamplerState> sampler;
 
 Matrix world;
@@ -40,7 +42,9 @@ void Initialize()
 
 	auto context = Window::Context();
 
-	Shader::SetEffect(L"Contents/Tutorial07.fx");
+	Shader::AddShader(L"Default", L"Contents/Tutorial07.fx");
+
+	Shader::Change(L"Default");
 
 	Shader::Tech(L"Default");
 
@@ -101,13 +105,41 @@ void Initialize()
 		return;
 	}
 
+	hr = LoadFromTGAFile(L"Contents/oldball.tga", &metadata, image);
+	if (FAILED(hr))
+	{
+		return;
+	}
+	hr = CreateShaderResourceView(
+		device,
+		image.GetImages(),
+		image.GetImageCount(),
+		metadata,
+		&soccerballTexture);
+	if (FAILED(hr))
+	{
+		return;
+	}
+
 	Shader::SetShaderResource(L"txDiffuse", shaderResourceView);
 
 	Shader::SetSampler(L"samLinear", 0, sampler);
 
-	player.Load(L"Contents/Box.obj");
+	// player.Load(L"Contents/QuadBox.obj");// Load(L"Contents/Box.obj");
+	// player.Load(L"Contents/QuadBox.obj");
+	player.Box();
 
 	enemy.Plane();
+
+	Shader::AddShader(L"NoChangeColor", L"Contents/Tutorial07_2.fx");
+
+	Shader::Change(L"NoChangeColor");
+
+	Shader::Tech(L"Default");
+
+	Shader::Pass(L"P0");
+
+	Shader::Change(L"Default");
 }
 
 void Update()
@@ -118,7 +150,7 @@ void Update()
 	}
 	else
 	{
-		static WORD dwTimeStart = 0;
+		static DWORD dwTimeStart = 0;
 		DWORD dwTimeCur = GetTickCount();
 		if (dwTimeStart == 0)
 		{
@@ -235,17 +267,39 @@ void Render()
 	Matrix worldViewInverseTranspose =
 		XMMatrixTranspose(worldViewInverse);
 
-	Shader::SetMatrix(L"World", XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z));
 
+	// player render
+	Shader::Change(L"NoChangeColor");
+
+	Matrix mat = XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z);
+	mat = XMMatrixRotationY(t) * mat;
+	// mat = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(t) * mat;
+	// mat = XMMatrixRotationY(t) * mat;
+	Shader::SetMatrix(L"World", mat);
+	Shader::SetMatrix(L"View", view);
+	Shader::SetMatrix(L"Projection", projection);
+	Shader::SetVector(L"vMeshColor", color);
+	Shader::SetShaderResource(L"txDiffuse", soccerballTexture);
+	Shader::SetSampler(L"samLinear", 0, sampler);
+	Shader::SetVector(L"lightPosition", Float4(0.0f, 0.0f, 1.0f, 0.0f));
+	Shader::SetVector(L"materialDiffuse", Float4(1.0f, 1.0f, 1.0f, 1.0f));
 	Shader::Apply();
 
 	player.Render();
 
+	// enemy render
+	Shader::Change(L"Default");
 	Shader::SetMatrix(L"World", XMMatrixTranslation(enemyPosition.x, enemyPosition.y, enemyPosition.z));
-
+	Shader::SetMatrix(L"View", view);
+	Shader::SetMatrix(L"Projection", projection);
+	Shader::SetVector(L"vMeshColor", color);
+	Shader::SetShaderResource(L"txDiffuse", shaderResourceView);
+	Shader::SetSampler(L"samLinear", 0, sampler);
 	Shader::Apply();
 
 	enemy.Render();
+
+
 
 	Window::Flip();
 }

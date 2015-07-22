@@ -19,6 +19,13 @@ public:
 		static_cast<IUnknown*>(m_handle);
 	}
 
+	Handle& operator = (Type* handle)
+	{
+		Release();
+		m_handle = handle;
+		static_cast<IUnknown*>(m_handle);
+	}
+
 	virtual ~Handle()
 	{
 		Release();

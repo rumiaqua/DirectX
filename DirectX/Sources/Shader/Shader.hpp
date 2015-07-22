@@ -10,8 +10,24 @@ class Shader
 {
 private:
 
+	struct Effect
+	{
+		Handle<ID3DX11Effect> effect;
+
+		ID3DX11EffectTechnique* technique;
+
+		ID3DX11EffectPass* pass;
+
+		Handle<ID3D11InputLayout> inputLayout;
+
+		std::unordered_map<std::wstring, ID3DX11EffectVariable*> variable;
+	};
+
+private:
+
 	Shader()
-		: m_effect(nullptr)
+		: m_effects()
+		, m_current(nullptr)
 	{
 
 	}
@@ -24,18 +40,18 @@ private:
 
 	static bool IsCached(const std::wstring& name)
 	{
-		return Instance().m_variable.find(name) != Instance().m_variable.end();
+		return Current().variable.find(name) != Current().variable.end();
 	}
 
 	static ID3DX11EffectVariable* Cache(const std::wstring& name)
 	{
-		return Instance().m_variable.at(name);
+		return Current().variable.at(name);
 	}
 
 	static ID3DX11EffectVariable* Regist(const std::wstring& name)
 	{
-		Instance().m_variable[name] =
-			Instance().m_effect->GetVariableByName(ToMultibyte(name).c_str());
+		Current().variable[name] =
+			Current().effect->GetVariableByName(ToMultibyte(name).c_str());
 
 		return Cache(name);
 	}
@@ -57,9 +73,24 @@ private:
 		}
 	}
 
+	static Effect& Access(const std::wstring& name)
+	{
+		return Instance().m_effects[name];
+	}
+
+	static Effect& Current()
+	{
+		return *Instance().m_current;
+	}
+
 public:
 
-	static void SetEffect(const std::wstring& filepath)
+	static void Change(const std::wstring& name)
+	{
+		Instance().m_current = &Instance().m_effects.at(name);
+	}
+
+	static void AddShader(const std::wstring& name, const std::wstring& filepath)
 	{
 		D3DX11CompileEffectFromFile(
 			filepath.c_str(),
@@ -68,38 +99,39 @@ public:
 			0U,
 			0U,
 			Window::Device(),
-			&Instance().m_effect,
+			&Access(name).effect,
 			NULL);
 	}
 
 	static void Tech(const std::wstring& name)
 	{
-		Instance().m_technique =
-			Instance().m_effect->GetTechniqueByName(
+		Current().technique =
+			Current().effect->GetTechniqueByName(
 			ToMultibyte(name).c_str());
 	}
 
 	static void Pass(const std::wstring& name)
 	{
-		Instance().m_pass = Instance().m_technique->GetPassByName(
+		Current().pass =
+			Current().technique->GetPassByName(
 			ToMultibyte(name).c_str());
 	}
 	static void InputLayout(D3D11_INPUT_ELEMENT_DESC* layout, UINT num)
 	{
 		D3DX11_PASS_DESC passDesc;
-		Instance().m_pass->GetDesc(&passDesc);
+		Current().pass->GetDesc(&passDesc);
 		Window::Device()->CreateInputLayout(
 			layout,
 			num,
 			passDesc.pIAInputSignature,
 			passDesc.IAInputSignatureSize,
-			&Instance().m_inputLayout);
-		Window::Context()->IASetInputLayout(Instance().m_inputLayout);
+			&Current().inputLayout);
+		Window::Context()->IASetInputLayout(Current().inputLayout);
 	}
 
 	static void Apply()
 	{
-		Instance().m_pass->Apply(0U, Window::Context());
+		Current().pass->Apply(0U, Window::Context());
 	}
 
 
@@ -150,13 +182,7 @@ public:
 
 private:
 
-	Handle<ID3DX11Effect> m_effect;
+	std::unordered_map<std::wstring, Effect> m_effects;
 
-	ID3DX11EffectTechnique* m_technique;
-
-	ID3DX11EffectPass* m_pass;
-
-	Handle<ID3D11InputLayout> m_inputLayout;
-
-	std::unordered_map<std::wstring, ID3DX11EffectVariable*> m_variable;
+	Effect* m_current;
 };

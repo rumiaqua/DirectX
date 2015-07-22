@@ -80,9 +80,26 @@ void ObjLoader::Load(const std::wstring& filename)
 
 			case 'f':
 			{
-				Face(split[1], split[2], split[3]);
-				// 今は三面データのみを扱う
-				m_topology = D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+				switch (split.size())
+				{
+					case 4:
+					{
+						Face(split[1], split[2], split[3]);
+						m_topology = D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+					}
+					break;
+
+					case 5:
+					{
+						Face(split[1]);
+						Face(split[2]);
+						Face(split[3]);
+						Face(split[3]);
+						Face(split[4]);
+						Face(split[1]);
+						m_topology = D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+					}
+				}
 			}
 			break;
 		}
