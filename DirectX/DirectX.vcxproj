@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -14,6 +14,7 @@
     <ProjectGuid>{84B2A53D-1C61-4F6A-99A7-1DB82EC4450A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DirectX</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -25,7 +26,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -99,15 +100,21 @@
     <ClInclude Include="Sources\Handle\Handle.hpp" />
     <ClInclude Include="Sources\Model\Model.hpp" />
     <ClInclude Include="Sources\ObjLoader\ObjLoader.hpp" />
+    <ClInclude Include="Sources\Polygon\Polygon.hpp" />
     <ClInclude Include="Sources\Primitive\Primitive.hpp" />
     <ClInclude Include="Sources\Shader\Shader.hpp" />
-    <ClInclude Include="Sources\SimpleVertex\SimpleVertex.hpp" />
+    <ClInclude Include="Sources\Vertex\Vertex.hpp" />
+    <ClInclude Include="Sources\Texture2D\Texture2D.hpp" />
     <ClInclude Include="Sources\Window\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Convert\Convert.cpp" />
     <ClCompile Include="Sources\main.cpp" />
+    <ClCompile Include="Sources\Model\Model.cpp" />
     <ClCompile Include="Sources\ObjLoader\ObjLoader.cpp" />
+    <ClCompile Include="Sources\Polygon\Polygon.cpp" />
+    <ClCompile Include="Sources\Shader\Shader.cpp" />
+    <ClCompile Include="Sources\Texture2D\Texture2D.cpp" />
     <ClCompile Include="Sources\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -116,10 +123,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="Contents\Casual_Man.obj">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </Object>
-    <Object Include="Contents\sphere.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </Object>
@@ -133,7 +136,15 @@
     <Image Include="Contents\seafloor.dds" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Contents\Texture.fx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Contents\Tutorial07.fx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Contents\Tutorial07_2.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </FxCompile>

@@ -27,9 +27,6 @@
     <ClInclude Include="Sources\Primitive\Primitive.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\SimpleVertex\SimpleVertex.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Window\Window.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -43,6 +40,15 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Librarys\DirectXTex\Inc\DirectXTex.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Texture2D\Texture2D.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Polygon\Polygon.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Vertex\Vertex.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -59,11 +65,22 @@
     <ClCompile Include="Sources\Convert\Convert.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Shader\Shader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Model\Model.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Texture2D\Texture2D.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Polygon\Polygon.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Object Include="Contents\Box.obj" />
     <Object Include="Contents\Casual_Man.obj" />
-    <Object Include="Contents\sphere.obj" />
     <Object Include="Contents\teapot.obj" />
   </ItemGroup>
   <ItemGroup>
@@ -72,6 +89,8 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Contents\Tutorial07.fx" />
+    <FxCompile Include="Contents\Texture.fx" />
+    <FxCompile Include="Contents\Tutorial07_2.fx" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Librarys\Effects11\Lib\Effects11d.lib" />
