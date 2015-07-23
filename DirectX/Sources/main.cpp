@@ -30,6 +30,9 @@ Matrix projection;
 // 色
 Float4 color;
 
+// サンプラーステート
+Handle<ID3D11SamplerState> samplerState;
+
 float t;
 
 using namespace DirectX;
@@ -56,8 +59,14 @@ void Initialize_()
 
 	color = Float4(1.0f, 0.0f, 0.0f, 1.0f);
 
+	D3D11_SAMPLER_DESC samplerDesc;
+	ZeroMemory(&samplerDesc, sizeof(samplerDesc));
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	// Window::Device()->CreateSamplerState()
+
 	Shader::AddShader(L"Default", L"Contents/Shader/DefaultShader.hlsl");
-	Shader::SetSampler(L"samplerState", 0U, )
+	Shader::SetSampler(L"samplerState", 0U, samplerState);
 
 	Shader::AddShader(L"Texture", L"Contents/Shader/TextureShader.hlsl");
 }
