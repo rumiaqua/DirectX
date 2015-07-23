@@ -313,13 +313,3 @@ D3D_DRIVER_TYPE Window::DriverType()
 {
 	return Instance().m_driverType;
 }
-
-UINT Window::Width()
-{
-	return Instance().m_width;
-}
-
-UINT Window::Height()
-{
-	return Instance().m_height;
-}

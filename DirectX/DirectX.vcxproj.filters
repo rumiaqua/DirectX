@@ -45,9 +45,6 @@
     <ClInclude Include="Librarys\DirectXTex\Inc\DirectXTex.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Texture2D\Texture2D.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\ObjLoader\ObjLoader.cpp">
@@ -66,6 +63,7 @@
   <ItemGroup>
     <Object Include="Contents\Box.obj" />
     <Object Include="Contents\Casual_Man.obj" />
+    <Object Include="Contents\sphere.obj" />
     <Object Include="Contents\teapot.obj" />
   </ItemGroup>
   <ItemGroup>
@@ -74,8 +72,6 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Contents\Tutorial07.fx" />
-    <FxCompile Include="Contents\Texture.fx" />
-    <FxCompile Include="Contents\Tutorial07_2.fx" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Librarys\Effects11\Lib\Effects11d.lib" />
