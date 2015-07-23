@@ -104,5 +104,6 @@
     <None Include="Librarys\DirectXTex\Inc\DirectXTex.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
+    <None Include="Contents\Shader\Tutorial07.fx" />
   </ItemGroup>
 </Project>
