@@ -110,8 +110,11 @@
   <ItemGroup>
     <ClCompile Include="Sources\Convert\Convert.cpp" />
     <ClCompile Include="Sources\main.cpp" />
+    <ClCompile Include="Sources\Model\Model.cpp" />
     <ClCompile Include="Sources\ObjLoader\ObjLoader.cpp" />
+    <ClCompile Include="Sources\Polygon\Polygon.cpp" />
     <ClCompile Include="Sources\Shader\Shader.cpp" />
+    <ClCompile Include="Sources\Texture2D\Texture2D.cpp" />
     <ClCompile Include="Sources\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
