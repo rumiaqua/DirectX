@@ -112,7 +112,7 @@ void ObjLoader::Load(const std::wstring& filename)
 	}
 }
 
-std::vector<SimpleVertex> ObjLoader::Vertices() const
+std::vector<Vertex> ObjLoader::Vertices() const
 {
 	return m_vertices;
 }

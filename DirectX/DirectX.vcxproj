@@ -103,7 +103,7 @@
     <ClInclude Include="Sources\Polygon\Polygon.hpp" />
     <ClInclude Include="Sources\Primitive\Primitive.hpp" />
     <ClInclude Include="Sources\Shader\Shader.hpp" />
-    <ClInclude Include="Sources\SimpleVertex\SimpleVertex.hpp" />
+    <ClInclude Include="Sources\Vertex\Vertex.hpp" />
     <ClInclude Include="Sources\Texture2D\Texture2D.hpp" />
     <ClInclude Include="Sources\Window\Window.hpp" />
   </ItemGroup>

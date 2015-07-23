@@ -4,7 +4,7 @@
 
 # include "Handle/Handle.hpp"
 
-# include "SimpleVertex/SimpleVertex.hpp"
+# include "Vertex/Vertex.hpp"
 
 # include "Window/Window.hpp"
 
@@ -35,7 +35,7 @@ namespace aqua
 
 		static std::shared_ptr<Polygon> Box()
 		{
-			static const SimpleVertex vertices[] =
+			static const Vertex vertices[] =
 			{
 				// 正面
 				{ Float3(-1.0f, -1.0f, -1.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
@@ -108,7 +108,7 @@ namespace aqua
 
 		static std::shared_ptr<Polygon> Plane()
 		{
-			static const SimpleVertex vertices[] =
+			static const Vertex vertices[] =
 			{
 				// 正面
 				{ Float3(-1.0f, -1.0f, 0.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
@@ -165,7 +165,7 @@ namespace aqua
 		/// <param name="numIndices">添字数</param>
 		/// <param name="topology">プリミティブ型</param>
 		void Initialize(
-			const SimpleVertex* vertices,
+			const Vertex* vertices,
 			UINT numVertices,
 			const WORD* indices,
 			UINT numIndices,
@@ -180,7 +180,7 @@ namespace aqua
 			ZeroMemory(&initData, sizeof(initData));
 
 			bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-			bufferDesc.ByteWidth = sizeof(SimpleVertex) * numVertices;
+			bufferDesc.ByteWidth = sizeof(Vertex) * numVertices;
 			initData.pSysMem = vertices;
 
 			auto device = Window::Device();
@@ -195,7 +195,7 @@ namespace aqua
 			device->CreateBuffer(
 				&bufferDesc, &initData, &m_indexBuffer);
 
-			m_stride = sizeof(SimpleVertex);
+			m_stride = sizeof(Vertex);
 
 			m_offset = 0U;
 

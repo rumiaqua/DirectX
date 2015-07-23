@@ -27,9 +27,6 @@
     <ClInclude Include="Sources\Primitive\Primitive.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\SimpleVertex\SimpleVertex.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Sources\Window\Window.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -49,6 +46,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Sources\Polygon\Polygon.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Vertex\Vertex.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

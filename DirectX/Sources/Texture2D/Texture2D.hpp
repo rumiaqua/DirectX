@@ -71,7 +71,7 @@ namespace aqua
 			float width = (float)metadata.width;
 			float height = (float)metadata.height;
 
-			static const SimpleVertex vertices[] =
+			static const Vertex vertices[] =
 			{
 				// ê≥ñ 
 				{ Float3(0.0f, 0.0f, 0.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },

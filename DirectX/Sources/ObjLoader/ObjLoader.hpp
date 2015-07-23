@@ -6,7 +6,7 @@
 
 # include "Primitive/Primitive.hpp"
 
-# include "SimpleVertex/SimpleVertex.hpp"
+# include "Vertex/Vertex.hpp"
 
 /// <summary>OBJファイル読込クラス</summary>
 class ObjLoader
@@ -57,7 +57,7 @@ public:
 
 	/// <summary>頂点リストを返す</summary>
 	/// <returns>頂点リスト</returns>
-	std::vector<SimpleVertex> Vertices() const;
+	std::vector<Vertex> Vertices() const;
 
 	/// <summary>インデックスリストを返す</summary>
 	/// <remarks>インデックスリスト</returns>
@@ -111,7 +111,7 @@ private:
 	std::vector<FaceElement> m_faces;
 
 	/// <summary>頂点リスト</summary>
-	std::vector<SimpleVertex> m_vertices;
+	std::vector<Vertex> m_vertices;
 
 	/// <summary>インデックスリスト</summary>
 	std::vector<WORD> m_indices;
