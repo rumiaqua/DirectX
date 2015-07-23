@@ -323,3 +323,8 @@ UINT Window::Height()
 {
 	return Instance().m_height;
 }
+
+float Window::Aspect()
+{
+	return (FLOAT)Window::Width() / (FLOAT)Window::Height();
+}

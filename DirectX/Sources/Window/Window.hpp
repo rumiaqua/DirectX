@@ -45,6 +45,8 @@ public:
 
 	static UINT Height();
 
+	static float Aspect();
+
 private:
 
 	TCHAR* m_appname;

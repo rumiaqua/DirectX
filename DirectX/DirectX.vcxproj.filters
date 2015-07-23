@@ -91,6 +91,8 @@
     <FxCompile Include="Contents\Tutorial07.fx" />
     <FxCompile Include="Contents\Texture.fx" />
     <FxCompile Include="Contents\Tutorial07_2.fx" />
+    <FxCompile Include="Contents\Shader\DefaultShader.hlsl" />
+    <FxCompile Include="Contents\Shader\TextureShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Librarys\Effects11\Lib\Effects11d.lib" />
