@@ -4,11 +4,13 @@
 
 # include "Shader/Shader.hpp"
 
-# define ISVALID(VAR) if(!(VAR)->IsValid())
+# include "Texture2D/Texture2D.hpp"
 
 Handle<ID3D11ShaderResourceView> shaderResourceView;
 
 Handle<ID3D11ShaderResourceView> soccerballTexture;
+
+Handle<ID3D11ShaderResourceView> texture2D;
 
 Handle<ID3D11SamplerState> sampler;
 
@@ -28,7 +30,7 @@ Float3 playerPosition;
 
 Float3 enemyPosition;
 
-Model plane;
+Texture2D texture;
 
 static float t = 0.0f;
 
@@ -121,16 +123,31 @@ void Initialize()
 		return;
 	}
 
+	hr = LoadFromWICFile(L"Contents/panda_big.png", 0U, &metadata, image);
+	if (FAILED(hr))
+	{
+		return;
+	}
+	hr = CreateShaderResourceView(
+		device,
+		image.GetImages(),
+		image.GetImageCount(),
+		metadata,
+		&texture2D);
+	if (FAILED(hr))
+	{
+		return;
+	}
+
 	Shader::SetShaderResource(L"txDiffuse", shaderResourceView);
 
 	Shader::SetSampler(L"samLinear", 0, sampler);
 
-	// player.Load(L"Contents/QuadBox.obj");// Load(L"Contents/Box.obj");
-	// player.Load(L"Contents/QuadBox.obj");
 	player.Box();
 
 	enemy.Plane();
 
+	// Tutorial07_2 シェーダー読込
 	Shader::AddShader(L"NoChangeColor", L"Contents/Tutorial07_2.fx");
 
 	Shader::Change(L"NoChangeColor");
@@ -139,6 +156,16 @@ void Initialize()
 
 	Shader::Pass(L"P0");
 
+	texture.Load(L"Contents/panda.png");
+
+	// Texture シェーダー読込
+	Shader::AddShader(L"Texture", L"Contents/Texture.fx");
+	Shader::Change(L"Texture");
+	Shader::Tech(L"Default");
+	Shader::Pass(L"P0");
+	Shader::SetSampler(L"samLinear", 0, sampler);
+
+	// シェーダーのセット
 	Shader::Change(L"Default");
 }
 
@@ -238,12 +265,6 @@ void Update()
 	{
 		enemyPosition.y -= 0.1f * deltaTime;
 	}
-	// 減衰
-	// velocity.x *= 0.99f;
-	// velocity.z *= 0.99f;
-
-	// Matrix rotate = XMMatrixRotationY(angle);
-	// Matrix translate = XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z);
 }
 
 void Render()
@@ -267,22 +288,16 @@ void Render()
 	Matrix worldViewInverseTranspose =
 		XMMatrixTranspose(worldViewInverse);
 
-
 	// player render
 	Shader::Change(L"NoChangeColor");
 
 	Matrix mat = XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z);
 	mat = XMMatrixRotationY(t) * mat;
-	// mat = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(t) * mat;
-	// mat = XMMatrixRotationY(t) * mat;
 	Shader::SetMatrix(L"World", mat);
 	Shader::SetMatrix(L"View", view);
 	Shader::SetMatrix(L"Projection", projection);
-	Shader::SetVector(L"vMeshColor", color);
 	Shader::SetShaderResource(L"txDiffuse", soccerballTexture);
 	Shader::SetSampler(L"samLinear", 0, sampler);
-	Shader::SetVector(L"lightPosition", Float4(0.0f, 0.0f, 1.0f, 0.0f));
-	Shader::SetVector(L"materialDiffuse", Float4(1.0f, 1.0f, 1.0f, 1.0f));
 	Shader::Apply();
 
 	player.Render();
@@ -293,13 +308,12 @@ void Render()
 	Shader::SetMatrix(L"View", view);
 	Shader::SetMatrix(L"Projection", projection);
 	Shader::SetVector(L"vMeshColor", color);
-	Shader::SetShaderResource(L"txDiffuse", shaderResourceView);
-	Shader::SetSampler(L"samLinear", 0, sampler);
 	Shader::Apply();
 
 	enemy.Render();
 
-
+	// texture render
+	texture.Render();
 
 	Window::Flip();
 }
@@ -316,11 +330,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+			continue;
 		}
-		else
-		{
-			Update();
-			Render();
-		}
+
+		Update();
+		Render();
 	}
 }

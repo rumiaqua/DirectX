@@ -1,5 +1,9 @@
 # pragma once
 
+# include <vector>
+
+# include <sstream>
+
 std::string ToMultibyte(const std::wstring& str);
 
 std::wstring ToUnicode(const std::string& str);
@@ -20,3 +24,9 @@ std::wstring ToStr(Type value)
 	ss << value;
 	return ss.str();
 }
+
+/// <summary>文字列を指定の文字で分割する</summary>
+/// <param name="str">文字列</param>
+/// <param name="delim">分割点の文字</param>
+/// <returns>分割した文字列の入ったコンテナ</returns>
+std::vector<std::wstring> Split(const std::wstring& str, char delim);
