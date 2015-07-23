@@ -22,15 +22,15 @@ Matrix projection;
 
 Float4 color;
 
-Model player;
-
-Model enemy;
-
 Float3 playerPosition;
 
 Float3 enemyPosition;
 
-Texture2D texture;
+std::shared_ptr<aqua::Polygon> player;
+
+std::shared_ptr<aqua::Polygon> enemy;
+
+std::shared_ptr<aqua::Polygon> texture;
 
 static float t = 0.0f;
 
@@ -143,9 +143,9 @@ void Initialize()
 
 	Shader::SetSampler(L"samLinear", 0, sampler);
 
-	player.Box();
+	player = aqua::Polygon::Box();
 
-	enemy.Plane();
+	enemy = aqua::Polygon::Plane();
 
 	// Tutorial07_2 シェーダー読込
 	Shader::AddShader(L"NoChangeColor", L"Contents/Tutorial07_2.fx");
@@ -156,7 +156,7 @@ void Initialize()
 
 	Shader::Pass(L"P0");
 
-	texture.Load(L"Contents/panda.png");
+	texture = std::make_shared<aqua::Texture2D>(L"Contents/panda.png");
 
 	// Texture シェーダー読込
 	Shader::AddShader(L"Texture", L"Contents/Texture.fx");
@@ -300,7 +300,7 @@ void Render()
 	Shader::SetSampler(L"samLinear", 0, sampler);
 	Shader::Apply();
 
-	player.Render();
+	player->Render();
 
 	// enemy render
 	Shader::Change(L"Default");
@@ -310,10 +310,10 @@ void Render()
 	Shader::SetVector(L"vMeshColor", color);
 	Shader::Apply();
 
-	enemy.Render();
+	enemy->Render();
 
 	// texture render
-	texture.Render();
+	texture->Render();
 
 	Window::Flip();
 }

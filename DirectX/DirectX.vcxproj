@@ -100,6 +100,7 @@
     <ClInclude Include="Sources\Handle\Handle.hpp" />
     <ClInclude Include="Sources\Model\Model.hpp" />
     <ClInclude Include="Sources\ObjLoader\ObjLoader.hpp" />
+    <ClInclude Include="Sources\Polygon\Polygon.hpp" />
     <ClInclude Include="Sources\Primitive\Primitive.hpp" />
     <ClInclude Include="Sources\Shader\Shader.hpp" />
     <ClInclude Include="Sources\SimpleVertex\SimpleVertex.hpp" />

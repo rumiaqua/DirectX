@@ -48,6 +48,9 @@
     <ClInclude Include="Sources\Texture2D\Texture2D.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Polygon\Polygon.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\ObjLoader\ObjLoader.cpp">
