@@ -48,11 +48,25 @@ float4 PS(PSInput input) : SV_Target
 	return texture2d.Sample(samplerState, input.texcoord) * color;
 }
 
+BlendState SrcAlphaBlendingAdd
+{
+	BlendEnable[0] = TRUE;
+	SrcBlend = SRC_COLOR;
+	DestBlend = INV_SRC_COLOR;
+	BlendOp = ADD;
+	SrcBlendAlpha = ZERO;
+	DestBlendAlpha = ZERO;
+	BlendOpAlpha = ADD;
+	RenderTargetWriteMask[0] = 0x0F;
+};
+
 technique11 Default
 {
 	pass P0
 	{
 		SetVertexShader(CompileShader(vs_5_0, VS()));
 		SetPixelShader(CompileShader(ps_5_0, PS()));
+
+		SetBlendState(SrcAlphaBlendingAdd, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 	}
 }

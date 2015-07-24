@@ -80,17 +80,12 @@
   </ItemGroup>
   <ItemGroup>
     <Object Include="Contents\Box.obj" />
-    <Object Include="Contents\Casual_Man.obj" />
     <Object Include="Contents\teapot.obj" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Contents\Casual_Man_02_D.tga" />
     <Image Include="Contents\seafloor.dds" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Contents\Tutorial07.fx" />
-    <FxCompile Include="Contents\Texture.fx" />
-    <FxCompile Include="Contents\Tutorial07_2.fx" />
     <FxCompile Include="Contents\Shader\DefaultShader.hlsl" />
     <FxCompile Include="Contents\Shader\TextureShader.hlsl" />
   </ItemGroup>
@@ -104,6 +99,5 @@
     <None Include="Librarys\DirectXTex\Inc\DirectXTex.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
-    <None Include="Contents\Shader\Tutorial07.fx" />
   </ItemGroup>
 </Project>

@@ -66,7 +66,7 @@ void Shader::Change(const std::wstring& name)
 
 void Shader::AddShader(const std::wstring& name, const std::wstring& filepath)
 {
-	D3DX11CompileEffectFromFile(
+	if (FAILED(D3DX11CompileEffectFromFile(
 		filepath.c_str(),
 		NULL,
 		NULL,
@@ -74,7 +74,10 @@ void Shader::AddShader(const std::wstring& name, const std::wstring& filepath)
 		0U,
 		Window::Device(),
 		&Access(name).effect,
-		NULL);
+		NULL)))
+	{
+		throw std::exception("シェーダーファイルのコンパイルに失敗しました");
+	}
 }
 
 void Shader::Tech(const std::wstring& name)
@@ -82,6 +85,10 @@ void Shader::Tech(const std::wstring& name)
 	Current().technique =
 		Current().effect->GetTechniqueByName(
 		ToMultibyte(name).c_str());
+	if (!Current().technique->IsValid())
+	{
+		throw std::exception("有効なテクニックを取得できませんでした");
+	}
 }
 
 void Shader::Pass(const std::wstring& name)
@@ -89,6 +96,10 @@ void Shader::Pass(const std::wstring& name)
 	Current().pass =
 		Current().technique->GetPassByName(
 		ToMultibyte(name).c_str());
+	if (!Current().pass->IsValid())
+	{
+		throw std::exception("有効なパスを取得できませんでした");
+	}
 }
 void Shader::InputLayout(D3D11_INPUT_ELEMENT_DESC* layout, UINT num)
 {

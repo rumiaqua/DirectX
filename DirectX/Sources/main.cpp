@@ -6,13 +6,15 @@
 
 # include "Texture2D/Texture2D.hpp"
 
-Handle<ID3D11ShaderResourceView> shaderResourceView;
+using namespace DirectX;
 
-Handle<ID3D11ShaderResourceView> soccerballTexture;
+Handle<ID3D11ShaderResourceView> shaderResourceView;
 
 Handle<ID3D11SamplerState> sampler;
 
-Matrix world;
+Float3 eye;
+Float3 at;
+Float3 up;
 
 Matrix view;
 
@@ -20,8 +22,10 @@ Matrix projection;
 
 Float4 color;
 
+Matrix playerRotation;
 Float3 playerPosition;
 
+Matrix enemyRotation;
 Float3 enemyPosition;
 
 std::shared_ptr<aqua::Polygon> player;
@@ -32,7 +36,9 @@ std::shared_ptr<aqua::Polygon> texture;
 
 static float t = 0.0f;
 
-using namespace DirectX;
+static float oneRadian = XM_PI / 180.0f;
+
+static const float deltaTime = 0.016667f;
 
 void Initialize()
 {
@@ -42,51 +48,9 @@ void Initialize()
 
 	auto context = Window::Context();
 
-	Shader::AddShader(L"Default", L"Contents/Tutorial07.fx");
+	// 変数初期化
 
-	Shader::Change(L"Default");
-
-	Shader::Tech(L"Default");
-
-	Shader::Pass(L"P0");
-
-	D3D11_INPUT_ELEMENT_DESC layout[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
-	Shader::InputLayout(layout, ARRAYSIZE(layout));
-
-	D3D11_SAMPLER_DESC sampDesc;
-	ZeroMemory(&sampDesc, sizeof(sampDesc));
-	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampDesc.MinLOD = 0;
-	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	hr = device->CreateSamplerState(&sampDesc, &sampler);
-	if (FAILED(hr))
-	{
-		return;
-	}
-
-	world = XMMatrixIdentity();
-	Shader::SetMatrix(L"World", world);
-
-	view = XMMatrixLookAtLH(
-		Float4(0.0f, 3.0f, -6.0f, 0.0f).ToVector(),
-		Float4(0.0f, 0.0f, 0.0f, 0.0f).ToVector(),
-		Float4(0.0f, 1.0f, 0.0f, 0.0f).ToVector());
-	Shader::SetMatrix(L"View", view);
-
-	projection = XMMatrixPerspectiveFovLH(
-		XM_PIDIV4, 4.0f / 3.0f, 0.1f, 100.0f);
-	Shader::SetMatrix(L"Projection", projection);
-
-
+	// シェーダーリソースビュー
 	TexMetadata metadata;
 	ScratchImage image;
 	hr = LoadFromDDSFile(L"Contents/seafloor.dds", 0U, &metadata, image);
@@ -105,53 +69,101 @@ void Initialize()
 		return;
 	}
 
-	hr = LoadFromTGAFile(L"Contents/oldball.tga", &metadata, image);
+	// サンプラーステート
+	D3D11_SAMPLER_DESC sampDesc;
+	ZeroMemory(&sampDesc, sizeof(sampDesc));
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampDesc.MinLOD = 0;
+	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	hr = device->CreateSamplerState(&sampDesc, &sampler);
 	if (FAILED(hr))
 	{
 		return;
 	}
-	hr = CreateShaderResourceView(
-		device,
-		image.GetImages(),
-		image.GetImageCount(),
-		metadata,
-		&soccerballTexture);
-	if (FAILED(hr))
-	{
-		return;
-	}
 
-	Shader::SetShaderResource(L"txDiffuse", shaderResourceView);
+	// 視点座標
+	eye = Float3(0.0f, 3.0f, -6.0f);
 
-	Shader::SetSampler(L"samLinear", 0, sampler);
+	// 注視点座標
+	at = Float3(0.0f, 0.0f, 0.0f);
 
+	// 上方向ベクトル
+	up = Float3(0.0f, 1.0f, 0.0f);
+
+	// ビュー行列
+	view = XMMatrixLookAtLH(
+		eye.ToVector(0.0f),
+		at.ToVector(0.0f),
+		up.ToVector(0.0f));
+
+	// 透視射影行列
+	projection = XMMatrixPerspectiveFovLH(
+		XM_PIDIV4, Window::Aspect(), 0.1f, 250.0f);
+
+	// 色
+	color = Float4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	// プレイヤー座標
+	playerPosition = Float3(0.0f, 0.0f, 0.0f);
+	// プレイヤー回転
+	playerRotation = XMMatrixIdentity();
+
+	// エネミー座標
+	enemyPosition = Float3(0.0f, 0.0f, 0.0f);
+	// エネミー回転
+	enemyRotation = XMMatrixIdentity();
+
+	// プレイヤー
 	player = aqua::Polygon::Box();
 
+	// エネミー
 	enemy = aqua::Polygon::Plane();
 
-	// Tutorial07_2 シェーダー読込
-	Shader::AddShader(L"NoChangeColor", L"Contents/Tutorial07_2.fx");
-
-	Shader::Change(L"NoChangeColor");
-
-	Shader::Tech(L"Default");
-
-	Shader::Pass(L"P0");
-
-	texture = std::make_shared<aqua::Texture2D>(L"Contents/panda.png");
-
-	// Texture シェーダー読込
-	Shader::AddShader(L"Texture", L"Contents/Texture.fx");
-	Shader::Change(L"Texture");
-	Shader::Tech(L"Default");
-	Shader::Pass(L"P0");
-	Shader::SetSampler(L"samLinear", 0, sampler);
+	// テクスチャ
+	texture = std::make_shared<aqua::Texture2D>(L"Contents/font2.png");
 
 	// シェーダーのセット
-	Shader::Change(L"Default");
-}
 
-void Update()
+	// 入力レイアウト
+	D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	// デフォルトシェーダー
+	Shader::AddShader(L"Default", L"Contents/Shader/DefaultShader.hlsl");
+	// シェーダーの切り替え
+	Shader::Change(L"Default");
+	// テクニックの指定
+	Shader::Tech(L"Default");
+	// パスの指定
+	Shader::Pass(L"P0");
+	// 入力レイアウトの指定
+	Shader::InputLayout(layout, ARRAYSIZE(layout));
+	// サンプラーステートのセット
+	Shader::SetSampler(L"samplerState", 0, sampler);
+	// シェーダーリソースビューのセット
+	Shader::SetShaderResource(L"texture2d", shaderResourceView);
+
+	// テクスチャシェーダー
+	Shader::AddShader(L"Texture", L"Contents/Shader/TextureShader.hlsl");
+	// シェーダーの切り替え
+	Shader::Change(L"Texture");
+	// テクニックの指定
+	Shader::Tech(L"Default");
+	// パスの指定
+	Shader::Pass(L"P0");
+	// サンプラーステートのセット
+	Shader::SetSampler(L"samplerState", 0, sampler);
+};
+
+void TimeElapsed()
 {
 	if (Window::DriverType() == D3D_DRIVER_TYPE_REFERENCE)
 	{
@@ -167,26 +179,26 @@ void Update()
 		}
 		t = (dwTimeCur - dwTimeStart) / 1000.0f;
 	}
+}
 
-	static float angle = 0.0f;
-
-	static float oneRadian = XM_PI / 180.0f;
-
-	static const float deltaTime = 0.016667f;
-
-	static const Float3 Forward = { 0.0f, 0.0f, 1.0f };
-
+void PlayerRotate()
+{
+	/*float angle = 0.0f;
 	if (GetAsyncKeyState(VK_LEFT) != 0)
 	{
 		angle -= oneRadian * deltaTime;
 	}
-
 	if (GetAsyncKeyState(VK_RIGHT) != 0)
 	{
 		angle += oneRadian * deltaTime;
 	}
+	playerRotation = playerRotation * XMMatrixRotationY(angle);*/
 
-	// player
+	playerRotation = playerRotation * XMMatrixRotationRollPitchYaw(0.0f, oneRadian * deltaTime, 0.0f);
+}
+
+void PlayerMove()
+{
 	if (GetAsyncKeyState('A') != 0)
 	{
 		playerPosition.x -= 0.1f * deltaTime;
@@ -216,8 +228,10 @@ void Update()
 	{
 		playerPosition.y -= 0.1f * deltaTime;
 	}
+}
 
-	// enemy
+void EnemyMove()
+{
 	if (GetAsyncKeyState('F') != 0)
 	{
 		enemyPosition.x -= 0.1f * deltaTime;
@@ -249,46 +263,120 @@ void Update()
 	}
 }
 
+void EyeMove()
+{
+	if (GetAsyncKeyState('J') != 0)
+	{
+		eye.x -= 0.1f * deltaTime;
+	}
+
+	if (GetAsyncKeyState('L') != 0)
+	{
+		eye.x += 0.1f * deltaTime;
+	}
+
+	if (GetAsyncKeyState('I') != 0)
+	{
+		eye.z += 0.1f * deltaTime;
+	}
+
+	if (GetAsyncKeyState('K') != 0)
+	{
+		eye.z -= 0.1f * deltaTime;
+	}
+
+	if (GetAsyncKeyState('O') != 0)
+	{
+		eye.y += 0.1f * deltaTime;
+	}
+
+	if (GetAsyncKeyState('M') != 0)
+	{
+		eye.y -= 0.1f * deltaTime;
+	}
+}
+
+void ViewMatrix()
+{
+	view = XMMatrixLookAtLH(
+		eye.ToVector(0.0f),
+		at.ToVector(0.0f),
+		up.ToVector(0.0f));
+}
+
+void Update()
+{
+	TimeElapsed();
+
+	PlayerRotate();
+	PlayerMove();
+
+	EnemyMove();
+
+	EyeMove();
+	ViewMatrix();
+}
+
 void Render()
 {
+	// 背景色クリア
 	static float clearColor[] =
 	{
 		0.1f, 0.1f, 0.1f, 1.0f,
 	};
 	Window::Clear(clearColor);
 
+	// 色の変化
 	color.x = (sinf(t * 1.0f) + 1.0f) * 0.5f;
 	color.y = (cosf(t * 3.0f) + 1.0f) * 0.5f;
 	color.z = (sinf(t * 5.0f) + 1.0f) * 0.5f;
 	color.w = 1.0f;
-	Shader::SetVector(L"vMeshColor", color);
 
-	// player render
-	Shader::Change(L"NoChangeColor");
-
-	Matrix mat = XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z);
-	mat = XMMatrixRotationY(t) * mat;
-	Shader::SetMatrix(L"World", mat);
-	Shader::SetMatrix(L"View", view);
-	Shader::SetMatrix(L"Projection", projection);
-	Shader::SetShaderResource(L"txDiffuse", soccerballTexture);
-	Shader::SetSampler(L"samLinear", 0, sampler);
+	// プレイヤーの描画
+	Shader::Change(L"Default");
+	Shader::SetMatrix(L"world", playerRotation * XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z));
+	Shader::SetMatrix(L"view", view);
+	Shader::SetMatrix(L"projection", projection);
+	Shader::SetVector(L"color", Float4(1.0f, 1.0f, 1.0f, 1.0f));
 	Shader::Apply();
-
 	player->Render();
 
-	// enemy render
+	// エネミーの描画
 	Shader::Change(L"Default");
-	Shader::SetMatrix(L"World", XMMatrixTranslation(enemyPosition.x, enemyPosition.y, enemyPosition.z));
-	Shader::SetMatrix(L"View", view);
-	Shader::SetMatrix(L"Projection", projection);
-	Shader::SetVector(L"vMeshColor", color);
+	Shader::SetMatrix(L"world", enemyRotation * XMMatrixTranslation(enemyPosition.x, enemyPosition.y, enemyPosition.z));
+	Shader::SetMatrix(L"view", view);
+	Shader::SetMatrix(L"projection", projection);
+	Shader::SetVector(L"color", color);
 	Shader::Apply();
-
 	enemy->Render();
 
-	// texture render
-	texture->Render();
+	// テクスチャの描画
+	Shader::Change(L"Texture");
+
+	// 文字列の描画
+	// std::wstring str = L"pos : (100.0f, 200.0f, 300.0f)";
+	std::wstring str = L"panda";
+	float x = 0.0f;
+	for (const auto& c : str)
+	{
+		static std::wstring checklist = L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789. !\"#$%&'()-=^~\\|@`[{;+:*]},<.>/?\\_";
+
+		auto offset = checklist.find(c, 0);
+
+		if (offset == -1)
+		{
+			continue;
+		}
+
+		const unsigned char index = offset;
+		const float width = 1.0f / checklist.size();
+		Shader::SetMatrix(L"world", XMMatrixScaling(20.0f, 40.0f, 1.0f) * XMMatrixTranslation(x, 0.0f, 0.0f));
+		auto uv = Float4(index * width, 0.0f, width, 1.0f);
+		Shader::SetVector(L"uv", uv);
+		texture->Render();
+
+		x += 20.0f;
+	}
 
 	Window::Flip();
 }

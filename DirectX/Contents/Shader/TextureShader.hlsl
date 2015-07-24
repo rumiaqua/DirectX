@@ -8,6 +8,8 @@ matrix projection;
 
 float4 color;
 
+float4 uv;
+
 struct VSInput
 {
 	float4 position : POSITION;
@@ -28,10 +30,12 @@ PSInput VS(VSInput input)
 {
 	PSInput output = (PSInput)0;
 
-	output.position = mul(input.position, projection);
-	output.position = mul(output.position, world);
+	// output.position = mul(input.position, projection);
+	// output.position = mul(output.position, world);
+	output.position = mul(input.position, world);
+	output.position = mul(output.position, projection);
 
-	output.texcoord = input.texcoord;
+	output.texcoord = input.texcoord * float2(uv.z, uv.w) + float2(uv.x, uv.y);
 
 	return output;
 }
