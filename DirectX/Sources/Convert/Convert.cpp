@@ -1,27 +1,13 @@
 # include "Convert.hpp"
 
-std::string ToNarrow(const std::wstring& wide)
+std::string ToMultibyte(const std::wstring& str)
 {
-	int len;
-	int slength = (int)wide.length() + 1;
-	len = WideCharToMultiByte(CP_ACP, 0, wide.c_str(), slength, 0, 0, 0, 0);
-	char* buf = new char[len];
-	WideCharToMultiByte(CP_ACP, 0, wide.c_str(), slength, buf, len, 0, 0);
-	std::string r(buf);
-	delete[] buf;
-	return r;
+	return std::string { str.begin(), str.end() };
 }
 
-std::wstring ToWide(const std::string& narrow)
+std::wstring ToUnicode(const std::string& str)
 {
-	int len;
-	int slength = (int)narrow.length() + 1;
-	len = MultiByteToWideChar(CP_ACP, 0, narrow.c_str(), slength, 0, 0);
-	wchar_t* buf = new wchar_t[len];
-	MultiByteToWideChar(CP_ACP, 0, narrow.c_str(), slength, buf, len);
-	std::wstring r(buf);
-	delete[] buf;
-	return r;
+	return std::wstring { str.begin(), str.end() };
 }
 
 /// <summary>•¶Žš—ñ‚ðŽw’è‚Ì•¶Žš‚Å•ªŠ„‚·‚é</summary>
