@@ -113,7 +113,7 @@ namespace aqua
 
 		Shader::SetMatrix(L"projection", Projection);
 		Shader::SetShaderResource(L"texture2d", m_shaderResource);
-		Shader::SetMatrix(L"world", DirectX::XMMatrixScaling(m_width, m_height, 1.0f));
+		// Shader::SetMatrix(L"world", DirectX::XMMatrixScaling(m_width, m_height, 1.0f));
 		Shader::SetVector(L"color", Float4(1.0f, 1.0f, 1.0f, 1.0f));
 		Shader::Apply();
 
