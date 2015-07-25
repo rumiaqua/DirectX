@@ -13,8 +13,8 @@ namespace aqua
 		void Load(const std::wstring& filename);
 
 		virtual ~Texture2D();
-
-		void Render() override;
+		
+		virtual void Render() override;
 
 	private:
 

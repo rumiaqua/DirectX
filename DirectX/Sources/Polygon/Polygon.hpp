@@ -19,11 +19,15 @@ namespace aqua
 
 		virtual ~Polygon();
 
-		static std::shared_ptr<Polygon> Box();
+		static std::shared_ptr<Polygon> Box(float size = 1.0f);
 
-		static std::shared_ptr<Polygon> Plane();
+		static std::shared_ptr<Polygon> Plane(float size = 1.0f, bool isBoth = false);
 
 		virtual void Render();
+
+	private:
+
+		virtual void OnRender();
 
 	protected:
 

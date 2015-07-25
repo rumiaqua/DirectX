@@ -4,9 +4,9 @@
 
 # include <sstream>
 
-std::string ToMultibyte(const std::wstring& str);
+std::string ToNarrow(const std::wstring& wide);
 
-std::wstring ToUnicode(const std::string& str);
+std::wstring ToWide(const std::string& narrow);
 
 template <typename Type>
 Type ToValue(const std::wstring& str)

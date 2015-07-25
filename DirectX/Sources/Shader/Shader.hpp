@@ -18,8 +18,6 @@ private:
 
 		ID3DX11EffectPass* pass;
 
-		Handle<ID3D11InputLayout> inputLayout;
-
 		std::unordered_map<std::wstring, ID3DX11EffectVariable*> variable;
 	};
 
@@ -41,6 +39,8 @@ private:
 
 	static Effect& Current();
 
+	static void InputLayout();
+
 public:
 
 	static void Change(const std::wstring& name);
@@ -49,11 +49,7 @@ public:
 
 	static void Tech(const std::wstring& name);
 
-	static void Pass(const std::wstring& name);
-
-	static void InputLayout(D3D11_INPUT_ELEMENT_DESC* layout, UINT num);
-
-	static void Apply();
+	static std::list<ID3DX11EffectPass*> Passes();
 
 	static void SetMatrix(const std::wstring& name, const Matrix& matrix);
 
@@ -65,7 +61,7 @@ public:
 
 	static void SetScalor(const std::wstring& name, float scalor);
 
-	static void SetRenderTargett(const std::wstring& name, ID3D11RenderTargetView* renderTarget);
+	static void SetRenderTarget(const std::wstring& name, ID3D11RenderTargetView* renderTarget);
 
 	static void SetRasterizer(const std::wstring& name, UINT index, ID3D11RasterizerState* rasterizer);
 
@@ -73,9 +69,13 @@ public:
 
 	static void SetDepthStencil(const std::wstring& name, UINT index, ID3D11DepthStencilState* depthStencil);
 
+	static void SetBlend(const std::wstring& name, UINT index, ID3D11BlendState* blendState);
+
 private:
 
 	std::unordered_map<std::wstring, Effect> m_effects;
+
+	Handle<ID3D11InputLayout> m_inputLayout;
 
 	Effect* m_current;
 };

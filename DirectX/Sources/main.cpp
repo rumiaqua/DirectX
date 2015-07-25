@@ -6,6 +6,12 @@
 
 # include "Texture2D/Texture2D.hpp"
 
+# include "Convert/Convert.hpp"
+
+#include <locale>
+#include <codecvt>
+#include <string>
+
 using namespace DirectX;
 
 Handle<ID3D11ShaderResourceView> shaderResourceView;
@@ -121,20 +127,12 @@ void Initialize()
 	player = aqua::Polygon::Box();
 
 	// エネミー
-	enemy = aqua::Polygon::Plane();
+	enemy = aqua::Polygon::Plane(1.0f, true);
 
 	// テクスチャ
 	texture = std::make_shared<aqua::Texture2D>(L"Contents/font2.png");
 
 	// シェーダーのセット
-
-	// 入力レイアウト
-	D3D11_INPUT_ELEMENT_DESC layout[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
 
 	// デフォルトシェーダー
 	Shader::AddShader(L"Default", L"Contents/Shader/DefaultShader.hlsl");
@@ -142,12 +140,9 @@ void Initialize()
 	Shader::Change(L"Default");
 	// テクニックの指定
 	Shader::Tech(L"Default");
-	// パスの指定
-	Shader::Pass(L"P0");
-	// 入力レイアウトの指定
-	Shader::InputLayout(layout, ARRAYSIZE(layout));
 	// サンプラーステートのセット
 	Shader::SetSampler(L"samplerState", 0, sampler);
+
 	// シェーダーリソースビューのセット
 	Shader::SetShaderResource(L"texture2d", shaderResourceView);
 
@@ -157,8 +152,6 @@ void Initialize()
 	Shader::Change(L"Texture");
 	// テクニックの指定
 	Shader::Tech(L"Default");
-	// パスの指定
-	Shader::Pass(L"P0");
 	// サンプラーステートのセット
 	Shader::SetSampler(L"samplerState", 0, sampler);
 };
@@ -332,30 +325,30 @@ void Render()
 	color.z = (sinf(t * 5.0f) + 1.0f) * 0.5f;
 	color.w = 1.0f;
 
-	// プレイヤーの描画
 	Shader::Change(L"Default");
-	Shader::SetMatrix(L"world", playerRotation * XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z));
-	Shader::SetMatrix(L"view", view);
-	Shader::SetMatrix(L"projection", projection);
-	Shader::SetVector(L"color", Float4(1.0f, 1.0f, 1.0f, 1.0f));
-	Shader::Apply();
-	player->Render();
-
-	// エネミーの描画
-	Shader::Change(L"Default");
+	// Shader::Tech(L"Default");
+	Shader::Tech(L"Blend");
 	Shader::SetMatrix(L"world", enemyRotation * XMMatrixTranslation(enemyPosition.x, enemyPosition.y, enemyPosition.z));
 	Shader::SetMatrix(L"view", view);
 	Shader::SetMatrix(L"projection", projection);
 	Shader::SetVector(L"color", color);
-	Shader::Apply();
 	enemy->Render();
 
-	// テクスチャの描画
-	Shader::Change(L"Texture");
+	// プレイヤーの描画
+	
+	/*
+	Shader::SetMatrix(L"world", playerRotation * XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z));
+	Shader::SetMatrix(L"view", view);
+	Shader::SetMatrix(L"projection", projection);
+	Shader::SetVector(L"color", Float4(1.0f, 1.0f, 1.0f, 1.0f));
+	Shader::SetVector(L"color", color);
+	player->Render();*/
+
+	// エネミーの描画
+	
 
 	// 文字列の描画
-	// std::wstring str = L"pos : (100.0f, 200.0f, 300.0f)";
-	std::wstring str = L"panda";
+	/*std::wstring str = L"Hello C++ World";
 	float x = 0.0f;
 	for (const auto& c : str)
 	{
@@ -376,27 +369,34 @@ void Render()
 		texture->Render();
 
 		x += 20.0f;
-	}
+	}*/
 
 	Window::Flip();
 }
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	Initialize();
-
-	MSG msg = { 0 };
-
-	while (msg.message != WM_QUIT)
+	try
 	{
-		if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-			continue;
-		}
+		Initialize();
 
-		Update();
-		Render();
+		MSG msg = { 0 };
+
+		while (msg.message != WM_QUIT)
+		{
+			if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+				continue;
+			}
+
+			Update();
+			Render();
+		}
+	}
+	catch (std::exception& ex)
+	{
+		MessageBox(NULL, ToWide(ex.what()).c_str(), L"例外をキャッチしました", MB_OK);
 	}
 }

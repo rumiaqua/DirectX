@@ -4,6 +4,8 @@
 
 # include "Window/Window.hpp"
 
+# include <iostream>
+
 Shader::Shader()
 	: m_effects()
 	, m_current(nullptr)
@@ -30,7 +32,7 @@ ID3DX11EffectVariable* Shader::Cache(const std::wstring& name)
 ID3DX11EffectVariable* Shader::Regist(const std::wstring& name)
 {
 	Current().variable[name] =
-		Current().effect->GetVariableByName(ToMultibyte(name).c_str());
+		Current().effect->GetVariableByName(ToNarrow(name).c_str());
 
 	return Cache(name);
 }
@@ -44,7 +46,7 @@ ID3DX11EffectVariable* Shader::Variable(const std::wstring& name)
 
 	auto val = Regist(name);
 
-	assert(val && (L"だめです : " + name).c_str());
+	assert(val || !(L"だめです : " + name).c_str());
 
 	return val;
 }
@@ -84,41 +86,65 @@ void Shader::Tech(const std::wstring& name)
 {
 	Current().technique =
 		Current().effect->GetTechniqueByName(
-		ToMultibyte(name).c_str());
+		ToNarrow(name).c_str());
 	if (!Current().technique->IsValid())
 	{
 		throw std::exception("有効なテクニックを取得できませんでした");
 	}
 }
 
-void Shader::Pass(const std::wstring& name)
+std::list<ID3DX11EffectPass*> Shader::Passes()
 {
-	Current().pass =
-		Current().technique->GetPassByName(
-		ToMultibyte(name).c_str());
-	if (!Current().pass->IsValid())
+	std::list<ID3DX11EffectPass*> passes;
+
+	D3DX11_TECHNIQUE_DESC techniqueDesc;
+	Current().technique->GetDesc(&techniqueDesc);
+
+	for (unsigned int i = 0; i < techniqueDesc.Passes; ++i)
 	{
-		throw std::exception("有効なパスを取得できませんでした");
+		passes.emplace_back(Current().technique->GetPassByIndex(i));
 	}
+
+	InputLayout();
+
+	return passes;
 }
-void Shader::InputLayout(D3D11_INPUT_ELEMENT_DESC* layout, UINT num)
+
+void Shader::InputLayout()
 {
+	if (Instance().m_inputLayout != nullptr)
+	{
+		std::cout << "既にレイアウトは作成されています" << std::endl;
+		return;
+	}
+
+	auto pass = Current().technique->GetPassByIndex(0);
+
+	if (pass == nullptr)
+	{
+		throw std::exception("テクニックが指定されていません");
+		return;
+	}
+
+	// 入力レイアウト
+	static const D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	// 入力レイアウトの指定
 	D3DX11_PASS_DESC passDesc;
-	Current().pass->GetDesc(&passDesc);
+	pass->GetDesc(&passDesc);
 	Window::Device()->CreateInputLayout(
 		layout,
-		num,
+		ARRAYSIZE(layout),
 		passDesc.pIAInputSignature,
 		passDesc.IAInputSignatureSize,
-		&Current().inputLayout);
-	Window::Context()->IASetInputLayout(Current().inputLayout);
+		&Instance().m_inputLayout);
+	Window::Context()->IASetInputLayout(Instance().m_inputLayout);
 }
-
-void Shader::Apply()
-{
-	Current().pass->Apply(0U, Window::Context());
-}
-
 
 void Shader::SetMatrix(const std::wstring& name, const Matrix& matrix)
 {
@@ -145,7 +171,7 @@ void Shader::SetScalor(const std::wstring& name, float scalor)
 	Variable(name)->AsScalar()->SetFloat(scalor);
 }
 
-void Shader::SetRenderTargett(const std::wstring& name, ID3D11RenderTargetView* renderTarget)
+void Shader::SetRenderTarget(const std::wstring& name, ID3D11RenderTargetView* renderTarget)
 {
 	Variable(name)->AsRenderTargetView()->SetRenderTarget(renderTarget);
 }
@@ -163,4 +189,9 @@ void Shader::SetDepthStencilView(const std::wstring& name, ID3D11DepthStencilVie
 void Shader::SetDepthStencil(const std::wstring& name, UINT index, ID3D11DepthStencilState* depthStencil)
 {
 	Variable(name)->AsDepthStencil()->SetDepthStencilState(index, depthStencil);
+}
+
+void Shader::SetBlend(const std::wstring& name, UINT index, ID3D11BlendState* blendState)
+{
+	Variable(name)->AsBlend()->SetBlendState(index, blendState);
 }

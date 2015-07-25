@@ -60,13 +60,41 @@ BlendState SrcAlphaBlendingAdd
 	RenderTargetWriteMask[0] = 0x0F;
 };
 
+BlendState NoBlend
+{
+	BlendEnable[0] = false;
+};
+
+BlendState AlphaBlend
+{
+	//AlphaToCoverageEnable = TRUE; //acts as an Alpha Test, clipping pixels with alpha<0.5
+	//IndependentBlendEnable = TRUE; //no worky
+	BlendEnable[0] = true;
+	SrcBlend = SRC_ALPHA;
+	DestBlend = INV_SRC_ALPHA;
+	BlendOp = ADD;
+	SrcBlendAlpha = ZERO;
+	DestBlendAlpha = ZERO;
+	BlendOpAlpha = ADD;
+	RenderTargetWriteMask[0] = 0x0F;
+};
+
 technique11 Default
 {
 	pass P0
 	{
+		SetBlendState(NoBlend, float4(1.0f, 1.0f, 1.0f, 1.0f), 0xFFFFFFFF);
 		SetVertexShader(CompileShader(vs_5_0, VS()));
 		SetPixelShader(CompileShader(ps_5_0, PS()));
+	}
+}
 
-		SetBlendState(SrcAlphaBlendingAdd, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+technique11 Blend
+{
+	pass P0
+	{
+		SetBlendState(SrcAlphaBlendingAdd, float4(1.0f, 1.0f, 1.0f, 1.0f), 0xFFFFFFFF);
+		SetVertexShader(CompileShader(vs_5_0, VS()));
+		SetPixelShader(CompileShader(ps_5_0, PS()));
 	}
 }

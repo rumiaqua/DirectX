@@ -6,6 +6,8 @@
 
 # include <memory>
 
+# include "Shader/Shader.hpp"
+
 namespace aqua
 {
 	Polygon::Polygon()
@@ -24,40 +26,41 @@ namespace aqua
 
 	}
 
-	std::shared_ptr<Polygon> Polygon::Box()
+	std::shared_ptr<Polygon> Polygon::Box(float size)
 	{
+		float width = size;
 		static const Vertex vertices[] =
 		{
 			// ê≥ñ 
-			{ Float3(-1.0f, -1.0f, -1.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(-1.0f, +1.0f, -1.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(+1.0f, +1.0f, -1.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(+1.0f, -1.0f, -1.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(-width, -width, -width), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(-width, +width, -width), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(+width, +width, -width), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(+width, -width, -width), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
 			// âE
-			{ Float3(+1.0f, -1.0f, -1.0f), Float2(0.0f, 0.0f), Float3(1.0f, 0.0f, 0.0f) },
-			{ Float3(+1.0f, +1.0f, -1.0f), Float2(0.0f, 1.0f), Float3(1.0f, 0.0f, 0.0f) },
-			{ Float3(+1.0f, +1.0f, +1.0f), Float2(1.0f, 1.0f), Float3(1.0f, 0.0f, 0.0f) },
-			{ Float3(+1.0f, -1.0f, +1.0f), Float2(1.0f, 0.0f), Float3(1.0f, 0.0f, 0.0f) },
+			{ Float3(+width, -width, -width), Float2(0.0f, 0.0f), Float3(1.0f, 0.0f, 0.0f) },
+			{ Float3(+width, +width, -width), Float2(0.0f, 1.0f), Float3(1.0f, 0.0f, 0.0f) },
+			{ Float3(+width, +width, +width), Float2(1.0f, 1.0f), Float3(1.0f, 0.0f, 0.0f) },
+			{ Float3(+width, -width, +width), Float2(1.0f, 0.0f), Float3(1.0f, 0.0f, 0.0f) },
 			// îwñ 
-			{ Float3(+1.0f, -1.0f, +1.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, 1.0f) },
-			{ Float3(+1.0f, +1.0f, +1.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, 1.0f) },
-			{ Float3(-1.0f, +1.0f, +1.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, 1.0f) },
-			{ Float3(-1.0f, -1.0f, +1.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, 1.0f) },
+			{ Float3(+width, -width, +width), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, 1.0f) },
+			{ Float3(+width, +width, +width), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, 1.0f) },
+			{ Float3(-width, +width, +width), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, 1.0f) },
+			{ Float3(-width, -width, +width), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, 1.0f) },
 			// ç∂
-			{ Float3(-1.0f, -1.0f, +1.0f), Float2(0.0f, 0.0f), Float3(-1.0f, 0.0f, 0.0f) },
-			{ Float3(-1.0f, +1.0f, +1.0f), Float2(0.0f, 1.0f), Float3(-1.0f, 0.0f, 0.0f) },
-			{ Float3(-1.0f, +1.0f, -1.0f), Float2(1.0f, 1.0f), Float3(-1.0f, 0.0f, 0.0f) },
-			{ Float3(-1.0f, -1.0f, -1.0f), Float2(1.0f, 0.0f), Float3(-1.0f, 0.0f, 0.0f) },
+			{ Float3(-width, -width, +width), Float2(0.0f, 0.0f), Float3(-1.0f, 0.0f, 0.0f) },
+			{ Float3(-width, +width, +width), Float2(0.0f, 1.0f), Float3(-1.0f, 0.0f, 0.0f) },
+			{ Float3(-width, +width, -width), Float2(1.0f, 1.0f), Float3(-1.0f, 0.0f, 0.0f) },
+			{ Float3(-width, -width, -width), Float2(1.0f, 0.0f), Float3(-1.0f, 0.0f, 0.0f) },
 			// è„
-			{ Float3(-1.0f, +1.0f, -1.0f), Float2(0.0f, 0.0f), Float3(0.0f, 1.0f, 0.0f) },
-			{ Float3(-1.0f, +1.0f, +1.0f), Float2(0.0f, 1.0f), Float3(0.0f, 1.0f, 0.0f) },
-			{ Float3(+1.0f, +1.0f, +1.0f), Float2(1.0f, 1.0f), Float3(0.0f, 1.0f, 0.0f) },
-			{ Float3(+1.0f, +1.0f, -1.0f), Float2(1.0f, 0.0f), Float3(0.0f, 1.0f, 0.0f) },
+			{ Float3(-width, +width, -width), Float2(0.0f, 0.0f), Float3(0.0f, 1.0f, 0.0f) },
+			{ Float3(-width, +width, +width), Float2(0.0f, 1.0f), Float3(0.0f, 1.0f, 0.0f) },
+			{ Float3(+width, +width, +width), Float2(1.0f, 1.0f), Float3(0.0f, 1.0f, 0.0f) },
+			{ Float3(+width, +width, -width), Float2(1.0f, 0.0f), Float3(0.0f, 1.0f, 0.0f) },
 			// â∫
-			{ Float3(-1.0f, -1.0f, +1.0f), Float2(0.0f, 0.0f), Float3(0.0f, -1.0f, 0.0f) },
-			{ Float3(-1.0f, -1.0f, -1.0f), Float2(0.0f, 1.0f), Float3(0.0f, -1.0f, 0.0f) },
-			{ Float3(+1.0f, -1.0f, -1.0f), Float2(1.0f, 1.0f), Float3(0.0f, -1.0f, 0.0f) },
-			{ Float3(+1.0f, -1.0f, +1.0f), Float2(1.0f, 0.0f), Float3(0.0f, -1.0f, 0.0f) },
+			{ Float3(-width, -width, +width), Float2(0.0f, 0.0f), Float3(0.0f, -1.0f, 0.0f) },
+			{ Float3(-width, -width, -width), Float2(0.0f, 1.0f), Float3(0.0f, -1.0f, 0.0f) },
+			{ Float3(+width, -width, -width), Float2(1.0f, 1.0f), Float3(0.0f, -1.0f, 0.0f) },
+			{ Float3(+width, -width, +width), Float2(1.0f, 0.0f), Float3(0.0f, -1.0f, 0.0f) },
 		};
 
 		UINT numVertices = ARRAYSIZE(vertices);
@@ -97,23 +100,43 @@ namespace aqua
 		return polygon;
 	}
 
-	std::shared_ptr<Polygon> Polygon::Plane()
+	std::shared_ptr<Polygon> Polygon::Plane(float size, bool isBoth)
 	{
-		static const Vertex vertices[] =
+		float width = size;
+		static const Vertex HalfVertices[] =
 		{
 			// ê≥ñ 
-			{ Float3(-1.0f, -1.0f, 0.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(-1.0f, +1.0f, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(+1.0f, +1.0f, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(+1.0f, -1.0f, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(-width, -width, 0.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(-width, +width, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(+width, +width, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(+width, -width, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
 		};
 
-		UINT numVertices = ARRAYSIZE(vertices);
+		static UINT numHalfVertices = ARRAYSIZE(HalfVertices);
+
+		static const Vertex BothVertices[] =
+		{
+			// ê≥ñ 
+			{ Float3(-width, -width, 0.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(-width, +width, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(+width, +width, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(+width, -width, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+
+			// îwñ 
+			{ Float3(-width, +width, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(-width, -width, 0.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(+width, -width, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(+width, +width, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+		};
+
+		static UINT numBothVertices = ARRAYSIZE(BothVertices);
 
 		static const unsigned short indices[] =
 		{
 			0, 1, 2,
 			2, 3, 0,
+			4, 5, 6,
+			6, 7, 4,
 		};
 
 		UINT numIndices = ARRAYSIZE(indices);
@@ -121,8 +144,8 @@ namespace aqua
 		auto polygon = std::make_shared<Polygon>();
 
 		polygon->Initialize(
-			vertices,
-			numVertices,
+			isBoth ? BothVertices : HalfVertices,
+			isBoth ? numBothVertices : numHalfVertices,
 			indices,
 			numIndices,
 			D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -130,8 +153,19 @@ namespace aqua
 		return polygon;
 	}
 
-	/// <summary>ï`âÊ</summary>
 	void Polygon::Render()
+	{
+		auto context = Window::Context();
+
+		for (const auto& pass : Shader::Passes())
+		{
+			pass->Apply(0U, context);
+			OnRender();
+		}
+	}
+
+	/// <summary>ï`âÊ</summary>
+	void Polygon::OnRender()
 	{
 		auto context = Window::Context();
 
