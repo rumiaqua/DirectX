@@ -130,7 +130,7 @@ void Initialize()
 	enemy = aqua::Polygon::Plane(1.0f, true);
 
 	// テクスチャ
-	texture = std::make_shared<aqua::Texture2D>(L"Contents/font2.png");
+	texture = std::make_shared<aqua::Texture2D>(L"Contents/panda.png");
 
 	// シェーダーのセット
 
@@ -326,13 +326,18 @@ void Render()
 	color.w = 1.0f;
 
 	Shader::Change(L"Default");
-	// Shader::Tech(L"Default");
 	Shader::Tech(L"Blend");
 	Shader::SetMatrix(L"world", enemyRotation * XMMatrixTranslation(enemyPosition.x, enemyPosition.y, enemyPosition.z));
 	Shader::SetMatrix(L"view", view);
 	Shader::SetMatrix(L"projection", projection);
 	Shader::SetVector(L"color", color);
-	enemy->Render();
+	for (const auto& pass : Shader::Passes())
+	{
+		pass->Apply(0U, Window::Context());
+		enemy->Render();
+	}
+
+	texture->Render();
 
 	// プレイヤーの描画
 	
@@ -348,7 +353,7 @@ void Render()
 	
 
 	// 文字列の描画
-	/*std::wstring str = L"Hello C++ World";
+	std::wstring str = L"Hello C++ World";
 	float x = 0.0f;
 	for (const auto& c : str)
 	{
@@ -369,7 +374,7 @@ void Render()
 		texture->Render();
 
 		x += 20.0f;
-	}*/
+	}
 
 	Window::Flip();
 }
