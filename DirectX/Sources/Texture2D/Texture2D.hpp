@@ -19,5 +19,9 @@ namespace aqua
 	private:
 
 		Handle<ID3D11ShaderResourceView> m_shaderResource;
+
+		float m_width;
+
+		float m_height;
 	};
 }
