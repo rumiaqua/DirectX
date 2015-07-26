@@ -4,6 +4,8 @@
 
 # include <unordered_map>
 
+# include "Window/Window.hpp"
+
 /// <summary>シェーダークラス</summary>
 class Shader
 {
@@ -16,11 +18,25 @@ private:
 
 		ID3DX11EffectTechnique* technique;
 
-		ID3DX11EffectPass* pass;
-
-		Handle<ID3D11InputLayout> inputLayout;
-
 		std::unordered_map<std::wstring, ID3DX11EffectVariable*> variable;
+	};
+
+public:
+
+	class Pass
+	{
+	public:
+		Pass(ID3DX11EffectPass* pass)
+			: m_pass(pass)
+		{
+
+		}
+		void Apply() const
+		{
+			m_pass->Apply(0U, Window::Context());
+		}
+	private:
+		ID3DX11EffectPass* m_pass;
 	};
 
 private:
@@ -28,6 +44,12 @@ private:
 	Shader();
 
 	static Shader& Instance();
+
+	static std::unordered_map<std::wstring, Effect>& Effects();
+
+	static Effect*& Current();
+
+	static Handle<ID3D11InputLayout>& InputLayout();
 
 	static bool IsCached(const std::wstring& name);
 
@@ -39,21 +61,19 @@ private:
 
 	static Effect& Access(const std::wstring& name);
 
-	static Effect& Current();
-
 public:
 
-	static void Change(const std::wstring& name);
+	static void RegistInputLayout();
 
 	static void AddShader(const std::wstring& name, const std::wstring& filepath);
 
-	static void Tech(const std::wstring& name);
+	static void Change(const std::wstring& name);
 
-	static void Pass(const std::wstring& name);
+	static void Change(const std::wstring& name, const std::wstring& filepath);
 
-	static void InputLayout(D3D11_INPUT_ELEMENT_DESC* layout, UINT num);
+	static void Technique(const std::wstring& name);
 
-	static void Apply();
+	static std::list<Pass> Passes();
 
 	static void SetMatrix(const std::wstring& name, const Matrix& matrix);
 
@@ -73,9 +93,13 @@ public:
 
 	static void SetDepthStencil(const std::wstring& name, UINT index, ID3D11DepthStencilState* depthStencil);
 
+	static void SetBlend(const std::wstring& name, UINT index, ID3D11BlendState* blendState);
+
 private:
 
 	std::unordered_map<std::wstring, Effect> m_effects;
 
 	Effect* m_current;
+
+	Handle<ID3D11InputLayout> m_inputLayout;
 };

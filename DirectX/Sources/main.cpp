@@ -6,6 +6,8 @@
 
 # include "Texture2D/Texture2D.hpp"
 
+# include <set>
+
 using namespace DirectX;
 
 Handle<ID3D11ShaderResourceView> shaderResourceView;
@@ -32,7 +34,9 @@ std::shared_ptr<aqua::Polygon> player;
 
 std::shared_ptr<aqua::Polygon> enemy;
 
-std::shared_ptr<aqua::Polygon> texture;
+std::shared_ptr<aqua::Polygon> back;
+
+// std::shared_ptr<aqua::Polygon> texture;
 
 static float t = 0.0f;
 
@@ -124,28 +128,18 @@ void Initialize()
 	enemy = aqua::Polygon::Plane();
 
 	// テクスチャ
-	texture = std::make_shared<aqua::Texture2D>(L"Contents/font2.png");
+	// texture = std::make_shared<aqua::Texture2D>(L"Contents/font2.png");
+
+	back = aqua::Polygon::Plane();
 
 	// シェーダーのセット
-
-	// 入力レイアウト
-	D3D11_INPUT_ELEMENT_DESC layout[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
 
 	// デフォルトシェーダー
 	Shader::AddShader(L"Default", L"Contents/Shader/DefaultShader.hlsl");
 	// シェーダーの切り替え
 	Shader::Change(L"Default");
 	// テクニックの指定
-	Shader::Tech(L"Default");
-	// パスの指定
-	Shader::Pass(L"P0");
-	// 入力レイアウトの指定
-	Shader::InputLayout(layout, ARRAYSIZE(layout));
+	Shader::Technique(L"Default");
 	// サンプラーステートのセット
 	Shader::SetSampler(L"samplerState", 0, sampler);
 	// シェーダーリソースビューのセット
@@ -156,11 +150,11 @@ void Initialize()
 	// シェーダーの切り替え
 	Shader::Change(L"Texture");
 	// テクニックの指定
-	Shader::Tech(L"Default");
-	// パスの指定
-	Shader::Pass(L"P0");
+	Shader::Technique(L"Default");
 	// サンプラーステートのセット
 	Shader::SetSampler(L"samplerState", 0, sampler);
+
+	Shader::RegistInputLayout();
 };
 
 void TimeElapsed()
@@ -326,56 +320,99 @@ void Render()
 	};
 	Window::Clear(clearColor);
 
+	// 作業順
+	struct RenderOrder
+	{
+		// alpha order
+		float a;
+		// z order
+		float z;
+		// func
+		std::function<void()> f;
+		RenderOrder(float a, float z, const std::function<void()>& f)
+			: a(a)
+			, z(z)
+			, f(f)
+		{
+
+		}
+		// 比較演算子
+		bool operator > (const RenderOrder& other) const
+		{
+			if (this->a == 1.0f)
+				return false;
+
+			if (other.a == 1.0f)
+				return true;
+
+			return other.z > this->z;
+		}
+		// 比較演算子
+		bool operator < (const RenderOrder& other) const
+		{
+			return (other > *this);
+		}
+	};
+
+	// 作業
+	std::set<RenderOrder> render;
+
 	// 色の変化
 	color.x = (sinf(t * 1.0f) + 1.0f) * 0.5f;
 	color.y = (cosf(t * 3.0f) + 1.0f) * 0.5f;
 	color.z = (sinf(t * 5.0f) + 1.0f) * 0.5f;
 	color.w = 1.0f;
 
+	render.emplace(1.0f, 0.0f, [=]
+	{
+
+		Shader::Change(L"Default");
+		Shader::SetMatrix(L"world", XMMatrixScaling(2.0f, 2.0f, 1.0f));
+		Shader::SetMatrix(L"view", view);
+		Shader::SetMatrix(L"projection", projection);
+		Shader::SetVector(L"color", Float4(1.0f, 1.0f, 1.0f, 1.0f));
+		for (const auto& pass : Shader::Passes())
+		{
+			pass.Apply();
+			back->Render();
+		}
+	});
+
 	// プレイヤーの描画
-	Shader::Change(L"Default");
-	Shader::SetMatrix(L"world", playerRotation * XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z));
-	Shader::SetMatrix(L"view", view);
-	Shader::SetMatrix(L"projection", projection);
-	Shader::SetVector(L"color", Float4(1.0f, 1.0f, 1.0f, 1.0f));
-	Shader::Apply();
-	player->Render();
+	render.emplace(0.1f, playerPosition.z, [=]
+	{
+		Shader::Change(L"Default");
+		Shader::SetMatrix(L"world", playerRotation * XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z));
+		Shader::SetMatrix(L"view", view);
+		Shader::SetMatrix(L"projection", projection);
+		Shader::SetVector(L"color", Float4(1.0f, 1.0f, 1.0f, 0.1f));
+		for (const auto& pass : Shader::Passes())
+		{
+			pass.Apply();
+			player->Render();
+		}
+	});
 
 	// エネミーの描画
-	Shader::Change(L"Default");
-	Shader::SetMatrix(L"world", enemyRotation * XMMatrixTranslation(enemyPosition.x, enemyPosition.y, enemyPosition.z));
-	Shader::SetMatrix(L"view", view);
-	Shader::SetMatrix(L"projection", projection);
-	Shader::SetVector(L"color", color);
-	Shader::Apply();
-	enemy->Render();
-
-	// テクスチャの描画
-	Shader::Change(L"Texture");
-
-	// 文字列の描画
-	// std::wstring str = L"pos : (100.0f, 200.0f, 300.0f)";
-	std::wstring str = L"panda";
-	float x = 0.0f;
-	for (const auto& c : str)
+	render.emplace(0.0f, enemyPosition.z, [=]
 	{
-		static std::wstring checklist = L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789. !\"#$%&'()-=^~\\|@`[{;+:*]},<.>/?\\_";
-
-		auto offset = checklist.find(c, 0);
-
-		if (offset == -1)
+		Shader::Change(L"Default");
+		Shader::SetMatrix(L"world", enemyRotation * XMMatrixTranslation(enemyPosition.x, enemyPosition.y, enemyPosition.z));
+		Shader::SetMatrix(L"view", view);
+		Shader::SetMatrix(L"projection", projection);
+		auto c = color;
+		c.a = 0.0f;
+		Shader::SetVector(L"color", c);
+		for (const auto& pass : Shader::Passes())
 		{
-			continue;
+			pass.Apply();
+			enemy->Render();
 		}
+	});
 
-		const unsigned char index = offset;
-		const float width = 1.0f / checklist.size();
-		Shader::SetMatrix(L"world", XMMatrixScaling(20.0f, 40.0f, 1.0f) * XMMatrixTranslation(x, 0.0f, 0.0f));
-		auto uv = Float4(index * width, 0.0f, width, 1.0f);
-		Shader::SetVector(L"uv", uv);
-		texture->Render();
-
-		x += 20.0f;
+	for (const auto& target : render)
+	{
+		target.f();
 	}
 
 	Window::Flip();
