@@ -135,18 +135,6 @@ namespace aqua
 	{
 		auto context = Window::Context();
 
-		for (const auto& pass : Shader::Passes())
-		{
-			pass->Apply(0U, context);
-			OnRender();
-		}
-	}
-
-	/// <summary>•`‰æ</summary>
-	void Polygon::OnRender()
-	{
-		auto context = Window::Context();
-
 		context->IASetVertexBuffers(
 			0U, 1U, &m_vertexBuffer, &m_stride, &m_offset);
 

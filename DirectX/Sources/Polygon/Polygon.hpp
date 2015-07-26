@@ -25,10 +25,6 @@ namespace aqua
 
 		virtual void Render();
 
-	private:
-
-		virtual void OnRender();
-
 	protected:
 
 		/// <summary>‰Šú‰»</summary>
