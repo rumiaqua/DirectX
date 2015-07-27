@@ -100,8 +100,10 @@
     <ClInclude Include="Sources\Handle\Handle.hpp" />
     <ClInclude Include="Sources\Model\Model.hpp" />
     <ClInclude Include="Sources\ObjLoader\ObjLoader.hpp" />
+    <ClInclude Include="Sources\OrderedRender\OrderedRender.hpp" />
     <ClInclude Include="Sources\Polygon\Polygon.hpp" />
     <ClInclude Include="Sources\Primitive\Primitive.hpp" />
+    <ClInclude Include="Sources\RenderingOrder\RenderingOrder.hpp" />
     <ClInclude Include="Sources\Shader\Shader.hpp" />
     <ClInclude Include="Sources\Vertex\Vertex.hpp" />
     <ClInclude Include="Sources\Texture2D\Texture2D.hpp" />

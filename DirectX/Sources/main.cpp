@@ -6,7 +6,7 @@
 
 # include "Texture2D/Texture2D.hpp"
 
-# include <set>
+# include "OrderedRender/OrderedRender.hpp"
 
 using namespace DirectX;
 
@@ -320,50 +320,13 @@ void Render()
 	};
 	Window::Clear(clearColor);
 
-	// ì‹Æ‡
-	struct RenderOrder
-	{
-		// alpha order
-		float a;
-		// z order
-		float z;
-		// func
-		std::function<void()> f;
-		RenderOrder(float a, float z, const std::function<void()>& f)
-			: a(a)
-			, z(z)
-			, f(f)
-		{
-
-		}
-		// ”äŠr‰‰Zq
-		bool operator > (const RenderOrder& other) const
-		{
-			if (this->a == 1.0f)
-				return false;
-
-			if (other.a == 1.0f)
-				return true;
-
-			return other.z > this->z;
-		}
-		// ”äŠr‰‰Zq
-		bool operator < (const RenderOrder& other) const
-		{
-			return (other > *this);
-		}
-	};
-
-	// ì‹Æ
-	std::set<RenderOrder> render;
-
 	// F‚Ì•Ï‰»
 	color.x = (sinf(t * 1.0f) + 1.0f) * 0.5f;
 	color.y = (cosf(t * 3.0f) + 1.0f) * 0.5f;
 	color.z = (sinf(t * 5.0f) + 1.0f) * 0.5f;
 	color.w = 1.0f;
 
-	render.emplace(1.0f, 0.0f, [=]
+	OrderedRender::Regist(1.0f, 0.0f, [=]
 	{
 
 		Shader::Change(L"Default");
@@ -379,7 +342,7 @@ void Render()
 	});
 
 	// ƒvƒŒƒCƒ„[‚Ì•`‰æ
-	render.emplace(0.1f, playerPosition.z, [=]
+	OrderedRender::Regist(0.1f, playerPosition.z, [=]
 	{
 		Shader::Change(L"Default");
 		Shader::SetMatrix(L"world", playerRotation * XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z));
@@ -394,7 +357,7 @@ void Render()
 	});
 
 	// ƒGƒlƒ~[‚Ì•`‰æ
-	render.emplace(0.0f, enemyPosition.z, [=]
+	OrderedRender::Regist(0.0f, enemyPosition.z, [=]
 	{
 		Shader::Change(L"Default");
 		Shader::SetMatrix(L"world", enemyRotation * XMMatrixTranslation(enemyPosition.x, enemyPosition.y, enemyPosition.z));
@@ -410,10 +373,7 @@ void Render()
 		}
 	});
 
-	for (const auto& target : render)
-	{
-		target.f();
-	}
+	OrderedRender::Render();
 
 	Window::Flip();
 }
