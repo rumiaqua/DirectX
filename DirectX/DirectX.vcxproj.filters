@@ -51,6 +51,12 @@
     <ClInclude Include="Sources\Vertex\Vertex.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\OrderedRender\OrderedRender.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\RenderingOrder\RenderingOrder.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\ObjLoader\ObjLoader.cpp">
@@ -86,10 +92,6 @@
     <Image Include="Contents\seafloor.dds" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Contents\Shader\DefaultShader.hlsl" />
-    <FxCompile Include="Contents\Shader\TextureShader.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
     <Library Include="Librarys\Effects11\Lib\Effects11d.lib" />
     <Library Include="Librarys\Effects11\Lib\Effects11.lib" />
     <Library Include="Librarys\DirectXTex\Lib\DirectXTexd.lib" />
@@ -99,5 +101,7 @@
     <None Include="Librarys\DirectXTex\Inc\DirectXTex.inl">
       <Filter>ヘッダー ファイル</Filter>
     </None>
+    <None Include="Contents\Shader\DefaultShader.hlsl" />
+    <None Include="Contents\Shader\TextureShader.hlsl" />
   </ItemGroup>
 </Project>

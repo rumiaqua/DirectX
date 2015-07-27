@@ -65,16 +65,16 @@ namespace aqua
 			throw std::exception("ÉäÉ\Å[ÉXÇÃê∂ê¨Ç…é∏îsÇµÇ‹ÇµÇΩ");
 		}
 
-		float width = (float)metadata.width;
-		float height = (float)metadata.height;
+		m_width = (float)metadata.width;
+		m_height = (float)metadata.height;
 
 		static const Vertex vertices[] =
 		{
 			// ê≥ñ 
 			{ Float3(0.0f, 0.0f, 0.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(width, 0.0f, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(0.0f, height, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(width, height, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(1.0f, 0.0f, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(0.0f, 1.0f, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Float3(1.0f, 1.0f, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
 		};
 
 		UINT numVertices = ARRAYSIZE(vertices);
@@ -100,7 +100,7 @@ namespace aqua
 	}
 
 	void Texture2D::Render()
-	{
+	{/*
 		Shader::Change(L"Texture");
 
 		static const Matrix Projection =
@@ -111,10 +111,11 @@ namespace aqua
 			-1.0f, 1.0f, 0.0f, 1.0f
 		};
 
-		Shader::SetMatrix(L"Projection", Projection);
-		Shader::SetShaderResource(L"txDiffuse", m_shaderResource);
-		Shader::Apply();
-
+		Shader::SetMatrix(L"projection", Projection);
+		Shader::SetShaderResource(L"texture2d", m_shaderResource);
+		// Shader::SetMatrix(L"world", DirectX::XMMatrixScaling(m_width, m_height, 1.0f));
+		Shader::SetVector(L"color", Float4(1.0f, 1.0f, 1.0f, 1.0f));
+		*/
 		Polygon::Render();
 	}
 }

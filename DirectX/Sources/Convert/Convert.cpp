@@ -10,6 +10,28 @@ std::wstring ToUnicode(const std::string& str)
 	return std::wstring { str.begin(), str.end() };
 }
 
+std::string ToNarrow(const std::wstring& wide)
+{
+	int slength = wide.length() + 1;
+	int len = WideCharToMultiByte(CP_ACP, 0U, wide.c_str(), wide.length(), 0, 0U, 0, 0);
+	char* buffer = new char[len];
+	WideCharToMultiByte(CP_ACP, 0U, wide.c_str(), wide.length(), buffer, len, 0, 0);
+	std::string result(buffer);
+	delete buffer;
+	return result;
+}
+
+std::wstring ToWide(const std::string& narrow)
+{
+	int slength = narrow.length() + 1;
+	int len = MultiByteToWideChar(CP_ACP, 0U, narrow.c_str(), narrow.length(), 0, 0);
+	wchar_t* buffer = new wchar_t[len];
+	MultiByteToWideChar(CP_ACP, 0U, narrow.c_str(), narrow.length(), buffer, len);
+	std::wstring result(buffer);
+	delete buffer;
+	return result;
+}
+
 /// <summary>•¶Žš—ñ‚ðŽw’è‚Ì•¶Žš‚Å•ªŠ„‚·‚é</summary>
 /// <param name="str">•¶Žš—ñ</param>
 /// <param name="delim">•ªŠ„“_‚Ì•¶Žš</param>

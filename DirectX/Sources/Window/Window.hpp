@@ -41,6 +41,12 @@ public:
 
 	static D3D_DRIVER_TYPE DriverType();
 
+	static UINT Width();
+
+	static UINT Height();
+
+	static float Aspect();
+
 private:
 
 	TCHAR* m_appname;
