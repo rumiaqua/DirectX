@@ -24,6 +24,7 @@ namespace aqua
 
 	}
 
+	/// <summary>—§•û‘Ì‚ð•Ô‚·</summary>
 	std::shared_ptr<Polygon> Polygon::Box()
 	{
 		static const Vertex vertices[] =
@@ -97,6 +98,7 @@ namespace aqua
 		return polygon;
 	}
 
+	/// <summary>”Â‚ð•Ô‚·</summary>
 	std::shared_ptr<Polygon> Polygon::Plane()
 	{
 		static const Vertex vertices[] =

@@ -8,6 +8,10 @@
 
 # include "OrderedRender/OrderedRender.hpp"
 
+# include "Convert/Convert.hpp"
+
+# include "Experimental/TestLoader/TestLoader.hpp"
+
 using namespace DirectX;
 
 Handle<ID3D11ShaderResourceView> shaderResourceView;
@@ -36,7 +40,7 @@ std::shared_ptr<aqua::Polygon> enemy;
 
 std::shared_ptr<aqua::Polygon> back;
 
-// std::shared_ptr<aqua::Polygon> texture;
+std::shared_ptr<aqua::Polygon> texture;
 
 static float t = 0.0f;
 
@@ -117,20 +121,21 @@ void Initialize()
 	playerRotation = XMMatrixIdentity();
 
 	// エネミー座標
-	enemyPosition = Float3(0.0f, 0.0f, 0.0f);
+	enemyPosition = Float3(0.0f, 0.0f, -10.0f);
 	// エネミー回転
 	enemyRotation = XMMatrixIdentity();
 
 	// プレイヤー
+	// player = aqua::Polygon::Box();
+	// player = aqua::Polygon::Plane();
+	// player = std::make_shared<aqua::Model>(L"Contents/Box.obj");
 	player = aqua::Polygon::Box();
 
 	// エネミー
 	enemy = aqua::Polygon::Plane();
 
 	// テクスチャ
-	// texture = std::make_shared<aqua::Texture2D>(L"Contents/font2.png");
-
-	back = aqua::Polygon::Plane();
+	texture = std::make_shared<aqua::Texture2D>(L"Contents/panda.png");
 
 	// シェーダーのセット
 
@@ -154,7 +159,19 @@ void Initialize()
 	// サンプラーステートのセット
 	Shader::SetSampler(L"samplerState", 0, sampler);
 
+	Shader::Change(L"Diffuse", L"Contents/Shader/ProgrammableShader.hlsl");
+	Shader::Technique(L"Diffuse");
+	Shader::SetShaderResource(L"texture2d", shaderResourceView);
+	Shader::SetSampler(L"samplerState", 0, sampler);
+	Shader::SetVector(L"diffuseLight", { 1.0f, 1.0f, 1.0f, 1.0f });
+	Shader::SetVector(L"diffuseMaterial", { 1.0f, 0.9f, 0.5f, 1.0f });
+	Shader::SetVector(L"lightPosition", { 0.0f, 0.0f, -10.0f, 0.0f });
+
 	Shader::RegistInputLayout();
+
+	Experimental::TestLoader loader { L"Contents/Box.obj" };
+	auto v = loader.Vertices();
+	auto i = loader.Indices();
 };
 
 void TimeElapsed()
@@ -177,7 +194,7 @@ void TimeElapsed()
 
 void PlayerRotate()
 {
-	/*float angle = 0.0f;
+	float angle = 0.0f;
 	if (GetAsyncKeyState(VK_LEFT) != 0)
 	{
 		angle -= oneRadian * deltaTime;
@@ -186,9 +203,9 @@ void PlayerRotate()
 	{
 		angle += oneRadian * deltaTime;
 	}
-	playerRotation = playerRotation * XMMatrixRotationY(angle);*/
+	playerRotation = playerRotation * XMMatrixRotationY(angle);
 
-	playerRotation = playerRotation * XMMatrixRotationRollPitchYaw(0.0f, oneRadian * deltaTime, 0.0f);
+//	playerRotation = playerRotation * XMMatrixRotationRollPitchYaw(0.0f, oneRadian * deltaTime, 0.0f);
 }
 
 void PlayerMove()
@@ -326,7 +343,7 @@ void Render()
 	color.z = (sinf(t * 5.0f) + 1.0f) * 0.5f;
 	color.w = 1.0f;
 
-	OrderedRender::Regist(1.0f, 0.0f, [=]
+	/*OrderedRender::Regist(1.0f, 0.0f, [=]
 	{
 
 		Shader::Change(L"Default");
@@ -339,10 +356,10 @@ void Render()
 			pass.Apply();
 			back->Render();
 		}
-	});
+	});*/
 
 	// プレイヤーの描画
-	OrderedRender::Regist(0.1f, playerPosition.z, [=]
+	/*OrderedRender::Regist(0.1f, playerPosition.z, [=]
 	{
 		Shader::Change(L"Default");
 		Shader::SetMatrix(L"world", playerRotation * XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z));
@@ -354,10 +371,40 @@ void Render()
 			pass.Apply();
 			player->Render();
 		}
+	});*/
+
+	OrderedRender::Regist(0.1f, playerPosition.z, [=]
+	{
+		Shader::Change(L"Diffuse");
+		auto model = playerRotation * XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z);
+		auto modelView = model * view;
+		Shader::SetMatrix(L"modelView", modelView);
+		Shader::SetMatrix(L"modelViewProjection", modelView * projection);
+		XMVECTOR det;
+		Float4 lightPosition { enemyPosition.x, enemyPosition.y, enemyPosition.z, 0.0f };
+		// Shader::SetVector(L"lightPosition", lightPosition);
+		auto inverse = XMMatrixInverse(&det, modelView);
+		auto transpose = XMMatrixTranspose(inverse);
+		Shader::SetMatrix(L"normal", transpose);
+		for (const auto& pass : Shader::Passes())
+		{
+			pass.Apply();
+			player->Render();
+		}
+	});
+
+	OrderedRender::Regist(1.0f, 0.0f, [=]
+	{
+		Shader::Change(L"Default");
+		for (auto&& pass : Shader::Passes())
+		{
+			pass.Apply();
+			texture->Render();
+		}
 	});
 
 	// エネミーの描画
-	OrderedRender::Regist(0.0f, enemyPosition.z, [=]
+	/*OrderedRender::Regist(0.0f, enemyPosition.z, [=]
 	{
 		Shader::Change(L"Default");
 		Shader::SetMatrix(L"world", enemyRotation * XMMatrixTranslation(enemyPosition.x, enemyPosition.y, enemyPosition.z));
@@ -371,7 +418,7 @@ void Render()
 			pass.Apply();
 			enemy->Render();
 		}
-	});
+	});*/
 
 	OrderedRender::Render();
 
@@ -380,20 +427,31 @@ void Render()
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	Initialize();
-
-	MSG msg = { 0 };
-
-	while (msg.message != WM_QUIT)
+	try
 	{
-		if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-			continue;
-		}
+		Initialize();
 
-		Update();
-		Render();
+		MSG msg = { 0 };
+
+		while (msg.message != WM_QUIT)
+		{
+			if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+				continue;
+			}
+
+			Update();
+			Render();
+		}
+	}
+	catch (std::exception& ex)
+	{
+		MessageBox(
+			NULL,
+			ToWide(ex.what()).c_str(),
+			L"例外をキャッチしました",
+			MB_OK);
 	}
 }

@@ -8,6 +8,10 @@ std::string ToMultibyte(const std::wstring& str);
 
 std::wstring ToUnicode(const std::string& str);
 
+std::string ToNarrow(const std::wstring& wide);
+
+std::wstring ToWide(const std::string& narrow);
+
 template <typename Type>
 Type ToValue(const std::wstring& str)
 {

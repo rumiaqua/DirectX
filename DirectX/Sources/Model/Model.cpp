@@ -2,6 +2,8 @@
 
 # include "ObjLoader/ObjLoader.hpp"
 
+# include "Experimental/TestLoader/TestLoader.hpp"
+
 namespace aqua
 {
 
@@ -14,18 +16,22 @@ namespace aqua
 	{
 		HRESULT hr = S_OK;
 
-		ObjLoader loader { filename };
+		Experimental::TestLoader loader { L"Contents/Box.obj" };
+		auto vertices = loader.Vertices();
+		auto indices = loader.Indices();
+
+		/*ObjLoader loader { filename };
 
 		auto vertices = loader.Vertices();
 
-		auto indices = loader.Indices();
+		auto indices = loader.Indices();*/
 
 		Initialize(
 			vertices.data(),
 			vertices.size(),
 			indices.data(),
 			indices.size(),
-			loader.Topology());
+			D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
 	Model::~Model()

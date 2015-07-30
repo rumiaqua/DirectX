@@ -46,8 +46,12 @@ ID3DX11EffectVariable* Shader::Cache(const std::wstring& name)
 
 ID3DX11EffectVariable* Shader::Regist(const std::wstring& name)
 {
-	Current()->variable[name] =
-		Current()->effect->GetVariableByName(ToMultibyte(name).c_str());
+	auto variable = Current()->effect->GetVariableByName(ToMultibyte(name).c_str());
+	if (!variable->IsValid())
+	{
+		throw std::exception("–³Œø‚È•Ï”‚Å‚·");
+	}
+	Current()->variable[name] = variable;
 
 	return Cache(name);
 }

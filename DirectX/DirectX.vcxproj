@@ -20,13 +20,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -97,6 +97,7 @@
     <ClInclude Include="Librarys\DirectXTex\Inc\DirectXTex.h" />
     <ClInclude Include="Librarys\Effects11\Inc\d3dx11effect.h" />
     <ClInclude Include="Sources\Convert\Convert.hpp" />
+    <ClInclude Include="Sources\Experimental\TestLoader\TestLoader.hpp" />
     <ClInclude Include="Sources\Handle\Handle.hpp" />
     <ClInclude Include="Sources\Model\Model.hpp" />
     <ClInclude Include="Sources\ObjLoader\ObjLoader.hpp" />
@@ -105,18 +106,21 @@
     <ClInclude Include="Sources\Primitive\Primitive.hpp" />
     <ClInclude Include="Sources\RenderingOrder\RenderingOrder.hpp" />
     <ClInclude Include="Sources\Shader\Shader.hpp" />
+    <ClInclude Include="Sources\Vector3\Vector3.hpp" />
     <ClInclude Include="Sources\Vertex\Vertex.hpp" />
     <ClInclude Include="Sources\Texture2D\Texture2D.hpp" />
     <ClInclude Include="Sources\Window\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\Convert\Convert.cpp" />
+    <ClCompile Include="Sources\Experimental\TestLoader\TestLoader.cpp" />
     <ClCompile Include="Sources\main.cpp" />
     <ClCompile Include="Sources\Model\Model.cpp" />
     <ClCompile Include="Sources\ObjLoader\ObjLoader.cpp" />
     <ClCompile Include="Sources\Polygon\Polygon.cpp" />
     <ClCompile Include="Sources\Shader\Shader.cpp" />
     <ClCompile Include="Sources\Texture2D\Texture2D.cpp" />
+    <ClCompile Include="Sources\Vector3\Vector3.cpp" />
     <ClCompile Include="Sources\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
