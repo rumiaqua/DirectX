@@ -17,15 +17,15 @@ ObjLoader::ObjLoader()
 
 }
 
-ObjLoader::ObjLoader(const std::wstring& filename)
+ObjLoader::ObjLoader(const String& filename)
 	: ObjLoader()
 {
 	Load(filename);
 }
 
-void ObjLoader::Load(const std::wstring& filename)
+void ObjLoader::Load(const String& filename)
 {
-	std::wifstream ifs { filename };
+	std::wifstream ifs { String::ToWide(filename) };
 
 	std::wstring buffer;
 
@@ -33,7 +33,7 @@ void ObjLoader::Load(const std::wstring& filename)
 	while (std::getline(ifs, buffer))
 	{
 		// 半角スペースで分割
-		auto split = Split(buffer, ' ');
+		auto split = String::Split(buffer, ' ');
 
 		// 最初の文字で判断
 		switch (buffer[0])
@@ -90,7 +90,7 @@ void ObjLoader::Load(const std::wstring& filename)
 	{
 		m_vertices.emplace_back(
 			m_positions[f.vertexIndex - 1],
-			f.texcoordIndex == 0 ? Float2(0.0f, 0.0f) : m_texcoords[f.texcoordIndex - 1],
+			f.texcoordIndex == 0 ? Vector2::Zero : m_texcoords[f.texcoordIndex - 1],
 			f.normalIndex == 0 ? m_positions[f.vertexIndex - 1] : m_normals[f.normalIndex - 1]);
 	}
 }
@@ -110,36 +110,36 @@ D3D11_PRIMITIVE_TOPOLOGY ObjLoader::Topology() const
 	return m_topology;
 }
 
-void ObjLoader::Position(const std::wstring& x, const std::wstring& y, const std::wstring& z)
+void ObjLoader::Position(const String& x, const String& y, const String& z)
 {
 	m_positions.emplace_back(
 		// ToValue<float>(x), ToValue<float>(y), ToValue<float>(z));
 		ToValue<float>(x), ToValue<float>(y), ToValue<float>(z));
 }
 
-void ObjLoader::Normal(const std::wstring& x, const std::wstring& y, const std::wstring& z)
+void ObjLoader::Normal(const String& x, const String& y, const String& z)
 {
 	m_normals.emplace_back(
 		ToValue<float>(x), ToValue<float>(y), ToValue<float>(z));
 }
 
-void ObjLoader::Texcoord(const std::wstring& u, const std::wstring& v)
+void ObjLoader::Texcoord(const String& u, const String& v)
 {
 	m_texcoords.emplace_back(
 		ToValue<float>(u), ToValue<float>(v));
 }
 
-void ObjLoader::Face(const std::wstring& f1, const std::wstring& f2, const std::wstring& f3)
+void ObjLoader::Face(const String& f1, const String& f2, const String& f3)
 {
 	Face(f1);
 	Face(f2);
 	Face(f3);
 }
 
-void ObjLoader::Face(const std::wstring& f)
+void ObjLoader::Face(const String& f)
 {
 	// スラッシュで分割
-	auto split = Split(f, '/');
+	auto split = String::Split(f, '/');
 
 	// 要素数で判断
 	switch (split.size())
@@ -159,7 +159,7 @@ void ObjLoader::Face(const std::wstring& f)
 		// 3つなら座標と（UV座標と）法線
 		case 3:
 		{
-			m_faces.emplace_back(ToValue<WORD>(split[0]), split[1].size() > 1 ? ToValue<WORD>(split[1]) : 0U, ToValue<WORD>(split[2]));
+			m_faces.emplace_back(ToValue<WORD>(split[0]), String::Length(split[1]) > 1 ? ToValue<WORD>(split[1]) : 0U, ToValue<WORD>(split[2]));
 			break;
 		}
 	}

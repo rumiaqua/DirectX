@@ -1,7 +1,5 @@
 # include "Polygon.hpp"
 
-# include "Vertex/Vertex.hpp"
-
 # include "Window/Window.hpp"
 
 # include <memory>
@@ -30,35 +28,35 @@ namespace aqua
 		static const Vertex vertices[] =
 		{
 			// ê≥ñ 
-			{ Float3(-1.0f, -1.0f, -1.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(-1.0f, +1.0f, -1.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(+1.0f, +1.0f, -1.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(+1.0f, -1.0f, -1.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Vector3(-1.0f, -1.0f, -1.0f), Vector2(0.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f) },
+			{ Vector3(-1.0f, +1.0f, -1.0f), Vector2(0.0f, 1.0f), Vector3(0.0f, 0.0f, -1.0f) },
+			{ Vector3(+1.0f, +1.0f, -1.0f), Vector2(1.0f, 1.0f), Vector3(0.0f, 0.0f, -1.0f) },
+			{ Vector3(+1.0f, -1.0f, -1.0f), Vector2(1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f) },
 			// âE
-			{ Float3(+1.0f, -1.0f, -1.0f), Float2(0.0f, 0.0f), Float3(1.0f, 0.0f, 0.0f) },
-			{ Float3(+1.0f, +1.0f, -1.0f), Float2(0.0f, 1.0f), Float3(1.0f, 0.0f, 0.0f) },
-			{ Float3(+1.0f, +1.0f, +1.0f), Float2(1.0f, 1.0f), Float3(1.0f, 0.0f, 0.0f) },
-			{ Float3(+1.0f, -1.0f, +1.0f), Float2(1.0f, 0.0f), Float3(1.0f, 0.0f, 0.0f) },
+			{ Vector3(+1.0f, -1.0f, -1.0f), Vector2(0.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f) },
+			{ Vector3(+1.0f, +1.0f, -1.0f), Vector2(0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f) },
+			{ Vector3(+1.0f, +1.0f, +1.0f), Vector2(1.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f) },
+			{ Vector3(+1.0f, -1.0f, +1.0f), Vector2(1.0f, 0.0f), Vector3(1.0f, 0.0f, 0.0f) },
 			// îwñ 
-			{ Float3(+1.0f, -1.0f, +1.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, 1.0f) },
-			{ Float3(+1.0f, +1.0f, +1.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, 1.0f) },
-			{ Float3(-1.0f, +1.0f, +1.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, 1.0f) },
-			{ Float3(-1.0f, -1.0f, +1.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, 1.0f) },
+			{ Vector3(+1.0f, -1.0f, +1.0f), Vector2(0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f) },
+			{ Vector3(+1.0f, +1.0f, +1.0f), Vector2(0.0f, 1.0f), Vector3(0.0f, 0.0f, 1.0f) },
+			{ Vector3(-1.0f, +1.0f, +1.0f), Vector2(1.0f, 1.0f), Vector3(0.0f, 0.0f, 1.0f) },
+			{ Vector3(-1.0f, -1.0f, +1.0f), Vector2(1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f) },
 			// ç∂
-			{ Float3(-1.0f, -1.0f, +1.0f), Float2(0.0f, 0.0f), Float3(-1.0f, 0.0f, 0.0f) },
-			{ Float3(-1.0f, +1.0f, +1.0f), Float2(0.0f, 1.0f), Float3(-1.0f, 0.0f, 0.0f) },
-			{ Float3(-1.0f, +1.0f, -1.0f), Float2(1.0f, 1.0f), Float3(-1.0f, 0.0f, 0.0f) },
-			{ Float3(-1.0f, -1.0f, -1.0f), Float2(1.0f, 0.0f), Float3(-1.0f, 0.0f, 0.0f) },
+			{ Vector3(-1.0f, -1.0f, +1.0f), Vector2(0.0f, 0.0f), Vector3(-1.0f, 0.0f, 0.0f) },
+			{ Vector3(-1.0f, +1.0f, +1.0f), Vector2(0.0f, 1.0f), Vector3(-1.0f, 0.0f, 0.0f) },
+			{ Vector3(-1.0f, +1.0f, -1.0f), Vector2(1.0f, 1.0f), Vector3(-1.0f, 0.0f, 0.0f) },
+			{ Vector3(-1.0f, -1.0f, -1.0f), Vector2(1.0f, 0.0f), Vector3(-1.0f, 0.0f, 0.0f) },
 			// è„
-			{ Float3(-1.0f, +1.0f, -1.0f), Float2(0.0f, 0.0f), Float3(0.0f, 1.0f, 0.0f) },
-			{ Float3(-1.0f, +1.0f, +1.0f), Float2(0.0f, 1.0f), Float3(0.0f, 1.0f, 0.0f) },
-			{ Float3(+1.0f, +1.0f, +1.0f), Float2(1.0f, 1.0f), Float3(0.0f, 1.0f, 0.0f) },
-			{ Float3(+1.0f, +1.0f, -1.0f), Float2(1.0f, 0.0f), Float3(0.0f, 1.0f, 0.0f) },
+			{ Vector3(-1.0f, +1.0f, -1.0f), Vector2(0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f) },
+			{ Vector3(-1.0f, +1.0f, +1.0f), Vector2(0.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f) },
+			{ Vector3(+1.0f, +1.0f, +1.0f), Vector2(1.0f, 1.0f), Vector3(0.0f, 1.0f, 0.0f) },
+			{ Vector3(+1.0f, +1.0f, -1.0f), Vector2(1.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f) },
 			// â∫
-			{ Float3(-1.0f, -1.0f, +1.0f), Float2(0.0f, 0.0f), Float3(0.0f, -1.0f, 0.0f) },
-			{ Float3(-1.0f, -1.0f, -1.0f), Float2(0.0f, 1.0f), Float3(0.0f, -1.0f, 0.0f) },
-			{ Float3(+1.0f, -1.0f, -1.0f), Float2(1.0f, 1.0f), Float3(0.0f, -1.0f, 0.0f) },
-			{ Float3(+1.0f, -1.0f, +1.0f), Float2(1.0f, 0.0f), Float3(0.0f, -1.0f, 0.0f) },
+			{ Vector3(-1.0f, -1.0f, +1.0f), Vector2(0.0f, 0.0f), Vector3(0.0f, -1.0f, 0.0f) },
+			{ Vector3(-1.0f, -1.0f, -1.0f), Vector2(0.0f, 1.0f), Vector3(0.0f, -1.0f, 0.0f) },
+			{ Vector3(+1.0f, -1.0f, -1.0f), Vector2(1.0f, 1.0f), Vector3(0.0f, -1.0f, 0.0f) },
+			{ Vector3(+1.0f, -1.0f, +1.0f), Vector2(1.0f, 0.0f), Vector3(0.0f, -1.0f, 0.0f) },
 		};
 
 		UINT numVertices = ARRAYSIZE(vertices);
@@ -104,10 +102,10 @@ namespace aqua
 		static const Vertex vertices[] =
 		{
 			// ê≥ñ 
-			{ Float3(-1.0f, -1.0f, 0.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(-1.0f, +1.0f, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(+1.0f, +1.0f, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(+1.0f, -1.0f, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Vector3(-1.0f, -1.0f, 0.0f), Vector2(0.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f) },
+			{ Vector3(-1.0f, +1.0f, 0.0f), Vector2(0.0f, 1.0f), Vector3(0.0f, 0.0f, -1.0f) },
+			{ Vector3(+1.0f, +1.0f, 0.0f), Vector2(1.0f, 1.0f), Vector3(0.0f, 0.0f, -1.0f) },
+			{ Vector3(+1.0f, -1.0f, 0.0f), Vector2(1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f) },
 		};
 
 		UINT numVertices = ARRAYSIZE(vertices);

@@ -1,72 +1,208 @@
 # pragma once
 
-class Vector3
+# include <DirectXPackedVector.h>
+
+namespace aqua
 {
-	// constructor
-public:
+	using namespace DirectX;
 
-	Vector3();
+	class Vector2;
 
-	Vector3(const Vector3& other);
+	class Vector4;
 
-	Vector3(float x, float y, float z);
+	class Vector3
+	{
+	public:
 
-	Vector3(const Float3& f);
+		/// <summary>零ベクトル</summary>
+		static const Vector3 Zero;
 
-	// operator overload
-public:
+		/// <summary>(1, 1, 1)のベクトル</summary>
+		static const Vector3 One;
 
-	Vector3& operator = (const Vector3& other);
+		/// <summary>(-1, 0, 0)のベクトル</summary>
+		static const Vector3 Left;
 
-	operator Float3() const;
+		/// <summary>(1, 0, 0)のベクトル</summary>
+		static const Vector3 Right;
 
-	// unary math method
-public:
+		/// <summary>(0, 1, 0)のベクトル</summary>
+		static const Vector3 Up;
 
-	static float LengthSquared(const Vector3& v);
+		/// <summary>(0, -1, 0)のベクトル</summary>
+		static const Vector3 Down;
 
-	static float Length(const Vector3& v);
+		/// <summary>(0, 0, 1)のベクトル</summary>
+		static const Vector3 Forward;
 
-	static Vector3& Normalize(Vector3& v);
+		/// <summary>(0, 0, -1)のベクトル</summary>
+		static const Vector3 Backward;
 
-	static Vector3 Normalized(const Vector3& v);
+	public:
 
-	// binary math method
-public:
+		/// <summary>デフォルトコンストラクタ</summary>
+		Vector3();
 
-	static float Dot(const Vector3& v1, const Vector3& v2);
+		/// <summary>コピーコンストラクタ</summary>
+		/// <param name="v">ベクトル</param>
+		Vector3(const Vector3& other);
 
-	static Vector3 Cross(const Vector3& v1, const Vector3& v2);
+		/// <summary>DirectXベクトルから変換</summary>
+		/// <param name="v">DirectXベクトル</param>
+		Vector3(const XMVECTOR& xm);
 
-public:
+		/// <summary>二次元ベクトルから変換</summary>
+		/// <param name="v">二次元ベクトル</param>
+		/// <param name="z">z要素</param>
+		Vector3(const Vector2& v, float z = -1.0f);
 
-	float x;
+		/// <summary>四次元ベクトルから変換</summary>
+		/// <param name="v">四次元ベクトル</param>
+		Vector3(const Vector4& v);
 
-	float y;
+		/// <summary>要素を指定する</summary>
+		/// <param name="x">x</param>
+		/// <param name="y">y</param>
+		/// <param name="z">z</param>
+		Vector3(float x, float y, float z);
 
-	float z;
-};
+	public:
 
-bool operator == (const Vector3& v1, const Vector3& v2);
+		/// <summary>コピー演算子</summary>
+		/// <param name="other">ベクトル</param>
+		/// <returns>自身</returns>
+		Vector3& operator = (const Vector3& other);
 
-bool operator != (const Vector3& v1, const Vector3& v2);
+	public:
 
-Vector3& operator += (Vector3& v1, const Vector3& v2);
+		/// <summary>長さの二乗を返す</summary>
+		/// <param name="v">ベクトル</param>
+		/// <returns>長さの二乗</returns>
+		static float LengthSquared(const Vector3& v);
 
-Vector3& operator -= (Vector3& v1, const Vector3& v2);
+		/// <summary>長さを返す</summary>
+		/// <param name="v">ベクトル</param>
+		/// <returns>長さ</returns>
+		static float Length(const Vector3& v);
 
-Vector3& operator *= (Vector3& v, float s);
+		/// <summary>正規化されたベクトルを返す</summary>
+		/// <param name="v">ベクトル</param>
+		/// <returns>正規化されたベクトル</returns>
+		static Vector3 Normalize(const Vector3& v);
 
-Vector3& operator *= (float s, Vector3& v);
+		/// <summary>0から1の間にクランプされたベクトルを返す</summary>
+		/// <param name="v">ベクトル</param>
+		/// <returns>0から1の間にクランプされたベクトル</returns>
+		static Vector3 Saturate(const Vector3& v);
 
-Vector3& operator /= (Vector3& v, float s);
+		/// <summary>指定桁数でならしたベクトルを返す</summary>
+		/// <param name="v">ベクトル</param>
+		/// <returns>ならしたベクトル</returns>
+		static Vector3 Smooth(const Vector3& v, int f = -4);
 
-Vector3 operator + (const Vector3& v1, const Vector3& v2);
+		/// <summary>内積を返す</summary>
+		/// <param name="v1">ベクトル</param>
+		/// <param name="v2">ベクトル</param>
+		/// <returns>内積</returns>
+		static float Dot(const Vector3& v1, const Vector3& v2);
 
-Vector3 operator - (const Vector3& v1, const Vector3& v2);
+		/// <summary>外積を返す</summary>
+		/// <param name="v1">ベクトル</param>
+		/// <param name="v2">ベクトル</param>
+		/// <returns>外積</returns>
+		static Vector3 Cross(const Vector3& v1, const Vector3& v2);
 
-Vector3 operator * (const Vector3& v, float s);
+		/// <summary>DirectXのベクトルに変換する</summary>
+		/// <param name="v">ベクトル</param>
+		/// <param name="w">w要素の値</param>
+		/// <returns>DirectXのベクトル</returns>
+		static XMVECTOR ToVector(const Vector3& v, float w = 1.0f);
 
-Vector3 operator * (float s, const Vector3& v);
+		/// <summary>距離を返す</summary>
+		/// <param name="v1">ベクトル</param>
+		/// <param name="v2">ベクトル</param>
+		/// <returns>距離</returns>
+		static float Distance(const Vector3& v1, const Vector3& v2);
 
-Vector3 operator / (const Vector3& v, float s);
+		/// <summary>壁ずりベクトルを返す</summary>
+		/// <param name="v1">ベクトル</param>
+		/// <param name="v2">法線ベクトル</param>
+		/// <returns>壁ずりベクトル</returns>
+		static Vector3 Scratch(const Vector3& v, const Vector3& normal);
+
+		/// <summary>反射ベクトルを返す</summary>
+		/// <param name="v1">ベクトル</param>
+		/// <param name="v2">法線ベクトル</param>
+		/// <returns>反射ベクトル</returns>
+		static Vector3 Reflect(const Vector3& v, const Vector3& normal);
+
+		/// <summary>射影ベクトルを返す</summary>
+		/// <param name="v1">ベクトル</param>
+		/// <param name="v2">対象のベクトル</param>
+		/// <returns>射影ベクトル</returns>
+		static Vector3 Projection(const Vector3& v, const Vector3& target);
+
+		/// <summary>線形補間したベクトルを返す</summary>
+		/// <param name="v1">始点</param>
+		/// <param name="v2">終点</param>
+		/// <param name="t">比率</param>
+		/// <returns>補間ベクトル</returns>
+		static Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t);
+
+	public:
+
+		union
+		{
+			/// <summary>色</summary>
+			struct
+			{
+				float r;
+
+				float g;
+
+				float b;
+			};
+
+			/// <summary>座標</summary>
+			struct
+			{
+				float x;
+
+				float y;
+
+				float z;
+			};
+
+			/// <summary>配列</summary>
+			float elm[3];
+		};
+	};
+
+	bool operator == (const Vector3& v1, const Vector3& v2);
+
+	bool operator != (const Vector3& v1, const Vector3& v2);
+
+	Vector3 operator + (const Vector3& v);
+
+	Vector3 operator - (const Vector3& v);
+
+	Vector3& operator += (Vector3& v1, const Vector3& v2);
+
+	Vector3& operator -= (Vector3& v1, const Vector3& v2);
+
+	Vector3& operator *= (Vector3& v, float s);
+
+	Vector3& operator *= (float s, Vector3& v);
+
+	Vector3& operator /= (Vector3& v, float s);
+
+	Vector3 operator + (const Vector3& v1, const Vector3& v2);
+
+	Vector3 operator - (const Vector3& v1, const Vector3& v2);
+
+	Vector3 operator * (const Vector3& v, float s);
+
+	Vector3 operator * (float s, const Vector3& v);
+
+	Vector3 operator / (const Vector3& v, float s);
+}

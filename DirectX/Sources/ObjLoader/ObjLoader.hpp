@@ -4,8 +4,6 @@
 
 # include <vector>
 
-# include "Primitive/Primitive.hpp"
-
 # include "Vertex/Vertex.hpp"
 
 /// <summary>OBJファイル読込クラス</summary>
@@ -47,13 +45,13 @@ public:
 
 	/// <summary>コンストラクタ</summary>
 	/// <param name="filename">ファイル名</param>
-	ObjLoader(const std::wstring& filename);
+	ObjLoader(const String& filename);
 
 public:
 
 	/// <summary>OBJファイル読込</summary>
 	/// <param name="filename">ファイル名</param>
-	void Load(const std::wstring& filename);
+	void Load(const String& filename);
 
 	/// <summary>頂点リストを返す</summary>
 	/// <returns>頂点リスト</returns>
@@ -73,39 +71,39 @@ private:
 	/// <param name="x">x座標の文字列</param>
 	/// <param name="y">y座標の文字列</param>
 	/// <param name="z">z座標の文字列</param>
-	void Position(const std::wstring& x, const std::wstring& y, const std::wstring& z);
+	void Position(const String& x, const String& y, const String& z);
 
 	/// <summary>法線データをバッファに追加</summary>
 	/// <param name="x">x座標の文字列</param>
 	/// <param name="y">y座標の文字列</param>
 	/// <param name="z">z座標の文字列</param>
-	void Normal(const std::wstring& x, const std::wstring& y, const std::wstring& z);
+	void Normal(const String& x, const String& y, const String& z);
 
 	/// <summary>テクスチャ座標データをバッファに追加</summary>
 	/// <param name="x">u座標の文字列</param>
 	/// <param name="y">v座標の文字列</param>
-	void Texcoord(const std::wstring& u, const std::wstring& v);
+	void Texcoord(const String& u, const String& v);
 
 	/// <summary>面データをバッファに追加</summary>
 	/// <param name="f1">1つ目の面の文字列</param>
 	/// <param name="f2">2つ目の面の文字列</param>
 	/// <param name="f3">3つ目の面の文字列</param>
-	void Face(const std::wstring& f1, const std::wstring& f2, const std::wstring& f3);
+	void Face(const String& f1, const String& f2, const String& f3);
 
 	/// <summary>面データをバッファに追加</summary>
 	/// <param name="f">面データ</param>
-	void Face(const std::wstring& f);
+	void Face(const String& f);
 
 private:
 
 	/// <summary>頂点バッファ</summary>
-	std::vector<Float3> m_positions;
+	std::vector<Vector3> m_positions;
 
 	/// <summary>法線バッファ</summary>
-	std::vector<Float3> m_normals;
+	std::vector<Vector3> m_normals;
 
 	/// <summary>テクスチャ座標バッファ</summary>
-	std::vector<Float2> m_texcoords;
+	std::vector<Vector2> m_texcoords;
 
 	/// <summary>面バッファ</summary>
 	std::vector<FaceElement> m_faces;

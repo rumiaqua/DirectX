@@ -6,35 +6,33 @@
 
 # include "Window/Window.hpp"
 
-# include "Vertex/Vertex.hpp"
-
 namespace aqua
 {
-	Texture2D::Texture2D(const std::wstring& filename)
+	Texture2D::Texture2D(const String& filename)
 	{
 		Load(filename);
 	}
 
-	void Texture2D::Load(const std::wstring& filename)
+	void Texture2D::Load(const String& filename)
 	{
 		DirectX::TexMetadata metadata;
 		DirectX::ScratchImage image;
 
 		HRESULT hr = S_OK;
 
-		auto split = Split(filename, '.');
+		auto split = String::Split(filename, '.');
 
 		if (split.back() == L"tga")
 		{
 			hr = DirectX::LoadFromTGAFile(
-				filename.c_str(),
+				filename,
 				&metadata,
 				image);
 		}
 		else if (split.back() == L"dds")
 		{
 			hr = DirectX::LoadFromDDSFile(
-				filename.c_str(),
+				filename,
 				0U,
 				&metadata,
 				image);
@@ -42,7 +40,7 @@ namespace aqua
 		else
 		{
 			hr = DirectX::LoadFromWICFile(
-				filename.c_str(),
+				filename,
 				0U,
 				&metadata,
 				image);
@@ -71,10 +69,10 @@ namespace aqua
 		static const Vertex vertices[] =
 		{
 			// ê≥ñ 
-			{ Float3(0.0f, 0.0f, 0.0f), Float2(0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(1.0f, 0.0f, 0.0f), Float2(1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(0.0f, 1.0f, 0.0f), Float2(0.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
-			{ Float3(1.0f, 1.0f, 0.0f), Float2(1.0f, 1.0f), Float3(0.0f, 0.0f, -1.0f) },
+			{ Vector3(0.0f, 0.0f, 0.0f), Vector2(0.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f) },
+			{ Vector3(1.0f, 0.0f, 0.0f), Vector2(1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f) },
+			{ Vector3(0.0f, 1.0f, 0.0f), Vector2(0.0f, 1.0f), Vector3(0.0f, 0.0f, -1.0f) },
+			{ Vector3(1.0f, 1.0f, 0.0f), Vector2(1.0f, 1.0f), Vector3(0.0f, 0.0f, -1.0f) },
 		};
 
 		UINT numVertices = ARRAYSIZE(vertices);
@@ -112,7 +110,7 @@ namespace aqua
 		Shader::SetMatrix(L"projection", Projection);
 		Shader::SetShaderResource(L"texture2d", m_shaderResource);
 		Shader::SetMatrix(L"world", DirectX::XMMatrixScaling(m_width, m_height, 1.0f));
-		Shader::SetVector(L"color", Float4(1.0f, 1.0f, 1.0f, 1.0f));
+		Shader::SetVector(L"color", { 1.0f, 1.0f, 1.0f, 1.0f });
 
 		Polygon::Render();
 	}

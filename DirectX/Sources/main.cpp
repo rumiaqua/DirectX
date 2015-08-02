@@ -10,27 +10,37 @@
 
 # include "Convert/Convert.hpp"
 
+# include "Vector2/Vector2.hpp"
+
+# include "Vector3/Vector3.hpp"
+
+# include "Vector4/Vector4.hpp"
+
+# include "Matrix/Matrix.hpp"
+
+using namespace aqua;
+
 using namespace DirectX;
 
 Handle<ID3D11ShaderResourceView> shaderResourceView;
 
 Handle<ID3D11SamplerState> sampler;
 
-Float3 eye;
-Float3 at;
-Float3 up;
+Vector3 eye;
+Vector3 at;
+Vector3 up;
 
 Matrix view;
 
 Matrix projection;
 
-Float4 color;
+Vector4 color;
 
 Matrix playerRotation;
-Float3 playerPosition;
+Vector3 playerPosition;
 
 Matrix enemyRotation;
-Float3 enemyPosition;
+Vector3 enemyPosition;
 
 std::shared_ptr<aqua::Polygon> player;
 
@@ -92,34 +102,34 @@ void Initialize()
 	}
 
 	// 視点座標
-	eye = Float3(0.0f, 3.0f, -6.0f);
+	eye = Vector3(0.0f, 3.0f, -6.0f);
 
 	// 注視点座標
-	at = Float3(0.0f, 0.0f, 0.0f);
+	at = Vector3(0.0f, 0.0f, 0.0f);
 
 	// 上方向ベクトル
-	up = Float3(0.0f, 1.0f, 0.0f);
+	up = Vector3(0.0f, 1.0f, 0.0f);
 
 	// ビュー行列
 	view = XMMatrixLookAtLH(
-		eye.ToVector(0.0f),
-		at.ToVector(0.0f),
-		up.ToVector(0.0f));
+		Vector3::ToVector(eye, 0.0f),
+		Vector3::ToVector(at, 0.0f),
+		Vector3::ToVector(up, 0.0f));
 
 	// 透視射影行列
 	projection = XMMatrixPerspectiveFovLH(
 		XM_PIDIV4, Window::Aspect(), 0.1f, 250.0f);
 
 	// 色
-	color = Float4(1.0f, 1.0f, 1.0f, 1.0f);
+	color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// プレイヤー座標
-	playerPosition = Float3(0.0f, 0.0f, 0.0f);
+	playerPosition = Vector3(0.0f, 0.0f, 0.0f);
 	// プレイヤー回転
 	playerRotation = XMMatrixIdentity();
 
 	// エネミー座標
-	enemyPosition = Float3(0.0f, 0.0f, -10.0f);
+	enemyPosition = Vector3(0.0f, 0.0f, -10.0f);
 	// エネミー回転
 	enemyRotation = XMMatrixIdentity();
 
@@ -207,7 +217,7 @@ void PlayerRotate()
 	}
 	playerRotation = playerRotation * XMMatrixRotationY(angle);
 
-//	playerRotation = playerRotation * XMMatrixRotationRollPitchYaw(0.0f, oneRadian * deltaTime, 0.0f);
+	//	playerRotation = playerRotation * XMMatrixRotationRollPitchYaw(0.0f, oneRadian * deltaTime, 0.0f);
 }
 
 // プレイヤー移動
@@ -316,9 +326,9 @@ void EyeMove()
 void ViewMatrix()
 {
 	view = XMMatrixLookAtLH(
-		eye.ToVector(0.0f),
-		at.ToVector(0.0f),
-		up.ToVector(0.0f));
+		Vector3::ToVector(eye, 0.0f),
+		Vector3::ToVector(at, 0.0f),
+		Vector3::ToVector(up, 0.0f));
 }
 
 // 更新
@@ -357,7 +367,7 @@ void Render()
 		Shader::SetMatrix(L"world", playerRotation * XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z));
 		Shader::SetMatrix(L"view", view);
 		Shader::SetMatrix(L"projection", projection);
-		Shader::SetVector(L"color", Float4(1.0f, 1.0f, 1.0f, 0.1f));
+		Shader::SetVector(L"color", Vector4(1.0f, 1.0f, 1.0f, 0.1f));
 		for (const auto& pass : Shader::Passes())
 		{
 			pass.Apply();
@@ -374,7 +384,7 @@ void Render()
 		Shader::SetMatrix(L"modelView", modelView);
 		Shader::SetMatrix(L"modelViewProjection", modelView * projection);
 		XMVECTOR det;
-		Float4 lightPosition { enemyPosition.x, enemyPosition.y, enemyPosition.z, 0.0f };
+		Vector4 lightPosition { enemyPosition.x, enemyPosition.y, enemyPosition.z, 0.0f };
 		// Shader::SetVector(L"lightPosition", lightPosition);
 		auto inverse = XMMatrixInverse(&det, modelView);
 		auto transpose = XMMatrixTranspose(inverse);
@@ -441,7 +451,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	{
 		MessageBox(
 			NULL,
-			ToWide(ex.what()).c_str(),
+			String(ex.what()),
 			L"例外をキャッチしました",
 			MB_OK);
 	}

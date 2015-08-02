@@ -8,9 +8,9 @@ namespace aqua
 	{
 	public:
 
-		Texture2D(const std::wstring& filename);
+		Texture2D(const String& filename);
 
-		void Load(const std::wstring& filename);
+		void Load(const String& filename);
 
 		virtual ~Texture2D();
 

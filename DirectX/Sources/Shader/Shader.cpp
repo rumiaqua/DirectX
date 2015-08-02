@@ -19,7 +19,7 @@ Shader& Shader::Instance()
 	return shader;
 }
 
-std::unordered_map<std::wstring, Shader::Effect>& Shader::Effects()
+std::unordered_map<String, Shader::Effect>& Shader::Effects()
 {
 	return Instance().m_effects;
 }
@@ -34,19 +34,19 @@ Handle<ID3D11InputLayout>& Shader::InputLayout()
 	return Instance().m_inputLayout;
 }
 
-bool Shader::IsCached(const std::wstring& name)
+bool Shader::IsCached(const String& name)
 {
 	return Current()->variable.find(name) != Current()->variable.end();
 }
 
-ID3DX11EffectVariable* Shader::Cache(const std::wstring& name)
+ID3DX11EffectVariable* Shader::Cache(const String& name)
 {
 	return Current()->variable.at(name);
 }
 
-ID3DX11EffectVariable* Shader::Regist(const std::wstring& name)
+ID3DX11EffectVariable* Shader::Regist(const String& name)
 {
-	auto variable = Current()->effect->GetVariableByName(ToMultibyte(name).c_str());
+	auto variable = Current()->effect->GetVariableByName(name);
 	if (!variable->IsValid())
 	{
 		throw std::exception("無効な変数です");
@@ -56,7 +56,7 @@ ID3DX11EffectVariable* Shader::Regist(const std::wstring& name)
 	return Cache(name);
 }
 
-ID3DX11EffectVariable* Shader::Variable(const std::wstring& name)
+ID3DX11EffectVariable* Shader::Variable(const String& name)
 {
 	if (IsCached(name))
 	{
@@ -65,12 +65,12 @@ ID3DX11EffectVariable* Shader::Variable(const std::wstring& name)
 
 	auto val = Regist(name);
 
-	assert(val && (L"だめです : " + name).c_str());
+	assert(val && (const char*)name);
 
 	return val;
 }
 
-Shader::Effect& Shader::Access(const std::wstring& name)
+Shader::Effect& Shader::Access(const String& name)
 {
 	return Effects()[name];
 }
@@ -114,10 +114,10 @@ void Shader::RegistInputLayout()
 	Window::Context()->IASetInputLayout(InputLayout());
 }
 
-void Shader::AddShader(const std::wstring& name, const std::wstring& filepath)
+void Shader::AddShader(const String& name, const String& filepath)
 {
 	if (FAILED(D3DX11CompileEffectFromFile(
-		filepath.c_str(),
+		filepath,
 		NULL,
 		NULL,
 		0U,
@@ -130,22 +130,21 @@ void Shader::AddShader(const std::wstring& name, const std::wstring& filepath)
 	}
 }
 
-void Shader::Change(const std::wstring& name)
+void Shader::Change(const String& name)
 {
 	Current() = &Instance().m_effects.at(name);
 }
 
-void Shader::Change(const std::wstring& name, const std::wstring& filepath)
+void Shader::Change(const String& name, const String& filepath)
 {
 	AddShader(name, filepath);
 	Change(name);
 }
 
-void Shader::Technique(const std::wstring& name)
+void Shader::Technique(const String& name)
 {
 	Current()->technique =
-		Current()->effect->GetTechniqueByName(
-			ToMultibyte(name).c_str());
+		Current()->effect->GetTechniqueByName(name);
 	if (!Current()->technique->IsValid())
 	{
 		throw std::exception("有効なテクニックを取得できませんでした");
@@ -169,52 +168,52 @@ std::list<Shader::Pass> Shader::Passes()
 	return passes;
 }
 
-void Shader::SetMatrix(const std::wstring& name, const Matrix& matrix)
+void Shader::SetMatrix(const String& name, const Matrix& matrix)
 {
 	Variable(name)->AsMatrix()->SetMatrix(matrix);
 }
 
-void Shader::SetVector(const std::wstring& name, const Float4& vector)
+void Shader::SetVector(const String& name, const Vector4& vector)
 {
 	Variable(name)->AsVector()->SetFloatVector(vector);
 }
 
-void Shader::SetSampler(const std::wstring& name, UINT index, ID3D11SamplerState* sampler)
+void Shader::SetSampler(const String& name, UINT index, ID3D11SamplerState* sampler)
 {
 	Variable(name)->AsSampler()->SetSampler(index, sampler);
 }
 
-void Shader::SetShaderResource(const std::wstring& name, ID3D11ShaderResourceView* shaderResource)
+void Shader::SetShaderResource(const String& name, ID3D11ShaderResourceView* shaderResource)
 {
 	Variable(name)->AsShaderResource()->SetResource(shaderResource);
 }
 
-void Shader::SetScalor(const std::wstring& name, float scalor)
+void Shader::SetScalor(const String& name, float scalor)
 {
 	Variable(name)->AsScalar()->SetFloat(scalor);
 }
 
-void Shader::SetRenderTargett(const std::wstring& name, ID3D11RenderTargetView* renderTarget)
+void Shader::SetRenderTargett(const String& name, ID3D11RenderTargetView* renderTarget)
 {
 	Variable(name)->AsRenderTargetView()->SetRenderTarget(renderTarget);
 }
 
-void Shader::SetRasterizer(const std::wstring& name, UINT index, ID3D11RasterizerState* rasterizer)
+void Shader::SetRasterizer(const String& name, UINT index, ID3D11RasterizerState* rasterizer)
 {
 	Variable(name)->AsRasterizer()->SetRasterizerState(index, rasterizer);
 }
 
-void Shader::SetDepthStencilView(const std::wstring& name, ID3D11DepthStencilView* depthStencilView)
+void Shader::SetDepthStencilView(const String& name, ID3D11DepthStencilView* depthStencilView)
 {
 	Variable(name)->AsDepthStencilView()->SetDepthStencil(depthStencilView);
 }
 
-void Shader::SetDepthStencil(const std::wstring& name, UINT index, ID3D11DepthStencilState* depthStencil)
+void Shader::SetDepthStencil(const String& name, UINT index, ID3D11DepthStencilState* depthStencil)
 {
 	Variable(name)->AsDepthStencil()->SetDepthStencilState(index, depthStencil);
 }
 
-void Shader::SetBlend(const std::wstring& name, UINT index, ID3D11BlendState* blendState)
+void Shader::SetBlend(const String& name, UINT index, ID3D11BlendState* blendState)
 {
 	Variable(name)->AsBlend()->SetBlendState(index, blendState);
 }

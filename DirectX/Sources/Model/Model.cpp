@@ -2,29 +2,27 @@
 
 # include "ObjLoader/ObjLoader.hpp"
 
-# include "Experimental/TestLoader/TestLoader.hpp"
-
 namespace aqua
 {
 
-	Model::Model(const std::wstring& filename)
+	Model::Model(const String& filename)
 	{
 		Load(filename);
 	}
 
-	void Model::Load(const std::wstring& filename)
+	void Model::Load(const String& filename)
 	{
 		HRESULT hr = S_OK;
 
-		Experimental::TestLoader loader { L"Contents/Box.obj" };
+		/*Experimental::TestLoader loader { L"Contents/Box.obj" };
 		auto vertices = loader.Vertices();
-		auto indices = loader.Indices();
-
-		/*ObjLoader loader { filename };
-
-		auto vertices = loader.Vertices();
-
 		auto indices = loader.Indices();*/
+
+		ObjLoader loader { filename };
+
+		auto vertices = loader.Vertices();
+
+		auto indices = loader.Indices();
 
 		Initialize(
 			vertices.data(),

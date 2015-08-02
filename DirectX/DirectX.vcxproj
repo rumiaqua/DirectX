@@ -55,7 +55,7 @@
       <PreprocessorDefinitions>_XM_NO_INTRINSICS_;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)\Sources;$(ProjectDir)\Librarys;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>Windows.h;d3d11.h;d3dcompiler.h;Primitive\Primitive.hpp;Effects11\Inc\d3dx11effect.h;DirectXTex\Inc\DirectXTex.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>Windows.h;d3d11.h;d3dcompiler.h;BaseType\BaseType.hpp;Effects11\Inc\d3dx11effect.h;DirectXTex\Inc\DirectXTex.h</ForcedIncludeFiles>
       <DisableSpecificWarnings>4099</DisableSpecificWarnings>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -79,7 +79,7 @@
       <PreprocessorDefinitions>_XM_NO_INTRINSICS_;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)\Sources;$(ProjectDir)\Librarys;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <ForcedIncludeFiles>Windows.h;d3d11.h;d3dcompiler.h;Primitive\Primitive.hpp;Effects11\Inc\d3dx11effect.h;DirectXTex\Inc\DirectXTex.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>Windows.h;d3d11.h;d3dcompiler.h;BaseType\BaseType.hpp;Effects11\Inc\d3dx11effect.h;DirectXTex\Inc\DirectXTex.h</ForcedIncludeFiles>
       <DisableSpecificWarnings>4099</DisableSpecificWarnings>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -96,31 +96,40 @@
   <ItemGroup>
     <ClInclude Include="Librarys\DirectXTex\Inc\DirectXTex.h" />
     <ClInclude Include="Librarys\Effects11\Inc\d3dx11effect.h" />
+    <ClInclude Include="Sources\BaseType\BaseType.hpp" />
     <ClInclude Include="Sources\Convert\Convert.hpp" />
-    <ClInclude Include="Sources\Experimental\TestLoader\TestLoader.hpp" />
     <ClInclude Include="Sources\Handle\Handle.hpp" />
+    <ClInclude Include="Sources\Math\Math.hpp" />
+    <ClInclude Include="Sources\Matrix\Matrix.hpp" />
     <ClInclude Include="Sources\Model\Model.hpp" />
     <ClInclude Include="Sources\ObjLoader\ObjLoader.hpp" />
     <ClInclude Include="Sources\OrderedRender\OrderedRender.hpp" />
     <ClInclude Include="Sources\Polygon\Polygon.hpp" />
-    <ClInclude Include="Sources\Primitive\Primitive.hpp" />
+    <ClInclude Include="Sources\Quaternion\Quaternion.hpp" />
     <ClInclude Include="Sources\RenderingOrder\RenderingOrder.hpp" />
     <ClInclude Include="Sources\Shader\Shader.hpp" />
+    <ClInclude Include="Sources\String\String.hpp" />
+    <ClInclude Include="Sources\Vector2\Vector2.hpp" />
     <ClInclude Include="Sources\Vector3\Vector3.hpp" />
+    <ClInclude Include="Sources\Vector4\Vector4.hpp" />
     <ClInclude Include="Sources\Vertex\Vertex.hpp" />
     <ClInclude Include="Sources\Texture2D\Texture2D.hpp" />
     <ClInclude Include="Sources\Window\Window.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sources\Convert\Convert.cpp" />
-    <ClCompile Include="Sources\Experimental\TestLoader\TestLoader.cpp" />
     <ClCompile Include="Sources\main.cpp" />
+    <ClCompile Include="Sources\Math\Math.cpp" />
+    <ClCompile Include="Sources\Matrix\Matrix.cpp" />
     <ClCompile Include="Sources\Model\Model.cpp" />
     <ClCompile Include="Sources\ObjLoader\ObjLoader.cpp" />
     <ClCompile Include="Sources\Polygon\Polygon.cpp" />
+    <ClCompile Include="Sources\Quaternion\Quaternion.cpp" />
     <ClCompile Include="Sources\Shader\Shader.cpp" />
+    <ClCompile Include="Sources\String\String.cpp" />
     <ClCompile Include="Sources\Texture2D\Texture2D.cpp" />
+    <ClCompile Include="Sources\Vector2\Vector2.cpp" />
     <ClCompile Include="Sources\Vector3\Vector3.cpp" />
+    <ClCompile Include="Sources\Vector4\Vector4.cpp" />
     <ClCompile Include="Sources\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>

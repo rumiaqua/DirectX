@@ -8,9 +8,9 @@ namespace aqua
 	{
 	public:
 
-		Model(const std::wstring& filename);
+		Model(const String& filename);
 
-		void Load(const std::wstring& filename);
+		void Load(const String& filename);
 		
 		virtual ~Model();
 	};
