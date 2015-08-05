@@ -142,5 +142,6 @@
     </None>
     <None Include="Contents\Shader\DefaultShader.hlsl" />
     <None Include="Contents\Shader\TextureShader.hlsl" />
+    <None Include="Contents\Shader\ProgrammableShader.hlsl" />
   </ItemGroup>
 </Project>

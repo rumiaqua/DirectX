@@ -20,7 +20,7 @@ namespace aqua
 
 		HRESULT hr = S_OK;
 
-		auto split = String::Split(filename, '.');
+		auto split = filename.Split(L'.');
 
 		if (split.back() == L"tga")
 		{

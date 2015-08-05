@@ -7,7 +7,7 @@
 template <typename Type>
 Type ToValue(const String& str)
 {
-	std::wstringstream ss { String::ToWide(str) };
+	std::wstringstream ss { str.ToWide() };
 	Type value;
 	ss >> value;
 	return value;

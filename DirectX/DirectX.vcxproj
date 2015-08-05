@@ -178,6 +178,11 @@
   <ItemGroup>
     <None Include="Librarys\DirectXTex\Inc\DirectXTex.inl" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Contents\Shader\ProgrammableShader.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

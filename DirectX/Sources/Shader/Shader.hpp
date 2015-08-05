@@ -18,7 +18,7 @@ private:
 
 		ID3DX11EffectTechnique* technique;
 
-		std::unordered_map<String, ID3DX11EffectVariable*, String::Hash> variable;
+		std::unordered_map<String, ID3DX11EffectVariable*> variable;
 	};
 
 public:

@@ -8,6 +8,8 @@ matrix view;
 
 matrix projection;
 
+matrix modelViewProjection;
+
 float4 color;
 
 struct VSInput
@@ -32,9 +34,7 @@ PSInput VS(VSInput input)
 {
 	PSInput output = (PSInput)0;
 
-	output.position = mul(input.position, world);
-	output.position = mul(output.position, view);
-	output.position = mul(output.position, projection);
+	output.position = mul(input.position, modelViewProjection);
 
 	output.texcoord = input.texcoord;
 

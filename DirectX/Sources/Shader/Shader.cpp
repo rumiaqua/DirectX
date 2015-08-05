@@ -46,7 +46,7 @@ ID3DX11EffectVariable* Shader::Cache(const String& name)
 
 ID3DX11EffectVariable* Shader::Regist(const String& name)
 {
-	auto variable = Current()->effect->GetVariableByName(name);
+	auto variable = Current()->effect->GetVariableByName(name.ToNarrow().c_str());
 	if (!variable->IsValid())
 	{
 		throw std::exception("無効な変数です");
@@ -65,7 +65,7 @@ ID3DX11EffectVariable* Shader::Variable(const String& name)
 
 	auto val = Regist(name);
 
-	assert(val && (const char*)name);
+	assert(val && (const wchar_t*)name);
 
 	return val;
 }
@@ -144,7 +144,7 @@ void Shader::Change(const String& name, const String& filepath)
 void Shader::Technique(const String& name)
 {
 	Current()->technique =
-		Current()->effect->GetTechniqueByName(name);
+		Current()->effect->GetTechniqueByName(name.ToNarrow().c_str());
 	if (!Current()->technique->IsValid())
 	{
 		throw std::exception("有効なテクニックを取得できませんでした");

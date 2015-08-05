@@ -59,6 +59,8 @@ PSInput VS(VSInput input)
 
 	output.texcoord = input.texcoord;
 
+	color = 1.0f;
+
 	output.color = saturate(color);
 
 	return output;

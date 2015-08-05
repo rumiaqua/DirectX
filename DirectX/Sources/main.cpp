@@ -215,7 +215,8 @@ void PlayerRotate()
 	{
 		angle += oneRadian * deltaTime;
 	}
-	playerRotation = playerRotation * XMMatrixRotationY(angle);
+
+	playerRotation.RotateY(angle);
 
 	//	playerRotation = playerRotation * XMMatrixRotationRollPitchYaw(0.0f, oneRadian * deltaTime, 0.0f);
 }
@@ -361,34 +362,15 @@ void Render()
 	color.z = (sinf(t * 5.0f) + 1.0f) * 0.5f;
 	color.w = 1.0f;
 
-	/*OrderedRender::Regist(0.1f, playerPosition.z, [=]
-	{
-		Shader::Change(L"Default");
-		Shader::SetMatrix(L"world", playerRotation * XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z));
-		Shader::SetMatrix(L"view", view);
-		Shader::SetMatrix(L"projection", projection);
-		Shader::SetVector(L"color", Vector4(1.0f, 1.0f, 1.0f, 0.1f));
-		for (const auto& pass : Shader::Passes())
-		{
-			pass.Apply();
-			player->Render();
-		}
-	});*/
-
 	// ƒvƒŒƒCƒ„[‚Ì•`‰æ
 	OrderedRender::Regist(0.1f, playerPosition.z, [=]
 	{
 		Shader::Change(L"Diffuse");
-		auto model = playerRotation * XMMatrixTranslation(playerPosition.x, playerPosition.y, playerPosition.z);
+		auto model = playerRotation.Translated(playerPosition);
 		auto modelView = model * view;
 		Shader::SetMatrix(L"modelView", modelView);
 		Shader::SetMatrix(L"modelViewProjection", modelView * projection);
-		XMVECTOR det;
-		Vector4 lightPosition { enemyPosition.x, enemyPosition.y, enemyPosition.z, 0.0f };
-		// Shader::SetVector(L"lightPosition", lightPosition);
-		auto inverse = XMMatrixInverse(&det, modelView);
-		auto transpose = XMMatrixTranspose(inverse);
-		Shader::SetMatrix(L"normal", transpose);
+		Shader::SetMatrix(L"normal", modelView.Inverse().Transpose());
 		for (const auto& pass : Shader::Passes())
 		{
 			pass.Apply();
@@ -396,13 +378,11 @@ void Render()
 		}
 	});
 
-	OrderedRender::Regist(1.0f, 0.0f, [=]
+	OrderedRender::Regist(1.0f, enemyPosition.z, [=]
 	{
 		Shader::Change(L"Default");
-		auto model = enemyRotation * XMMatrixTranslation(enemyPosition.x, enemyPosition.y, enemyPosition.z);
-		Shader::SetMatrix(L"world", model);
-		Shader::SetMatrix(L"view", view);
-		Shader::SetMatrix(L"projection", projection);
+		auto model = enemyRotation.Translated(enemyPosition);
+		Shader::SetMatrix(L"modelViewProjection", model * view * projection);
 		Shader::SetVector(L"color", color);
 		for (const auto& pass : Shader::Passes())
 		{
@@ -410,16 +390,6 @@ void Render()
 			player->Render();
 		}
 	});
-
-	/*OrderedRender::Regist(1.0f, 0.0f, [=]
-	{
-		Shader::Change(L"Default");
-		for (auto&& pass : Shader::Passes())
-		{
-			pass.Apply();
-			texture->Render();
-		}
-	});*/
 
 	OrderedRender::Render();
 

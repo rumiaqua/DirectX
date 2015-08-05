@@ -4,6 +4,8 @@
 
 # include <vector>
 
+# include <hash_map>
+
 namespace aqua
 {
 	class String
@@ -29,52 +31,55 @@ namespace aqua
 		/// <param name="str">wstringクラス</param>
 		String(const std::wstring& str);
 
-		struct Hash
-		{
+	public:
 
-		};
+		operator const wchar_t* () const;
 
 	public:
 
-		/// <summary>マルチバイト文字列に変換</summary>
-		/// <returns>マルチバイト文字列</summary>
-		operator const char* () const;
-
-		/// <summary>ワイド文字列に変換</summary>
-		/// <returns>ワイド文字列</summary>
-		operator const wchar_t* () const;
-
-		/// <summary>代入演算子</summary>
-		/// <param name="str">文字列</param>
 		String& operator = (const String& str);
 
-		/// <summary>指定したインデックスの文字を返す</summary>
-		/// <param name="index">インデックス</param>
+		bool operator == (const wchar_t* str) const;
+
+		bool operator == (const String& str) const;
+
 		wchar_t operator [] (unsigned int index) const;
 
 	public:
 
 		/// <summary>文字列の長さを返す</summary>
 		/// <param name="str">文字列</param>
-		static unsigned int Length(const String& str);
+		unsigned int Length() const;
 
 		/// <summary>stringクラスに変換</summary>
 		/// <param name="str">文字列</param>
-		static std::string ToNarrow(const String& str);
+		std::string ToNarrow() const;
 
 		/// <summary>wstringクラスに変換</summary>
 		/// <param name="str">文字列</param>
-		static std::wstring ToWide(const String& str);
+		std::wstring ToWide() const;
 
 		/// <summary>分割して返す</summary>
 		/// <param name="str">文字列</param>
 		/// <param name="delim">分割文字</param>
 		/// <returns>分割して収納したリスト</returns>
-		static std::vector<String> Split(const String& str, wchar_t delim);
+		std::vector<String> Split(wchar_t delim) const;
 
 	private:
 
-		/// <summary>wstringクラス</summary>
 		std::wstring m_str;
+	};
+}
+
+namespace std
+{
+	template <>
+	class hash<String>
+	{
+	public:
+		size_t operator()(const String& str) const
+		{
+			return hash<std::wstring>()(str.ToWide());
+		}
 	};
 }

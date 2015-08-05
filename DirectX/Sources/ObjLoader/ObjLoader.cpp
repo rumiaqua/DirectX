@@ -25,7 +25,7 @@ ObjLoader::ObjLoader(const String& filename)
 
 void ObjLoader::Load(const String& filename)
 {
-	std::wifstream ifs { String::ToWide(filename) };
+	std::wifstream ifs { filename.ToWide() };
 
 	std::wstring buffer;
 
@@ -33,7 +33,7 @@ void ObjLoader::Load(const String& filename)
 	while (std::getline(ifs, buffer))
 	{
 		// 半角スペースで分割
-		auto split = String::Split(buffer, ' ');
+		auto split = String(buffer).Split(L' ');
 
 		// 最初の文字で判断
 		switch (buffer[0])
@@ -139,7 +139,7 @@ void ObjLoader::Face(const String& f1, const String& f2, const String& f3)
 void ObjLoader::Face(const String& f)
 {
 	// スラッシュで分割
-	auto split = String::Split(f, '/');
+	auto split = f.Split(L'/');
 
 	// 要素数で判断
 	switch (split.size())
@@ -159,7 +159,7 @@ void ObjLoader::Face(const String& f)
 		// 3つなら座標と（UV座標と）法線
 		case 3:
 		{
-			m_faces.emplace_back(ToValue<WORD>(split[0]), String::Length(split[1]) > 1 ? ToValue<WORD>(split[1]) : 0U, ToValue<WORD>(split[2]));
+			m_faces.emplace_back(ToValue<WORD>(split[0]), split[1].Length() > 1 ? ToValue<WORD>(split[1]) : 0U, ToValue<WORD>(split[2]));
 			break;
 		}
 	}

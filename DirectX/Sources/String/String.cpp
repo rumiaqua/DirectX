@@ -55,11 +55,6 @@ namespace aqua
 
 	}
 
-	String::operator const char*() const
-	{
-		return ToNarrow(m_str).c_str();
-	}
-
 	String::operator const wchar_t*() const
 	{
 		return m_str.c_str();
@@ -71,32 +66,42 @@ namespace aqua
 		return *this;
 	}
 
+	bool String::operator == (const wchar_t* str) const
+	{
+		return *this == String(str);
+	}
+
+	bool String::operator == (const String& str) const
+	{
+		return m_str == str.m_str;
+	}
+
 	wchar_t String::operator[](unsigned int index) const
 	{
 		return m_str[index];
 	}
 
-	unsigned int String::Length(const String& str)
+	unsigned int String::Length() const
 	{
-		return str.m_str.length();
+		return m_str.length();
 	}
 
-	std::string String::ToNarrow(const String& str)
+	std::string String::ToNarrow() const
 	{
-		return aqua::ToNarrow(str.m_str);
+		return aqua::ToNarrow(m_str);
 	}
 
-	std::wstring String::ToWide(const String& str)
+	std::wstring String::ToWide() const
 	{
-		return str.m_str;
+		return m_str;
 	}
-	std::vector<String> String::Split(const String& str, wchar_t delim)
+	std::vector<String> String::Split(wchar_t delim) const
 	{
 		std::vector<String> res;
 
 		UINT current = 0, found;
 
-		const std::wstring buffer = String::ToWide(str);
+		const std::wstring buffer = ToWide();
 
 		while ((found = buffer.find_first_of(delim, current)) != std::wstring::npos)
 		{
@@ -106,6 +111,5 @@ namespace aqua
 
 		res.push_back(std::wstring(buffer, current, buffer.size() - current));
 		return res;
-
 	}
 }
