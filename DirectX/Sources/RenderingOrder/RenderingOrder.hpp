@@ -12,13 +12,27 @@ struct RenderingOrder
 	// 描画処理
 	std::function<void()> renderFunc;
 
+	unsigned int id;
+
 	// コンストラクタ
 	RenderingOrder(float alpha, float zOrder, const std::function<void()>& renderFunc)
 		: alpha(alpha)
 		, zOrder(zOrder)
 		, renderFunc(renderFunc)
 	{
+		static unsigned int masterID = 0;
 
+		id = masterID++;
+	}
+
+	bool operator == (const RenderingOrder& other) const
+	{
+		return this->id == other.id;
+	}
+
+	bool operator != (const RenderingOrder& other) const
+	{
+		return !(*this == other);
 	}
 
 	// 比較演算子

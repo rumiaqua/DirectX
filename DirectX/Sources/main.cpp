@@ -36,6 +36,8 @@ Matrix projection;
 
 Vector4 color;
 
+Vector4 diffuseMaterial;
+
 Matrix playerRotation;
 Vector3 playerPosition;
 
@@ -112,9 +114,9 @@ void Initialize()
 
 	// ビュー行列
 	view = XMMatrixLookAtLH(
-		Vector3::ToVector(eye, 0.0f),
-		Vector3::ToVector(at, 0.0f),
-		Vector3::ToVector(up, 0.0f));
+		eye.ToVector(0.0f),
+		at.ToVector(0.0f),
+		up.ToVector(0.0f));
 
 	// 透視射影行列
 	projection = XMMatrixPerspectiveFovLH(
@@ -123,18 +125,20 @@ void Initialize()
 	// 色
 	color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
+	// 拡散反射光
+	diffuseMaterial = Vector4(1.0f, 0.9f, 0.5f, 1.0f);
+
 	// プレイヤー座標
 	playerPosition = Vector3(0.0f, 0.0f, 0.0f);
 	// プレイヤー回転
 	playerRotation = XMMatrixIdentity();
 
 	// エネミー座標
-	enemyPosition = Vector3(0.0f, 0.0f, -10.0f);
+	enemyPosition = Vector3(0.0f, 0.0f, 3.0f);
 	// エネミー回転
 	enemyRotation = XMMatrixIdentity();
 
 	// プレイヤー
-	// player = aqua::Polygon::Box();
 	player = std::make_shared<aqua::Model>(L"Contents/Box.obj");
 
 	// エネミー
@@ -176,7 +180,7 @@ void Initialize()
 	// ディフューズ率
 	Shader::SetVector(L"diffuseLight", { 1.0f, 1.0f, 1.0f, 1.0f });
 	// ディフューズカラー
-	Shader::SetVector(L"diffuseMaterial", { 1.0f, 0.9f, 0.5f, 1.0f });
+	Shader::SetVector(L"diffuseMaterial", diffuseMaterial);
 	// ライト座標
 	Shader::SetVector(L"lightPosition", { 0.0f, 0.0f, -10.0f, 0.0f });
 
@@ -216,9 +220,7 @@ void PlayerRotate()
 		angle += oneRadian * deltaTime;
 	}
 
-	playerRotation.RotateY(angle);
-
-	//	playerRotation = playerRotation * XMMatrixRotationRollPitchYaw(0.0f, oneRadian * deltaTime, 0.0f);
+	playerRotation = playerRotation.RotatedY(angle);
 }
 
 // プレイヤー移動
@@ -327,9 +329,9 @@ void EyeMove()
 void ViewMatrix()
 {
 	view = XMMatrixLookAtLH(
-		Vector3::ToVector(eye, 0.0f),
-		Vector3::ToVector(at, 0.0f),
-		Vector3::ToVector(up, 0.0f));
+		eye.ToVector(0.0f),
+		at.ToVector(0.0f),
+		up.ToVector(0.0f));
 }
 
 // 更新
@@ -362,15 +364,19 @@ void Render()
 	color.z = (sinf(t * 5.0f) + 1.0f) * 0.5f;
 	color.w = 1.0f;
 
+	color.x = 1.0f;
+	color.y = 1.0f;
+	color.z = 1.0f;
+	color.w = 1.0f;
+
 	// プレイヤーの描画
-	OrderedRender::Regist(0.1f, playerPosition.z, [=]
+	OrderedRender::Regist(color.a, playerPosition.z, [=]
 	{
-		Shader::Change(L"Diffuse");
+		Shader::Change(L"Default");
 		auto model = playerRotation.Translated(playerPosition);
-		auto modelView = model * view;
-		Shader::SetMatrix(L"modelView", modelView);
-		Shader::SetMatrix(L"modelViewProjection", modelView * projection);
-		Shader::SetMatrix(L"normal", modelView.Inverse().Transpose());
+		Shader::SetMatrix(L"modelViewProjection", model * view * projection);
+		Shader::SetVector(L"color", color);
+
 		for (const auto& pass : Shader::Passes())
 		{
 			pass.Apply();
@@ -378,16 +384,19 @@ void Render()
 		}
 	});
 
-	OrderedRender::Regist(1.0f, enemyPosition.z, [=]
+	OrderedRender::Regist(diffuseMaterial.a, enemyPosition.z, [=]
 	{
-		Shader::Change(L"Default");
+		Shader::Change(L"Diffuse");
 		auto model = enemyRotation.Translated(enemyPosition);
-		Shader::SetMatrix(L"modelViewProjection", model * view * projection);
-		Shader::SetVector(L"color", color);
+		auto modelView = model * view;
+		Shader::SetMatrix(L"modelView", modelView);
+		Shader::SetMatrix(L"modelViewProjection", modelView * projection);
+		Shader::SetMatrix(L"normal", modelView.Inverse().Transposed());
+
 		for (const auto& pass : Shader::Passes())
 		{
 			pass.Apply();
-			player->Render();
+			enemy->Render();
 		}
 	});
 

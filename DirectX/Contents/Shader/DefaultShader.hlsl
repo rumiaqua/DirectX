@@ -63,6 +63,21 @@ BlendState SrcAlphaBlendingAdd
 	RenderTargetWriteMask[0] = 0x0F;
 };
 
+BlendState SrcAlphaBlendingAdd
+{
+	BlendEnable[0] = TRUE;
+
+	SrcBlend = SRC_COLOR;
+	DestBlend = INV_SRC_COLOR;
+	BlendOp = ADD;
+
+	SrcBlendAlpha = ZERO;
+	DestBlendAlpha = ZERO;
+	BlendOpAlpha = ADD;
+
+	RenderTargetWriteMask[0] = 0x0F;
+};
+
 technique11 Default
 {
 	pass P0

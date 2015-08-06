@@ -68,79 +68,95 @@ namespace aqua
 
 	public:
 
-		/// <summary>コピー演算子</summary>
-		/// <param name="other">ベクトル</param>
-		/// <returns>自身</returns>
 		Vector3& operator = (const Vector3& other);
 
 	public:
 
 		/// <summary>長さの二乗を返す</summary>
-		/// <param name="v">ベクトル</param>
 		/// <returns>長さの二乗</returns>
-		static float LengthSquared(const Vector3& v);
+		float LengthSquared() const;
 
 		/// <summary>長さを返す</summary>
-		/// <param name="v">ベクトル</param>
 		/// <returns>長さ</returns>
-		static float Length(const Vector3& v);
+		float Length() const;
 
 		/// <summary>正規化されたベクトルを返す</summary>
-		/// <param name="v">ベクトル</param>
 		/// <returns>正規化されたベクトル</returns>
-		static Vector3 Normalize(const Vector3& v);
+		Vector3 Normalized() const;
 
 		/// <summary>0から1の間にクランプされたベクトルを返す</summary>
-		/// <param name="v">ベクトル</param>
 		/// <returns>0から1の間にクランプされたベクトル</returns>
-		static Vector3 Saturate(const Vector3& v);
+		Vector3 Saturated() const;
 
 		/// <summary>指定桁数でならしたベクトルを返す</summary>
-		/// <param name="v">ベクトル</param>
 		/// <returns>ならしたベクトル</returns>
-		static Vector3 Smooth(const Vector3& v, int f = -4);
+		Vector3 Smoothed(int f = -4) const;
 
 		/// <summary>内積を返す</summary>
-		/// <param name="v1">ベクトル</param>
-		/// <param name="v2">ベクトル</param>
+		/// <param name="v">ベクトル</param>
 		/// <returns>内積</returns>
-		static float Dot(const Vector3& v1, const Vector3& v2);
+		float Dot(const Vector3& v) const;
 
 		/// <summary>外積を返す</summary>
-		/// <param name="v1">ベクトル</param>
-		/// <param name="v2">ベクトル</param>
+		/// <param name="v">ベクトル</param>
 		/// <returns>外積</returns>
-		static Vector3 Cross(const Vector3& v1, const Vector3& v2);
+		Vector3 Cross(const Vector3& v) const;
 
 		/// <summary>DirectXのベクトルに変換する</summary>
-		/// <param name="v">ベクトル</param>
 		/// <param name="w">w要素の値</param>
 		/// <returns>DirectXのベクトル</returns>
-		static XMVECTOR ToVector(const Vector3& v, float w = 1.0f);
+		XMVECTOR ToVector(float w = 1.0f) const;
 
 		/// <summary>距離を返す</summary>
-		/// <param name="v1">ベクトル</param>
-		/// <param name="v2">ベクトル</param>
+		/// <param name="v">ベクトル</param>
 		/// <returns>距離</returns>
-		static float Distance(const Vector3& v1, const Vector3& v2);
+		float Distance(const Vector3& v) const;
 
 		/// <summary>壁ずりベクトルを返す</summary>
-		/// <param name="v1">ベクトル</param>
-		/// <param name="v2">法線ベクトル</param>
+		/// <param name="normal">法線ベクトル</param>
 		/// <returns>壁ずりベクトル</returns>
-		static Vector3 Scratch(const Vector3& v, const Vector3& normal);
+		Vector3 Scratched(const Vector3& normal) const;
 
 		/// <summary>反射ベクトルを返す</summary>
-		/// <param name="v1">ベクトル</param>
-		/// <param name="v2">法線ベクトル</param>
+		/// <param name="normal">法線ベクトル</param>
 		/// <returns>反射ベクトル</returns>
-		static Vector3 Reflect(const Vector3& v, const Vector3& normal);
+		Vector3 Reflected(const Vector3& normal) const;
 
 		/// <summary>射影ベクトルを返す</summary>
-		/// <param name="v1">ベクトル</param>
-		/// <param name="v2">対象のベクトル</param>
+		/// <param name="target">対象のベクトル</param>
 		/// <returns>射影ベクトル</returns>
-		static Vector3 Projection(const Vector3& v, const Vector3& target);
+		Vector3 Projected(const Vector3& target) const;
+
+	public:
+
+		/// <summary>正規化する</summary>
+		/// <returns>ベクトル</returns>
+		Vector3& Normalize();
+
+		/// <summary>0から1の間にクランプする</summary>
+		/// <returns>ベクトル</returns>
+		Vector3& Saturate();
+
+		/// <summary>指定桁数でならす</summary>
+		/// <returns>ベクトル</returns>
+		Vector3& Smooth(int f = -4);
+
+		/// <summary>壁ずりベクトルを計算する</summary>
+		/// <param name="normal">法線ベクトル</param>
+		/// <returns>ベクトル</returns>
+		Vector3& Scratch(const Vector3& normal);
+
+		/// <summary>反射ベクトルを計算する</summary>
+		/// <param name="normal">法線ベクトル</param>
+		/// <returns>ベクトル</returns>
+		Vector3& Reflect(const Vector3& normal);
+
+		/// <summary>射影ベクトルを計算する</summary>
+		/// <param name="target">対象のベクトル</param>
+		/// <returns>ベクトル</returns>
+		Vector3& Project(const Vector3& target);
+
+	public:
 
 		/// <summary>線形補間したベクトルを返す</summary>
 		/// <param name="v1">始点</param>

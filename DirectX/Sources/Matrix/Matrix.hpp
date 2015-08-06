@@ -141,106 +141,106 @@ namespace aqua
 
 	public:
 
-		/// <summary>平行移動する</summary>
+		/// <summary>平行移動行列を返す</summary>
 		/// <param name="position">移動量</param>
-		/// <returns>行列</returns>
-		Matrix& Translated(const Vector3& position);
+		/// <returns>平行移動行列</returns>
+		Matrix Translated(const Vector3& position) const;
 
-		/// <summary>平行移動する</summary>
+		/// <summary>平行移動行列を返す</summary>
 		/// <param name="x">x方向の移動量</param>
 		/// <param name="y">y方向の移動量</param>
 		/// <param name="z">z方向の移動量</param>
-		/// <returns>行列</returns>
-		Matrix& Translated(float x, float y, float z);
+		/// <returns>平行移動行列</returns>
+		Matrix Translated(float x, float y, float z) const;
 
-		/// <summary>拡大縮小する</summary>
+		/// <summary>拡大縮小行列を返す</summary>
 		/// <param name="s">拡大率</param>
-		/// <returns>行列</returns>
-		Matrix& Scaled(float scale);
+		/// <returns>拡大縮小行列</returns>
+		Matrix Scaled(float scale) const;
 
-		/// <summary>拡大縮小する</summary>
+		/// <summary>拡大縮小行列を返す</summary>
 		/// <param name="scale">拡大率</param>
-		/// <returns>行列</returns>
-		Matrix& Scaled(const Vector3& scale);
+		/// <returns>拡大縮小行列</returns>
+		Matrix Scaled(const Vector3& scale) const;
 
-		/// <summary>拡大縮小する</summary>
+		/// <summary>拡大縮小行列を返す</summary>
 		/// <param name="x">x方向の拡大率</param>
 		/// <param name="y">y方向の拡大率</param>
 		/// <param name="z">z方向の拡大率</param>
-		/// <returns>行列</returns>
-		Matrix& Scaled(float x, float y, float z);
+		/// <returns>拡大縮小行列</returns>
+		Matrix Scaled(float x, float y, float z) const;
 
 		/// <summary>X軸で回転</summary>
 		/// <param name="angle">回転量</param>
-		/// <returns>行列</returns>
-		Matrix& RotatedX(float angle);
+		/// <returns>回転行列</returns>
+		Matrix RotatedX(float angle) const;
 
-		/// <summary>Y軸で回転</summary>
+		/// <summary>X軸で回転</summary>
 		/// <param name="angle">回転量</param>
-		/// <returns>行列</returns>
-		Matrix& RotatedY(float angle);
+		/// <returns>回転行列</returns>
+		Matrix RotatedY(float angle) const;
 
-		/// <summary>Z軸で回転</summary>
+		/// <summary>X軸で回転</summary>
 		/// <param name="angle">回転量</param>
-		/// <returns>行列</returns>
-		Matrix& RotatedZ(float angle);
+		/// <returns>回転行列</returns>
+		Matrix RotatedZ(float angle) const;
 
-		/// <summary>回転する</summary>
+		/// <summary>回転行列を返す</summary>
 		/// <param name="pitchYawRoll">回転量</param>
-		/// <returns>行列</returns>
-		Matrix& Rotated(const Vector3& pitchYawRoll);
+		/// <returns>拡大縮小行列</returns>
+		Matrix Rotated(const Vector3& pitchYawRoll) const;
 
-		/// <summary>回転する</summary>
+		/// <summary>回転行列を返す</summary>
 		/// <param name="pitch">x軸の回転量</param>
 		/// <param name="yaw">y軸の回転量</param>
 		/// <param name="roll">z軸の回転量</param>
-		/// <returns>行列</returns>
-		Matrix& Rotated(float pitch, float yaw, float roll);
+		/// <returns>拡大縮小行列</returns>
+		Matrix Rotated(float pitch, float yaw, float roll) const;
 
-		/// <summary>回転する</summary>
+		/// <summary>回転行列を返す</summary>
 		/// <param name="q">回転量</param>
-		/// <returns>行列</returns>
-		Matrix& Rotated(const Quaternion& q);
+		/// <returns>拡大縮小行列</returns>
+		Matrix Rotated(const Quaternion& q) const;
 
-		/// <summary>アフィン変換する</summary>
+		/// <summary>アフィン変換行列を返す</summary>
 		/// <param name="scaling">拡大率</param>
 		/// <param name="rotation">回転量</param>
 		/// <param name="translation">移動量</param>
-		/// <returns>行列</returns>
-		Matrix& Transformed(
+		/// <returns>アフィン変換行列</returns>
+		Matrix Transformed(
 			float scaling,
 			const Vector3& rotation,
-			const Vector3& translation);
+			const Vector3& translation) const;
 
-		/// <summary>アフィン変換する</summary>
+		/// <summary>アフィン変換行列を返す</summary>
 		/// <param name="scaling">拡大率</param>
 		/// <param name="rotation">回転量</param>
 		/// <param name="translation">移動量</param>
-		/// <returns>行列</returns>
-		Matrix& Transformed(
+		/// <returns>アフィン変換行列</returns>
+		Matrix Transformed(
 			const Vector3& scaling,
 			const Vector3& rotation,
-			const Vector3& translation);
+			const Vector3& translation) const;
 
-		/// <summary>アフィン変換する</summary>
+		/// <summary>アフィン変換行列を返す</summary>
 		/// <param name="scaling">拡大率</param>
 		/// <param name="rotation">回転量</param>
 		/// <param name="translation">移動量</param>
-		/// <returns>行列</returns>
-		Matrix& Transformed(
+		/// <returns>アフィン変換行列</returns>
+		Matrix Transformed(
 			float scaling,
 			const Quaternion& rotation,
-			const Vector3& translation);
+			const Vector3& translation) const;
 
-		/// <summary>アフィン変換する</summary>
+		/// <summary>アフィン変換行列を返す</summary>
 		/// <param name="scaling">拡大率</param>
 		/// <param name="rotation">回転量</param>
 		/// <param name="translation">移動量</param>
-		/// <returns>行列</returns>
-		Matrix& Transformed(
+		/// <returns>アフィン変換行列</returns>
+		Matrix Transformed(
 			const Vector3& scaling,
 			const Quaternion& rotation,
-			const Vector3& translation);
+			const Vector3& translation) const;
 
 	public:
 
@@ -269,26 +269,11 @@ namespace aqua
 
 		/// <summary>転置行列を返す</summary>
 		/// <returns>転置行列</returns>
-		Matrix Transpose() const;
+		Matrix Transposed() const;
 
 		/// <summary>単位行列かどうかを返す</summary>
 		/// <returns>単位行列であればtrue そうでなければfalse</returns>
 		bool IsIdentity() const;
-
-	public:
-
-		/// <summary>逆行列にする</summary>
-		/// <returns>行列</returns>
-		Matrix& Inversed();
-
-		/// <summary>行列式を収納して逆行列にする</summary>
-		/// <param name="determinant">行列式</param>
-		/// <returns>行列</returns>
-		Matrix& Inversed(float& determinant);
-
-		/// <summary>転置する</summary>
-		/// <returns>行列</returns>
-		Matrix& Transposed();
 	};
 
 	Matrix operator * (const Matrix& m1, const Matrix& m2);

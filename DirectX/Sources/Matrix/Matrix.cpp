@@ -115,10 +115,10 @@ namespace aqua
 	{
 
 		return XMMatrixAffineTransformation(
-			Vector3::ToVector(scaling, 1.0f),
+			scaling.ToVector(1.0f),
 			DirectX::g_XMZero,
-			Vector3::ToVector(rotation, 0.0f),
-			Vector3::ToVector(translation, 0.0f));
+			rotation.ToVector(0.0f),
+			translation.ToVector(0.0f));
 	}
 
 	Matrix Matrix::Transform(
@@ -138,94 +138,85 @@ namespace aqua
 		const Vector3& translation)
 	{
 		return XMMatrixAffineTransformation(
-			Vector3::ToVector(scaling, 1.0f),
+			scaling.ToVector(1.0f),
 			DirectX::g_XMZero,
 			rotation.xm,
-			Vector3::ToVector(translation, 0.0f));
+			translation.ToVector(0.0f));
 	}
 
-	Matrix& Matrix::Translated(const Vector3& position)
+	Matrix Matrix::Translated(const Vector3& position) const
 	{
 		return Translated(position.x, position.y, position.z);
 	}
 
-	Matrix & Matrix::Translated(float x, float y, float z)
+	Matrix Matrix::Translated(float x, float y, float z) const
 	{
-		*this *= Translate(x, y, z);
-		return *this;
+		return *this * Translate(x, y, z);
 	}
 
-	Matrix& Matrix::Scaled(float scale)
+	Matrix Matrix::Scaled(float scale) const
 	{
 		return Scaled(scale, scale, scale);
 	}
 
-	Matrix& Matrix::Scaled(const Vector3& scale)
+	Matrix Matrix::Scaled(const Vector3& scale) const
 	{
 		return Scaled(scale.x, scale.y, scale.z);
 	}
 
-	Matrix& Matrix::Scaled(float x, float y, float z)
+	Matrix Matrix::Scaled(float x, float y, float z) const
 	{
-		*this *= Scale(x, y, z);
-		return *this;
+		return *this * Scale(x, y, z);
 	}
 
-	Matrix& Matrix::RotatedX(float angle)
+	Matrix Matrix::RotatedX(float angle) const
 	{
-		*this *= RotateX(angle);
-		return *this;
+		return *this * RotateX(angle);
 	}
 
-	Matrix& Matrix::RotatedY(float angle)
+	Matrix Matrix::RotatedY(float angle) const
 	{
-		*this *= RotateY(angle);
-		return *this;
+		return *this * RotateY(angle);
 	}
 
-	Matrix& Matrix::RotatedZ(float angle)
+	Matrix Matrix::RotatedZ(float angle) const
 	{
-		*this *= RotateZ(angle);
-		return *this;
+		return *this * RotateZ(angle);
 	}
 
-	Matrix& Matrix::Rotated(const Vector3& pitchYawRoll)
+	Matrix Matrix::Rotated(const Vector3& pitchYawRoll) const
 	{
 		return Rotated(pitchYawRoll.x, pitchYawRoll.y, pitchYawRoll.z);
 	}
 
-	Matrix& Matrix::Rotated(float pitch, float yaw, float roll)
+	Matrix Matrix::Rotated(float pitch, float yaw, float roll) const
 	{
-		*this *= Rotate(pitch, yaw, roll);
-		return *this;
+		return *this * Rotate(pitch, yaw, roll);
 	}
 
-	Matrix& Matrix::Rotated(const Quaternion& q)
+	Matrix Matrix::Rotated(const Quaternion& q) const
 	{
-		*this *= Rotate(q);
-		return *this;
+		return *this * Rotate(q);
 	}
 
-	Matrix& Matrix::Transformed(float scaling, const Vector3& rotation, const Vector3& translation)
+	Matrix Matrix::Transformed(float scaling, const Vector3& rotation, const Vector3& translation) const
 	{
 		return Transformed({ scaling,scaling ,scaling }, rotation, translation);
 	}
 
-	Matrix& Matrix::Transformed(const Vector3& scaling, const Vector3& rotation, const Vector3& translation)
+	Matrix Matrix::Transformed(const Vector3& scaling, const Vector3& rotation, const Vector3& translation) const
 	{
-		*this *= Transform(scaling, rotation, translation);
-		return *this;
+		return *this * Transform(scaling, rotation, translation);
 	}
 
-	Matrix& Matrix::Transformed(float scaling, const Quaternion& rotation, const Vector3& translation)
+	Matrix Matrix::Transformed(float scaling, const Quaternion& rotation, const Vector3& translation) const
 	{
 		return Transformed({ scaling,scaling ,scaling }, rotation, translation);
 	}
 
-	Matrix& Matrix::Transformed(const Vector3& scaling, const Quaternion& rotation, const Vector3& translation)
+	Matrix Matrix::Transformed(const Vector3& scaling, const Quaternion& rotation, const Vector3& translation) const
 	{
-		*this *= Transform(scaling, rotation, translation);
-		return *this;
+		return *this * Transform(scaling, rotation, translation);
 	}
 
 	bool Matrix::Decompose(
@@ -241,6 +232,7 @@ namespace aqua
 			&rotateOutput,
 			&translateOutput,
 			*this);
+
 		if (!success)
 		{
 			return false;
@@ -274,7 +266,7 @@ namespace aqua
 		return Inverse();
 	}
 
-	Matrix Matrix::Transpose() const
+	Matrix Matrix::Transposed() const
 	{
 		return XMMatrixTranspose(*this);
 	}
@@ -284,37 +276,21 @@ namespace aqua
 		return XMMatrixIsIdentity(*this);
 	}
 
-	Matrix& Matrix::Inversed()
-	{
-		*this = Inverse();
-		return *this;
-	}
-
-	Matrix& Matrix::Inversed(float& determinant)
-	{
-		*this = Inverse(determinant);
-		return *this;
-	}
-
-	Matrix& Matrix::Transposed()
-	{
-		*this = Transpose();
-		return *this;
-	}
-
 	Matrix operator * (const Matrix& m1, const Matrix& m2)
 	{
-		return m1 * m2;
+		Matrix m = m1;
+		return m *= m2;
 	}
 
 	Matrix& operator *= (Matrix& m1, const Matrix& m2)
 	{
-		return m1 *= m2;
+		m1 = XMMatrixMultiply(m1, m2);
+		return m1;
 	}
 
 	Vector3 operator * (const Vector3& v, const Matrix& matrix)
 	{
-		return XMVector3Transform(Vector3::ToVector(v, 1.0f), matrix);
+		return XMVector3Transform(v.ToVector(1.0f), matrix);
 	}
 
 	Vector3& operator *= (Vector3& v, const Matrix& matrix)

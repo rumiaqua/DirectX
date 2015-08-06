@@ -8,6 +8,8 @@
 
 namespace aqua
 {
+	using namespace DirectX;
+
 	const Vector4 Vector4::Zero { 0.0f, 0.0f, 0.0f, 0.0f };
 
 	const Vector4 Vector4::One { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -24,20 +26,24 @@ namespace aqua
 
 	}
 
-	Vector4::Vector4(const Vector3& v, float w)
-		: Vector4(v.x, v.y, v.z, w)
-	{
-
-	}
-
-	Vector4::Vector4(const XMVECTOR& xm)
-		: Vector4(xm.vector4_f32[0], xm.vector4_f32[1], xm.vector4_f32[2], xm.vector4_f32[3])
+	Vector4::Vector4(const DirectX::XMVECTOR& xm)
+		: Vector4(
+			xm.vector4_f32[0],
+			xm.vector4_f32[1],
+			xm.vector4_f32[2],
+			xm.vector4_f32[3])
 	{
 
 	}
 
 	Vector4::Vector4(const Vector2& v1, const Vector2& v2)
 		: Vector4(v1.x, v1.y, v2.x, v2.y)
+	{
+
+	}
+
+	Vector4::Vector4(const Vector3& v, float w)
+		: Vector4(v.x, v.y, v.z, w)
 	{
 
 	}
@@ -90,56 +96,70 @@ namespace aqua
 		return &xm;
 	}
 
-	float Vector4::LengthSquared(const Vector4& v)
+	float Vector4::LengthSquared() const
 	{
-		return Dot(v, v);
+		return Dot(*this);
 	}
 
-	float Vector4::Length(const Vector4& v)
+	float Vector4::Length() const
 	{
-		return Math::Sqrt(LengthSquared(v));
+		return Math::Sqrt(LengthSquared());
 	}
 
-	Vector4 Vector4::Normalize(const Vector4& v)
+	Vector4 Vector4::Normalized() const
 	{
-		auto lengthSquared = LengthSquared(v);
+		Vector4 result = *this;
+		return result.Normalize();
+	}
+
+	Vector4 Vector4::Saturated() const
+	{
+		Vector4 v = *this;
+		return v.Saturate();
+	}
+
+	Vector4 Vector4::Smoothed(int f) const
+	{
+		Vector4 v = *this;
+		return v.Smooth(f);
+	}
+
+	float Vector4::Dot(const Vector4& v) const
+	{
+		return x * v.x + y * v.y + z * v.z;
+	}
+
+	float Vector4::Distance(const Vector4& v) const
+	{
+		return (v - *this).Length();
+	}
+
+	Vector4& Vector4::Normalize()
+	{
+		float lengthSquared = LengthSquared();
 
 		if (lengthSquared == 0.0f)
 		{
-			return v;
+			return *this;
 		}
 
-		auto result = v;
-
-		return result /= Math::Sqrt(lengthSquared);
+		return *this /= Math::Sqrt(lengthSquared);
 	}
 
-	Vector4 Vector4::Saturate(const Vector4& v)
+	Vector4& Vector4::Saturate()
 	{
-		return Vector4(
-			Math::Saturate(v.x),
-			Math::Saturate(v.y),
-			Math::Saturate(v.z),
-			Math::Saturate(v.w));
+		x = Math::Saturate(x);
+		y = Math::Saturate(y);
+		z = Math::Saturate(z);
+		return *this;
 	}
 
-	Vector4 Vector4::Smooth(const Vector4 & v, int f)
+	Vector4& Vector4::Smooth(int f)
 	{
-		return Vector4(
-			Math::Smooth(v.x, f),
-			Math::Smooth(v.y, f),
-			Math::Smooth(v.z, f),
-			Math::Smooth(v.w, f));
-	}
-
-	float Vector4::Dot(const Vector4& v1, const Vector4& v2)
-	{
-		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
-	}
-
-	float Vector4::Distance(const Vector4& v1, const Vector4& v2)
-	{
-		return Length(v2 - v1);
+		x = Math::Smooth(x, f);
+		y = Math::Smooth(y, f);
+		z = Math::Smooth(z, f);
+		return *this;
 	}
 
 	Vector4 Vector4::Lerp(const Vector4& v1, const Vector4& v2, float t)
@@ -214,19 +234,19 @@ namespace aqua
 
 	Vector4 operator + (const Vector4& v1, const Vector4& v2)
 	{
-		auto result = v1;
+		Vector4 result = v1;
 		return result += v2;
 	}
 
 	Vector4 operator - (const Vector4& v1, const Vector4& v2)
 	{
-		auto result = v1;
+		Vector4 result = v1;
 		return result -= v2;
 	}
 
 	Vector4 operator * (const Vector4& v, float s)
 	{
-		auto result = v;
+		Vector4 result = v;
 		return result *= s;
 	}
 
@@ -237,7 +257,7 @@ namespace aqua
 
 	Vector4 operator / (const Vector4& v, float s)
 	{
-		auto result = v;
+		Vector4 result = v;
 		return result /= s;
 	}
 }

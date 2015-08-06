@@ -72,85 +72,119 @@ namespace aqua
 		return *this;
 	}
 
-	float Vector3::LengthSquared(const Vector3& v)
+	float Vector3::LengthSquared() const
 	{
-		return Dot(v, v);
+		return Dot(*this);
 	}
 
-	float Vector3::Length(const Vector3& v)
+	float Vector3::Length() const
 	{
-		return Math::Sqrt(LengthSquared(v));
+		return Math::Sqrt(LengthSquared());
 	}
 
-	Vector3 Vector3::Normalize(const Vector3& v)
+	Vector3 Vector3::Normalized() const
 	{
-		auto lengthSquared = LengthSquared(v);
+		Vector3 result = *this;
+		return result.Normalize();
+	}
+
+	Vector3 Vector3::Saturated() const
+	{
+		Vector3 v = *this;
+		return v.Saturate();
+	}
+
+	Vector3 Vector3::Smoothed(int f) const
+	{
+		Vector3 v = *this;
+		return v.Smooth(f);
+	}
+
+	float Vector3::Dot(const Vector3& v) const
+	{
+		return x * v.x + y * v.y + z * v.z;
+	}
+
+	Vector3 Vector3::Cross(const Vector3& v) const
+	{
+		return Vector3(
+			y * v.z - z * v.y,
+			z * v.x - x * v.z,
+			x * v.y - y * v.x);
+	}
+
+	XMVECTOR Vector3::ToVector(float w) const
+	{
+		return XMVectorSet(x, y, z, w);
+	}
+
+	float Vector3::Distance(const Vector3& v) const
+	{
+		return (v - *this).Length();
+	}
+
+	Vector3 Vector3::Scratched(const Vector3& normal) const
+	{
+		Vector3 v = *this;
+		return v.Scratch(normal);
+	}
+
+	Vector3 Vector3::Reflected(const Vector3& normal) const
+	{
+		Vector3 v = *this;
+		return v.Reflect(normal);
+	}
+
+	Vector3 Vector3::Projected(const Vector3& target) const
+	{
+		Vector3 v = *this;
+		return v.Project(target);
+	}
+
+	Vector3& Vector3::Normalize()
+	{
+		float lengthSquared = LengthSquared();
 
 		if (lengthSquared == 0.0f)
 		{
-			return v;
+			return *this;
 		}
 
-		auto result = v;
-
-		return result /= Math::Sqrt(lengthSquared);
+		return *this /= Math::Sqrt(lengthSquared);
 	}
 
-	Vector3 Vector3::Saturate(const Vector3& v)
+	Vector3& Vector3::Saturate()
 	{
-		return Vector3(
-			Math::Saturate(v.x),
-			Math::Saturate(v.y),
-			Math::Saturate(v.z));
+		x = Math::Saturate(x);
+		y = Math::Saturate(y);
+		z = Math::Saturate(z);
+		return *this;
 	}
 
-	Vector3 Vector3::Smooth(const Vector3 & v, int f)
+	Vector3& Vector3::Smooth(int f)
 	{
-		return Vector3(
-			Math::Smooth(v.x, f),
-			Math::Smooth(v.y, f),
-			Math::Smooth(v.z, f));
+		x = Math::Smooth(x, f);
+		y = Math::Smooth(y, f);
+		z = Math::Smooth(z, f);
+		return *this;
 	}
 
-	float Vector3::Dot(const Vector3& v1, const Vector3& v2)
+	Vector3 & Vector3::Scratch(const Vector3 & normal)
 	{
-		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+		Vector3 n = normal.Normalized();
+		return *this -= n * Dot(n);
 	}
 
-	Vector3 Vector3::Cross(const Vector3& v1, const Vector3& v2)
+	Vector3 & Vector3::Reflect(const Vector3 & normal)
 	{
-		return Vector3(
-			v1.y * v2.z - v1.z * v2.y,
-			v1.z * v2.x - v1.x * v2.z,
-			v1.x * v2.y - v1.y * v2.x);
+		Vector3 n = normal.Normalized();
+		return *this -= n * Dot(n) * 2.0f;
 	}
 
-	XMVECTOR Vector3::ToVector(const Vector3& v, float w)
+	Vector3 & Vector3::Project(const Vector3 & target)
 	{
-		return XMVectorSet(v.x, v.y, v.z, w);
-	}
-
-	float Vector3::Distance(const Vector3& v1, const Vector3& v2)
-	{
-		return Length(v2 - v1);
-	}
-
-	Vector3 Vector3::Scratch(const Vector3& v, const Vector3& normal)
-	{
-		Vector3 n = Normalize(normal);
-		return v - n * Dot(v, n);
-	}
-
-	Vector3 Vector3::Reflect(const Vector3& v, const Vector3& normal)
-	{
-		Vector3 n = Normalize(normal);
-		return v - n * Dot(v, n) * 2.0f;
-	}
-
-	Vector3 Vector3::Projection(const Vector3& v, const Vector3& target)
-	{
-		Vector3 n = Normalize(target);
-		return n * Dot(v, n);
+		Vector3 n = target.Normalized();
+		return *this *= Dot(n);
 	}
 
 	Vector3 Vector3::Lerp(const Vector3& v1, const Vector3& v2, float t)
@@ -220,19 +254,19 @@ namespace aqua
 
 	Vector3 operator + (const Vector3& v1, const Vector3& v2)
 	{
-		auto result = v1;
+		Vector3 result = v1;
 		return result += v2;
 	}
 
 	Vector3 operator - (const Vector3& v1, const Vector3& v2)
 	{
-		auto result = v1;
+		Vector3 result = v1;
 		return result -= v2;
 	}
 
 	Vector3 operator * (const Vector3& v, float s)
 	{
-		auto result = v;
+		Vector3 result = v;
 		return result *= s;
 	}
 
@@ -243,7 +277,7 @@ namespace aqua
 
 	Vector3 operator / (const Vector3& v, float s)
 	{
-		auto result = v;
+		Vector3 result = v;
 		return result /= s;
 	}
 }

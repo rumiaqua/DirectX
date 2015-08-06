@@ -8,11 +8,11 @@ class OrderedRender
 {
 private:
 
-	OrderedRender();
+	OrderedRender() = delete;
 
-	OrderedRender(const OrderedRender&);
+	OrderedRender(const OrderedRender&) = delete;
 
-	OrderedRender& operator = (const OrderedRender&);
+	OrderedRender& operator = (const OrderedRender&) = delete;
 
 public:
 
@@ -23,11 +23,12 @@ public:
 
 	static void Regist(float alpha, float zOrder, const std::function<void()>& renderFunc)
 	{
-		m_renderingOrders.emplace(alpha, zOrder, renderFunc);
+		m_renderingOrders.emplace_back(alpha, zOrder, renderFunc);
 	}
 
 	static void Render()
 	{
+		std::sort(m_renderingOrders.begin(), m_renderingOrders.end());
 		for (const auto& target : m_renderingOrders)
 		{
 			target.renderFunc();
@@ -38,7 +39,7 @@ public:
 
 private:
 
-	static std::set<RenderingOrder> m_renderingOrders;
+	static std::vector<RenderingOrder> m_renderingOrders;
 };
 
-std::set<RenderingOrder> OrderedRender::m_renderingOrders;
+std::vector<RenderingOrder> OrderedRender::m_renderingOrders;

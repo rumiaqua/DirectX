@@ -17,7 +17,7 @@ namespace aqua
 		/// <summary>零ベクトル</summary>
 		static const Vector4 Zero;
 
-		/// <summmary>(1, 1, 1)のベクトル</summary>
+		/// <summary>(1, 1, 1, 1)のベクトル</summary>
 		static const Vector4 One;
 
 	public:
@@ -40,84 +40,81 @@ namespace aqua
 
 		/// <summary>三次元ベクトルから変換</summary>
 		/// <param name="v">三次元ベクトル</param>
-		/// <param name="w">w要素の値</param>
+		/// <param name="w">w要素</param>
 		Vector4(const Vector3& v, float w);
 
 		/// <summary>要素を指定する</summary>
-		/// <param name="x">x</param>
-		/// <param name="y">y</param>
-		/// <param name="z">z</param>
+		/// <param name="x">x要素</param>
+		/// <param name="y">y要素</param>
+		/// <param name="z">z要素</param>
+		/// <param name="w">w要素</param>
 		Vector4(float x, float y, float z, float w);
 
 	public:
 
-		/// <summary>コピー演算子</summary>
-		/// <param name="other">ベクトル</param>
-		/// <returns>自身</returns>
 		Vector4& operator = (const Vector4& other);
 
-		/// <summary>DirectXベクトルに変換</summary>
-		/// <param>DirectXベクトル</param>
+	public:
+
 		operator XMVECTOR();
 
-		/// <summary>DirectXベクトルに変換</summary>
-		/// <returns>DirectXベクトル</returns>
 		operator const XMVECTOR() const;
 
-		/// <summary>配列に変換</summary>
-		/// <returns>配列</returns>
 		operator float* ();
 
-		/// <summary>配列に変換</summary>
-		/// <returns>配列</returns>
 		operator const float* () const;
 
-		/// <summary>DirectXベクトルのポインタに変換</summary>
-		/// <returns>DirectXベクトルのポインタ</returns>
 		XMVECTOR* operator & ();
 
-		/// <summary>DirectXベクトルのconstポインタに変換</summary>
-		/// <returns>DirectXベクトルのconstポインタ</returns>
 		const XMVECTOR* operator & () const;
 
 	public:
 
 		/// <summary>長さの二乗を返す</summary>
-		/// <param name="v">ベクトル</param>
 		/// <returns>長さの二乗</returns>
-		static float LengthSquared(const Vector4& v);
+		float LengthSquared() const;
 
 		/// <summary>長さを返す</summary>
-		/// <param name="v">ベクトル</param>
 		/// <returns>長さ</returns>
-		static float Length(const Vector4& v);
+		float Length() const;
 
 		/// <summary>正規化されたベクトルを返す</summary>
-		/// <param name="v">ベクトル</param>
 		/// <returns>正規化されたベクトル</returns>
-		static Vector4 Normalize(const Vector4& v);
+		Vector4 Normalized() const;
 
 		/// <summary>0から1の間にクランプされたベクトルを返す</summary>
-		/// <param name="v">ベクトル</param>
 		/// <returns>0から1の間にクランプされたベクトル</returns>
-		static Vector4 Saturate(const Vector4& v);
+		Vector4 Saturated() const;
 
 		/// <summary>指定桁数でならしたベクトルを返す</summary>
-		/// <param name="v">ベクトル</param>
 		/// <returns>ならしたベクトル</returns>
-		static Vector4 Smooth(const Vector4& v, int f = -4);
+		Vector4 Smoothed(int f = -4) const;
 
 		/// <summary>内積を返す</summary>
-		/// <param name="v1">ベクトル</param>
-		/// <param name="v2">ベクトル</param>
+		/// <param name="v">ベクトル</param>
 		/// <returns>内積</returns>
-		static float Dot(const Vector4& v1, const Vector4& v2);
+		float Dot(const Vector4& v) const;
 
 		/// <summary>距離を返す</summary>
-		/// <param name="v1">ベクトル</param>
-		/// <param name="v2">ベクトル</param>
+		/// <param name="v">ベクトル</param>
 		/// <returns>距離</returns>
-		static float Distance(const Vector4& v1, const Vector4& v2);
+		float Distance(const Vector4& v) const;
+
+	public:
+
+		/// <summary>正規化する</summary>
+		/// <returns>ベクトル</returns>
+		Vector4& Normalize();
+
+		/// <summary>0から1の間にクランプする</summary>
+		/// <returns>ベクトル</returns>
+		Vector4& Saturate();
+
+		/// <summary>指定桁数でならす</summary>
+		/// <returns>ベクトル</returns>
+		Vector4& Smooth(int f = -4);
+
+	public:
 
 		/// <summary>線形補間したベクトルを返す</summary>
 		/// <param name="v1">始点</param>
@@ -130,9 +127,6 @@ namespace aqua
 
 		union
 		{
-			/// <summary>DirectX</summary>
-			XMVECTOR xm;
-
 			/// <summary>色</summary>
 			struct
 			{
@@ -153,12 +147,14 @@ namespace aqua
 				float y;
 
 				float z;
-
+				
 				float w;
 			};
 
 			/// <summary>配列</summary>
 			float elm[4];
+
+			XMVECTOR xm;
 		};
 	};
 

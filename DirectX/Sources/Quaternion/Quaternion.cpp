@@ -18,7 +18,7 @@ namespace aqua
 	Quaternion::Quaternion(const Vector3& axis, float angle)
 	{
 		xm = XMQuaternionRotationNormal(
-			Vector3::ToVector(axis, 0.0f), angle);
+			axis.ToVector(0.0f), angle);
 	}
 
 	Quaternion::Quaternion(const XMVECTOR& v)
