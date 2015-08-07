@@ -107,6 +107,10 @@
     <ClInclude Include="Sources\Polygon\Polygon.hpp" />
     <ClInclude Include="Sources\Quaternion\Quaternion.hpp" />
     <ClInclude Include="Sources\RenderingOrder\RenderingOrder.hpp" />
+    <ClInclude Include="Sources\RenderObject\RenderEnemy.hpp" />
+    <ClInclude Include="Sources\RenderObject\RenderModel.hpp" />
+    <ClInclude Include="Sources\RenderObject\RenderObject.hpp" />
+    <ClInclude Include="Sources\RenderObject\RenderPlayer.hpp" />
     <ClInclude Include="Sources\Shader\Shader.hpp" />
     <ClInclude Include="Sources\String\String.hpp" />
     <ClInclude Include="Sources\Vector2\Vector2.hpp" />

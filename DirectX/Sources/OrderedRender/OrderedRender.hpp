@@ -29,6 +29,7 @@ public:
 	static void Render()
 	{
 		std::sort(m_renderingOrders.begin(), m_renderingOrders.end());
+
 		for (const auto& target : m_renderingOrders)
 		{
 			target.renderFunc();

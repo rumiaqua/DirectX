@@ -63,7 +63,7 @@ BlendState SrcAlphaBlendingAdd
 	RenderTargetWriteMask[0] = 0x0F;
 };
 
-BlendState SrcAlphaBlendingAdd
+BlendState SrcAlphaBlendingAdd2
 {
 	BlendEnable[0] = TRUE;
 
@@ -82,7 +82,8 @@ technique11 Default
 {
 	pass P0
 	{
-		SetBlendState(SrcAlphaBlendingAdd, float4(1.0f, 1.0f, 1.0f, 1.0f), 0xFFFFFFFF);
+		// SetBlendState(SrcAlphaBlendingAdd, float4(1.0f, 1.0f, 1.0f, 1.0f), 0xFFFFFFFF);
+		SetBlendState(SrcAlphaBlendingAdd2, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 		SetVertexShader(CompileShader(vs_5_0, VS()));
 		SetPixelShader(CompileShader(ps_5_0, PS()));
 	}

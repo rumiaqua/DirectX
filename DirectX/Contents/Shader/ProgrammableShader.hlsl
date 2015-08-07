@@ -77,11 +77,26 @@ BlendState NoBlend
 	RenderTargetWriteMask[0] = 0x0F;
 };
 
+BlendState SrcAlphaBlendingAdd
+{
+	BlendEnable[0] = TRUE;
+
+	SrcBlend = SRC_COLOR;
+	DestBlend = INV_SRC_COLOR;
+	BlendOp = ADD;
+
+	SrcBlendAlpha = ZERO;
+	DestBlendAlpha = ZERO;
+	BlendOpAlpha = ADD;
+
+	RenderTargetWriteMask[0] = 0x0F;
+};
+
 technique11 Diffuse
 {
 	pass P0
 	{
-		SetBlendState(NoBlend, float4(1.0f, 1.0f, 1.0f, 1.0f), 0xFFFFFFFF);
+		SetBlendState(SrcAlphaBlendingAdd, float4(1.0f, 1.0f, 1.0f, 1.0f), 0xFFFFFFFF);
 		SetVertexShader(CompileShader(vs_5_0, VS()));
 		SetPixelShader(CompileShader(ps_5_0, PS()));
 	}
