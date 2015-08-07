@@ -8,8 +8,6 @@ class RenderPlayer : public RenderModel
 {
 private:
 
-	static const float oneRadian;
-
 	static const float deltaTime;
 
 public:
@@ -51,11 +49,11 @@ private:
 		float angle = 0.0f;
 		if (GetAsyncKeyState(VK_LEFT) != 0)
 		{
-			angle -= oneRadian * deltaTime;
+			angle -= Math::Radian * deltaTime;
 		}
 		if (GetAsyncKeyState(VK_RIGHT) != 0)
 		{
-			angle += oneRadian * deltaTime;
+			angle += Math::Radian * deltaTime;
 		}
 
 		m_rotate = m_rotate.Yaw(angle);
@@ -112,7 +110,5 @@ private:
 
 	Matrix& m_projection;
 };
-
-const float RenderPlayer::oneRadian = XM_PI / 180.0f;
 
 const float RenderPlayer::deltaTime = 0.016667f;

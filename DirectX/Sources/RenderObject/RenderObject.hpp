@@ -6,7 +6,14 @@ class RenderObject
 {
 public:
 
-	RenderObject() = default;
+	RenderObject()
+		: m_position(Vector3::Zero)
+		, m_rotate(Quaternion::Identity())
+		, m_scale(Vector3::One)
+		, m_color(Vector4::One)
+	{
+
+	}
 
 	virtual ~RenderObject()
 	{

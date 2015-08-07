@@ -14,6 +14,9 @@
 
 # include "RenderObject/RenderEnemy.hpp"
 
+# include "RenderObject/RenderTempObject.hpp"
+
+// # include "../../../../Siv3D Engine/Siv3DPackage(June2015)/Inc/SivVector3D.hpp"
 
 using namespace aqua;
 
@@ -35,9 +38,7 @@ static float t = 0.0f;
 
 static const float deltaTime = 0.016667f;
 
-RenderPlayer player(view, projection);
-
-RenderPlayer enemy(view, projection);
+std::shared_ptr<RenderTempObject> temp;
 
 void Initialize()
 {
@@ -48,6 +49,7 @@ void Initialize()
 	auto context = Window::Context();
 
 	// 変数初期化
+	temp = std::make_shared<RenderTempObject>(view, projection);
 
 	// シェーダーリソースビュー
 	TexMetadata metadata;
@@ -211,9 +213,6 @@ void Update()
 {
 	TimeElapsed();
 
-	player.Update();
-	enemy.Update();
-
 	EyeMove();
 	ViewMatrix();
 }
@@ -228,8 +227,7 @@ void Render()
 	};
 	Window::Clear(clearColor);
 
-	player.Render();
-	enemy.Render();
+	temp->Render();
 
 	OrderedRender::Render();
 

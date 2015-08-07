@@ -2,12 +2,6 @@ Texture2D texture2d;
 
 SamplerState samplerState;
 
-matrix world;
-
-matrix view;
-
-matrix projection;
-
 matrix modelViewProjection;
 
 float4 color;
