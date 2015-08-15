@@ -93,6 +93,21 @@
     <ClInclude Include="Sources\RenderObject\RenderTempObject.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Resources\Resources.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Resources\IResource.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Resources\Texture.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Optional\Optional.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Stopwatch\Stopwatch.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\ObjLoader\ObjLoader.cpp">
@@ -135,6 +150,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Sources\Quaternion\Quaternion.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Stopwatch\Stopwatch.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

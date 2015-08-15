@@ -16,18 +16,28 @@
 
 # include "RenderObject/RenderTempObject.hpp"
 
-// # include "../../../../Siv3D Engine/Siv3DPackage(June2015)/Inc/SivVector3D.hpp"
+# include "Resources/Resources.hpp"
+
+# include "Resources/Texture.hpp"
+
+# include "Stopwatch/Stopwatch.hpp"
+
+# include <iostream>
+
+# include <chrono>
+
+# pragma comment (lib, "winmm.lib")
 
 using namespace aqua;
 
 using namespace DirectX;
 
-Handle<ID3D11ShaderResourceView> shaderResourceView;
-
 Handle<ID3D11SamplerState> sampler;
 
 Vector3 eye;
+
 Vector3 at;
+
 Vector3 up;
 
 Matrix view;
@@ -52,7 +62,7 @@ void Initialize()
 	temp = std::make_shared<RenderTempObject>(view, projection);
 
 	// シェーダーリソースビュー
-	TexMetadata metadata;
+	/*TexMetadata metadata;
 	ScratchImage image;
 	hr = LoadFromDDSFile(L"Contents/seafloor.dds", 0U, &metadata, image);
 	if (FAILED(hr))
@@ -68,7 +78,11 @@ void Initialize()
 	if (FAILED(hr))
 	{
 		return;
-	}
+	}*/
+
+	// テクスチャリソースの読込
+	Resources::Register<Texture>(L"seafloor", L"Contents/seafloor.dds");
+	Resources::Register<Texture>(L"panda", L"Contents/panda.png");
 
 	// サンプラーステート
 	D3D11_SAMPLER_DESC sampDesc;
@@ -116,31 +130,7 @@ void Initialize()
 	// サンプラーステート
 	Shader::SetSampler(L"samplerState", 0, sampler);
 	// シェーダーリソースビュー
-	Shader::SetShaderResource(L"texture2d", shaderResourceView);
-
-	// テクスチャシェーダー
-	Shader::AddShader(L"Texture", L"Contents/Shader/TextureShader.hlsl");
-	// シェーダーの切り替え
-	Shader::Change(L"Texture");
-	// テクニックの指定
-	Shader::Technique(L"Default");
-	// サンプラーステート
-	Shader::SetSampler(L"samplerState", 0, sampler);
-
-	// ディフューズ
-	Shader::Change(L"Diffuse", L"Contents/Shader/ProgrammableShader.hlsl");
-	// テクニック
-	Shader::Technique(L"Diffuse");
-	// シェーダーリソースビュー
-	Shader::SetShaderResource(L"texture2d", shaderResourceView);
-	// サンプラーステート
-	Shader::SetSampler(L"samplerState", 0, sampler);
-	// ディフューズ率
-	Shader::SetVector(L"diffuseLight", { 1.0f, 1.0f, 1.0f, 1.0f });
-	// ディフューズカラー
-	Shader::SetVector(L"diffuseMaterial", { 1.0f, 0.9f, 0.5f, 0.7f });
-	// ライト座標
-	Shader::SetVector(L"lightPosition", { 0.0f, 0.0f, -10.0f, 0.0f });
+	Shader::SetShaderResource(L"texture2d", Resources::Get<Texture>(L"panda")->ShaderResourceView());
 
 	// 入力レイアウトの登録
 	Shader::RegistInputLayout();
@@ -211,7 +201,11 @@ void ViewMatrix()
 // 更新
 void Update()
 {
+	// Window::Update();
+
 	TimeElapsed();
+
+	temp->Update();
 
 	EyeMove();
 	ViewMatrix();
@@ -234,8 +228,11 @@ void Render()
 	Window::Flip();
 }
 
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+// int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+int main()
 {
+	using namespace std::chrono;
+
 	try
 	{
 		Initialize();

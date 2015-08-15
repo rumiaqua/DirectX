@@ -29,12 +29,22 @@ public:
 		return Pointer();
 	}
 
+	operator const Type*() const
+	{
+		return Pointer();
+	}
+
 	operator bool() const
 	{
 		return m_handle != nullptr;
 	}
 
 	Type* operator -> ()
+	{
+		return Pointer();
+	}
+
+	const Type* operator -> () const
 	{
 		return Pointer();
 	}
@@ -47,6 +57,11 @@ public:
 public:
 
 	Type* Pointer()
+	{
+		return m_handle;
+	}
+
+	const Type* Pointer() const
 	{
 		return m_handle;
 	}

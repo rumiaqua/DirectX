@@ -21,7 +21,12 @@ private:
 
 	virtual void OnUpdate() override
 	{
-
+		static const float deltaTime = 0.016667f;
+		m_color -= Vector4::One * deltaTime * 0.01f;
+		if (m_color.Saturated() == Vector4::Zero)
+		{
+			m_color = Vector4::One;
+		}
 	}
 
 	virtual void OnRender() const override

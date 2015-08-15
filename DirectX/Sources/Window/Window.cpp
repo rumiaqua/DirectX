@@ -224,6 +224,7 @@ void Window::CreateRenderTargetView()
 		throw std::exception("レンダーターゲットビューの生成に失敗しました");
 	}
 
+	// 深度ステンシルの作成
 	D3D11_TEXTURE2D_DESC depthDesc;
 	ZeroMemory(&depthDesc, sizeof(depthDesc));
 	depthDesc.Width = m_width;
@@ -244,6 +245,7 @@ void Window::CreateRenderTargetView()
 		throw std::exception("深度ステンシルの生成に失敗しました");
 	}
 
+	// 深度ステンシルビューの作成
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
 	ZeroMemory(&dsvDesc, sizeof(dsvDesc));
 	dsvDesc.Format = depthDesc.Format;

@@ -126,7 +126,7 @@ namespace aqua
 
 	float Vector4::Dot(const Vector4& v) const
 	{
-		return x * v.x + y * v.y + z * v.z;
+		return x * v.x + y * v.y + z * v.z + w * v.w;
 	}
 
 	float Vector4::Distance(const Vector4& v) const
@@ -151,6 +151,7 @@ namespace aqua
 		x = Math::Saturate(x);
 		y = Math::Saturate(y);
 		z = Math::Saturate(z);
+		w = Math::Saturate(a);
 		return *this;
 	}
 
@@ -159,6 +160,7 @@ namespace aqua
 		x = Math::Smooth(x, f);
 		y = Math::Smooth(y, f);
 		z = Math::Smooth(z, f);
+		w = Math::Smooth(w, f);
 		return *this;
 	}
 

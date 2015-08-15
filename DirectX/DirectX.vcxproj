@@ -52,7 +52,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_XM_NO_INTRINSICS_;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_XM_NO_INTRINSICS_;CONSOLE;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)\Sources;$(ProjectDir)\Librarys;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>Windows.h;d3d11.h;d3dcompiler.h;BaseType\BaseType.hpp;Effects11\Inc\d3dx11effect.h;DirectXTex\Inc\DirectXTex.h</ForcedIncludeFiles>
@@ -62,7 +62,7 @@
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)\Librarys;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;Effects11\Lib\Effects11d.lib;DirectXTex\Lib\DirectXTexd.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -76,7 +76,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_XM_NO_INTRINSICS_;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_XM_NO_INTRINSICS_;CONSOLE;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)\Sources;$(ProjectDir)\Librarys;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>Windows.h;d3d11.h;d3dcompiler.h;BaseType\BaseType.hpp;Effects11\Inc\d3dx11effect.h;DirectXTex\Inc\DirectXTex.h</ForcedIncludeFiles>
@@ -85,7 +85,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
@@ -103,6 +103,7 @@
     <ClInclude Include="Sources\Matrix\Matrix.hpp" />
     <ClInclude Include="Sources\Model\Model.hpp" />
     <ClInclude Include="Sources\ObjLoader\ObjLoader.hpp" />
+    <ClInclude Include="Sources\Optional\Optional.hpp" />
     <ClInclude Include="Sources\OrderedRender\OrderedRender.hpp" />
     <ClInclude Include="Sources\Polygon\Polygon.hpp" />
     <ClInclude Include="Sources\Quaternion\Quaternion.hpp" />
@@ -112,7 +113,11 @@
     <ClInclude Include="Sources\RenderObject\RenderObject.hpp" />
     <ClInclude Include="Sources\RenderObject\RenderPlayer.hpp" />
     <ClInclude Include="Sources\RenderObject\RenderTempObject.hpp" />
+    <ClInclude Include="Sources\Resources\IResource.hpp" />
+    <ClInclude Include="Sources\Resources\Resources.hpp" />
+    <ClInclude Include="Sources\Resources\Texture.hpp" />
     <ClInclude Include="Sources\Shader\Shader.hpp" />
+    <ClInclude Include="Sources\Stopwatch\Stopwatch.hpp" />
     <ClInclude Include="Sources\String\String.hpp" />
     <ClInclude Include="Sources\Vector2\Vector2.hpp" />
     <ClInclude Include="Sources\Vector3\Vector3.hpp" />
@@ -130,6 +135,7 @@
     <ClCompile Include="Sources\Polygon\Polygon.cpp" />
     <ClCompile Include="Sources\Quaternion\Quaternion.cpp" />
     <ClCompile Include="Sources\Shader\Shader.cpp" />
+    <ClCompile Include="Sources\Stopwatch\Stopwatch.cpp" />
     <ClCompile Include="Sources\String\String.cpp" />
     <ClCompile Include="Sources\Texture2D\Texture2D.cpp" />
     <ClCompile Include="Sources\Vector2\Vector2.cpp" />
